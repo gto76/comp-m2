@@ -13,7 +13,6 @@
 
 #include "const.hpp"
 #include "util.hpp"
-
 #include "printer.hpp"
 #include "ram.hpp"
 #include "cpu.hpp"
@@ -150,6 +149,49 @@ char readStdin(bool drawCursor) {
 }
 
 /*
+ * Run every cycle.
+ */
+void sleepAndCheckForKey() {
+	usleep(FQ*1000);
+
+	// Exit if ctrl-c was pressed
+	if (pleaseExit) {
+		exit(0);
+	}
+	
+	// Pauses execution if a key was hit, and waits for another key hit
+	int keyCode = Util::getKey();
+	if (keyCode) {
+		// If escape was pressed
+		if (keyCode == 27) {
+			executionCanceled = true;
+			return;
+		}
+		// Press key to continue
+		keyCode = readStdin(false);
+		// If the key was esc
+		if (keyCode == 27) {
+			executionCanceled = true;
+		}
+	}
+}
+
+void exec() {
+	while(!executionCanceled) {
+		bool shouldContinue = cpu.step();
+		if (interactivieMode) {
+			redrawScreen();
+		}
+		if(!shouldContinue) {
+			return;
+		}
+		if (interactivieMode) {
+			sleepAndCheckForKey();
+		}
+	}
+}
+
+/*
  * Saves the state of the ram and starts the execution of a program.
  * When execution stops, due to it reaching last address or user pressing 'esc',
  * it loads back the saved state of the ram, and resets the cpu.
@@ -159,7 +201,7 @@ void run() {
 		printer.printEmptyLine();
 	}
 	savedRam = ram.state;
-	cpu.exec();
+	exec();
 	// if 'esc' was pressed then it doesn't wait for keypress at the end
 	if (executionCanceled) {
 		executionCanceled = false;
@@ -236,33 +278,7 @@ void userInput() {
 	}
 }
 
-/*
- * Run every cycle.
- */
-void sleepAndCheckForKey() {
-	usleep(FQ*1000);
 
-	// Exit if ctrl-c was pressed
-	if (pleaseExit) {
-		exit(0);
-	}
-	
-	// Pauses execution if a key was hit, and waits for another key hit
-	int keyCode = Util::getKey();
-	if (keyCode) {
-		// If escape was pressed
-		if (keyCode == 27) {
-			executionCanceled = true;
-			return;
-		}
-		// Press key to continue
-		keyCode = readStdin(false);
-		// If the key was esc
-		if (keyCode == 27) {
-			executionCanceled = true;
-		}
-	}
-}
 
 /*
  * Initializes 'output.c' by sending dimensions of a 'drawing' and a 'drawScreen'  
@@ -308,23 +324,6 @@ void checkIfInputIsPiped() {
 	interactivieMode = !Util::inputIsPiped();
 }
 
-vector<bool> readLineFromPipe() {
-	string line;
-	// Read until next whitespace
-	cin >> line;
-	// If reached end of pipe input
-	if (!cin) {
-		exit(0);
-	}
-
-	if (Util::startsWithDigit(line)) {
-		int num = Util::extractInteger(line);
-		return Util::getBoolByte(num);
-	} else {
-		return Util::getBoolByte(line);
-	}
-}
-
 void loadRamIfFileSpecified(int argc, const char* argv[]) {
 	if (argc <= 1) {
 		return;
@@ -337,245 +336,6 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
    		loadRamFromFileStream(&fileStream);
       	fileStream.close();  
    	}
-}
-
-/*
- * PRINTER
- */
-
-/*
- * If in interactive mode, then prints word together with decimal
- * representation on the printer. If not in interactive mode,
- * then prints to the stdout. If stdout is a pipe, then it doesen't
- * add the decimal representation.
- */
-void Printer::print(vector<bool> wordIn) {
-	if (interactivieMode) {
-		output += Util::getStringWithFormatedInt(wordIn);
-		printerOutputUpdated = false;
-	} else {
-		if (Util::outputIsPiped()) {
-			cout << Util::getString(wordIn) + "\n";
-		} else {
-			cout << Util::getStringWithFormatedInt(wordIn);
-		}
-	}
-}
-
-void Printer::printEmptyLine() {
-	output += "            \n";
-}
-
-string Printer::getOutput() {
-	return output;
-}
-
-string Printer::getPrinterOutput() {
-	if (!printerOutputUpdated) {
-		printerOutput = renderPrinterOutput();
-		printerOutputUpdated = true;
-	}
-	return printerOutput;
-}
-
-void Printer::clear() {
-	output = "";
-	printerOutputUpdated = false;
-}
-
-string Printer::renderPrinterOutput() {
-	if (output.length() <= 0) {
-		return "|0|______________|0|";
-	}
-	vector<string> lines = Util::splitString(output);
-	reverse(lines.begin(), lines.end());
-	vector<string>  outputLines;
-	for (string line : lines) {
-		outputLines.push_back("|0| " + line + " |0|");
-	}
-	outputLines.push_back("|0|______________|0|");
-	return Util::makeString(outputLines);
-}
-
-/*
- * RAM
- */
-
-vector<bool> Ram::get(vector<bool> adr) {
-	int address = Util::getInt(adr);
-	// Return random if last address (reserved for output),
-	// or read from pipe if input is piped in.
-	if (address == RAM_SIZE) {
-		if (interactivieMode) {
-			return Util::getRandomWord();
-		} else {
-			return readLineFromPipe();
-		}
-	}
-	vector<bool> wordOut(WORD_SIZE);
-	for (int i = 0; i < WORD_SIZE; i++) {
-		wordOut[i] = state[address][i];
-	}
-	return wordOut;
-}
-
-void Ram::set(vector<bool> adr, vector<bool> wordIn) {
-	int address = Util::getInt(adr);
-	// Save word
-	if (address < RAM_SIZE) {
-		for (int i = 0; i < WORD_SIZE; i++) {
-			state[address][i] = wordIn[i];
-		}
-	// Send word to printer
-	} else {
-		printer.print(wordIn);
-	}
-}
-
-string Ram::getString() {
-	string out;
-	for (vector<bool> word : state) {
-		out += Util::getString(word) + '\n';
-	}
-	return out;
-}
-
-/*
- * CPU
- */
-
-void Cpu::exec() {
-	while(!executionCanceled) {
-		bool shouldContinue = step();
-		if (interactivieMode) {
-			redrawScreen();
-		}
-		if(!shouldContinue) {
-			return;
-		}
-		if (interactivieMode) {
-			sleepAndCheckForKey();
-		}
-	}
-}
-
-bool Cpu::step() {
-	cycle++;
-
-	// Stop if reached last address
-	if (Util::getInt(pc) >= RAM_SIZE) {
-		return false;
-	}
-
-	vector<bool> instruction = getInstruction();
-	int instCode = Util::getInt(instruction);
-	vector<bool> adr = getAddress();
-
-	switch (instCode) {
-		case 0:
-			read(adr);
-			break;
-		case 1:
-			write(adr);
-			break;
-		case 2:
-			add(adr);
-			break;
-		case 3:
-			sub(adr);
-			break;
-		case 4:
-			jump(adr);
-			break;
-		case 5:
-			jumpIfMax(adr);
-			break;
-		case 6:
-			jumpIfMin(adr);
-			break;
-		case 7:
-			shiftRight();
-			break;
-		default:
-			read(adr);
-	}
-
-	return true;
-}
-
-int Cpu::getCycle() {
-	return cycle;
-}
-
-vector<bool> Cpu::getRegister() {
-	return reg;
-}
-
-vector<bool> Cpu::getPc() {
-	return pc;
-}
-
-vector<bool> Cpu::getInstruction() {
-	vector<bool> instruction = Util::getFirstNibble(ram.get(pc));
-	// If instruction id is larger than the number of instructions then 
-	// the instruction with id 1 (write) gets executed.
-	if (Util::getInt(instruction) >= NUM_OF_INSTRUCTIONS) {
-		return Util::getBoolNibb(0);
-	}
-	return instruction;
-}
-
-vector<bool> Cpu::getAddress() {
-	return Util::getSecondNibble(ram.get(pc));
-}
-
-void Cpu::increasePc() {
-	pc = Util::getBoolNibb(Util::getInt(pc) + 1);
-}
-
-void Cpu::read(vector<bool> adr) {
-	reg = ram.get(adr);
-	increasePc();
-}
-
-void Cpu::write(vector<bool> adr) {
-	ram.set(adr, reg);
-	increasePc();
-}
-
-void Cpu::add(vector<bool> adr) {
-	reg = Util::getBoolByte(Util::getInt(reg) + Util::getInt(ram.get(adr)));
-	increasePc();
-}
-
-void Cpu::sub(vector<bool> adr) {
-	reg = Util::getBoolByte(Util::getInt(reg) - Util::getInt(ram.get(adr)));
-	increasePc();
-}
-
-void Cpu::jump(vector<bool> adr) {
-	pc = adr;
-}
-
-void Cpu::jumpIfMax(vector<bool> adr) {
-	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
-		pc = adr;
-	} else {
-		increasePc();
-	}
-}
-
-void Cpu::jumpIfMin(vector<bool> adr) {
-	if (Util::getInt(reg) <= 0) {
-		pc = adr;
-	} else {
-		increasePc();
-	}
-}
-
-void Cpu::shiftRight() {
-	reg = Util::getBoolByte(Util::getInt(reg) / 2);
-	increasePc();
 }
 
 /*
@@ -598,7 +358,7 @@ int main(int argc, const char* argv[]) {
 	if (interactivieMode) {
 		startInteractiveMode();
 	} else {
-		cpu.exec();
+		exec();
 	}
 }
 

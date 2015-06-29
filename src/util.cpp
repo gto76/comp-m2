@@ -104,6 +104,23 @@ string Util::getStringWithFormatedInt(vector<bool> wordIn) {
 	return Util::getString(wordIn) + " " + Util::getFormatedInt(wordIn) + "\n";
 }
 
+vector<bool> Util::readLineFromPipe() {
+	string line;
+	// Read until next whitespace
+	cin >> line;
+	// If reached end of pipe input
+	if (!cin) {
+		exit(0);
+	}
+
+	if (Util::startsWithDigit(line)) {
+		int num = Util::extractInteger(line);
+		return Util::getBoolByte(num);
+	} else {
+		return Util::getBoolByte(line);
+	}
+}
+
 /*
  * GENERAL UTIL
  */

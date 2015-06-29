@@ -9,7 +9,7 @@ using namespace std;
 
 class Cpu {
 	public:
-		void exec();
+		bool step();
 		vector<bool> getRegister();
 		vector<bool> getPc();
 		vector<bool> getInstruction();
@@ -19,7 +19,6 @@ class Cpu {
 		vector<bool> reg = vector<bool>(WORD_SIZE);
 		vector<bool> pc = vector<bool>(ADDR_SIZE);
 		int cycle = 0;
-		bool step();
 		void increasePc();
 		void read(vector<bool> adr);
 		void write(vector<bool> adr);
