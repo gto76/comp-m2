@@ -6,7 +6,16 @@
 
 using namespace std;
 
-vector<bool> Ram::get(vector<bool> adr) {
+vector<bool> Ram::getInstruction(vector<bool> adr) {
+	int address = Util::getInt(adr);
+	if (address == RAM_SIZE) {
+		fprintf(stderr, "Error in function Ram::getInstruction, invalid address");
+		exit(4);
+	}
+	return instructions[address];
+}
+
+vector<bool> Ram::getData(vector<bool> adr) {
 	int address = Util::getInt(adr);
 	// Return random if last address (reserved for output),
 	// or read from pipe if input is piped in.
@@ -17,21 +26,33 @@ vector<bool> Ram::get(vector<bool> adr) {
 			return Util::readLineFromPipe();
 		}
 	}
-	vector<bool> wordOut(WORD_SIZE);
-	for (int i = 0; i < WORD_SIZE; i++) {
-		wordOut[i] = state[address][i];
-	}
-	return wordOut;
+	return data[address];
 }
 
-void Ram::set(vector<bool> adr, vector<bool> wordIn) {
-	int address = Util::getInt(adr);
-	// Save word
-	if (address < RAM_SIZE) {
-		for (int i = 0; i < WORD_SIZE; i++) {
-			state[address][i] = wordIn[i];
+void Ram::saveWord(int address, vector<bool> wordIn, bool toInstructions) {
+	for (int i = 0; i < WORD_SIZE; i++) {
+		if (toInstructions) {
+			instructions[address][i] = wordIn[i];
+		} else {
+			data[address][i] = wordIn[i];
 		}
-	// Send word to printer
+	}
+}
+
+void Ram::setInstruction(vector<bool> adr, vector<bool> wordIn) {
+	int address = Util::getInt(adr);
+	if (address < RAM_SIZE) {
+		saveWord(address, wordIn, true);
+	} else {
+		fprintf(stderr, "Error in function Ram::setInstruction, invalid address");
+		exit(5);
+	}
+}
+
+void Ram::setData(vector<bool> adr, vector<bool> wordIn) {
+	int address = Util::getInt(adr);
+	if (address < RAM_SIZE) {
+		saveWord(address, wordIn, false);
 	} else {
 		printer.print(wordIn);
 	}
@@ -39,7 +60,12 @@ void Ram::set(vector<bool> adr, vector<bool> wordIn) {
 
 string Ram::getString() {
 	string out;
-	for (vector<bool> word : state) {
+	out += "# Instructions:";
+	for (vector<bool> word : instructions) {
+		out += Util::getString(word) + '\n';
+	}
+	out += "\n# Data:";
+	for (vector<bool> word : data) {
 		out += Util::getString(word) + '\n';
 	}
 	return out;

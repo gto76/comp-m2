@@ -25,7 +25,7 @@ class Util {
 		static string makeString(vector<string> lines);
 		static int hexToInt(char cIn);
 		static string getString(char cIn);
-		static tuple<int,int> getLocationOfFirstRamLightbulb();
+		static tuple<int,int> getCoordinatesOfFirstOccurance(string text, char cIn);
 		static int getKey();
 		static bool fileExists(string filename);
 		static bool inputIsPiped();

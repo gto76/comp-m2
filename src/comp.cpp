@@ -47,7 +47,8 @@ int cursorY = 0;
 vector<string> buffer;
 
 // Saved state of a ram
-vector<vector<bool>> savedRam;
+vector<vector<bool>> savedRamInstructions;
+vector<vector<bool>> savedRamData;
 
 // Offset of first ram lightbulb in the asci drawing
 int ramX;
@@ -57,7 +58,7 @@ int executionCounter = 0;
 bool executionCanceled = false;
 
 void setRamOffset() {
-	tuple<int,int> t = Util::getLocationOfFirstRamLightbulb() ;
+	tuple<int,int> t = Util::getCoordinatesOfFirstOccurance(drawing, 'a') ;
 	ramX = get<0>(t);
 	ramY = get<1>(t);
 }
@@ -89,27 +90,29 @@ void highlightCursor(bool highlight) {
 	fflush(stdout);
 }
 
+
 void switchBitUnderCursor() {
-	bool newBitValue = !ram.state.at(cursorY).at(cursorX);
-	ram.state.at(cursorY).at(cursorX) = newBitValue;
+	bool newBitValue = !ram.instructions.at(cursorY).at(cursorX); // TODO
+	ram.instructions.at(cursorY).at(cursorX) = newBitValue;
 	// Only change char of the buffer, as to avoid screen redraw.
 	buffer.at(cursorY+ramY).at(cursorX+ramX) = Util::getChar(newBitValue);
 }
 
 void eraseByteUnderCursor() {
-	ram.set(Util::getBoolNibb(cursorY), Util::getBoolByte(0));
+	ram.setInstruction(Util::getBoolNibb(cursorY), Util::getBoolByte(0)); // TODO
 	redrawScreen();
 }
 
+//TODO
 bool switchBytesInRam(int index1, int index2) {
 	if (index1 < 0 || index2 < 0 || index1 >= RAM_SIZE || index2 >= RAM_SIZE) {
 		return false;
 	}
 	vector<bool> addr1 = Util::getBoolNibb(index1);
 	vector<bool> addr2 = Util::getBoolNibb(index2);
-	vector<bool> temp = ram.get(addr1);
-	ram.set(addr1, ram.get(addr2));
-	ram.set(addr2, temp);
+	vector<bool> temp = ram.getInstruction(addr1); // TODO
+	ram.setInstruction(addr1, ram.getInstruction(addr2)); // TODO
+	ram.setInstruction(addr2, temp); // TODO
 	return true;
 }
 
@@ -200,7 +203,8 @@ void run() {
 	if (executionCounter > 0) {
 		printer.printEmptyLine();
 	}
-	savedRam = ram.state;
+	savedRamInstructions = ram.instructions;
+	savedRamData = ram.data;
 	exec();
 	// if 'esc' was pressed then it doesn't wait for keypress at the end
 	if (executionCanceled) {
@@ -209,7 +213,8 @@ void run() {
 		readStdin(false);
 	}
 	ram = Ram();
-	ram.state = savedRam;
+	ram.instructions = savedRamInstructions;
+	ram.data = savedRamData;
 	cpu = Cpu();
 	redrawScreen();
 	executionCounter++;
@@ -298,23 +303,39 @@ bool getBool(char c) {
 	return c == '*';
 }
 
+void writeInstructionBitToRam(int address, int bitIndex, bool bitValue) {
+	ram.instructions.at(address).at(bitIndex) = bitValue;
+}
+
+void writeDataBitToRam(int address, int bitIndex, bool bitValue) {
+	ram.data.at(address).at(bitIndex) = bitValue;
+}
+
+void writeLineToRam(string line, int address) {
+	int bitIndex = 0;
+	for (char c : line) {
+		if (address < WORD_SIZE) { 
+			writeInstructionBitToRam(address, bitIndex, getBool(c));
+		} else {
+			writeDataBitToRam(address, bitIndex, getBool(c));
+		}
+		if (++bitIndex >= WORD_SIZE) {
+			return;
+		}
+	}
+}
+
 void loadRamFromFileStream(ifstream* fileStream) {
 	int address = 0;
 	while (!fileStream->eof()) {
-		int bitIndex = 0;
 		string line;
     	getline(*fileStream, line);
-    	// Ignore line if empty or a comment.
-    	if (line.empty() || line[0] == '#') {
+    	bool lineEmptyOrAComment = line.empty() || line[0] == '#';
+    	if (lineEmptyOrAComment) {
     		continue;
     	}
-		for (char c : line) {
-			ram.state.at(address).at(bitIndex) = getBool(c);
-			if (++bitIndex >= WORD_SIZE) {
-				break;
-			}
-		}
-		if (++address >= RAM_SIZE) {
+    	writeLineToRam(line, address);
+		if (++address >= 2*RAM_SIZE) {
 			return;
 		}
   	} 

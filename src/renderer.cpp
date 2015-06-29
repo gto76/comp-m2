@@ -19,8 +19,9 @@ string Renderer::renderState(Printer printerIn, Ram ramIn, Cpu cpuIn) {
 
 	string out;
 	for (string line : Util::splitString(drawing)) {
-		string processedLine = instance.insertActualValues(line);
-		out += processedLine + "\n";
+		//string processedLine = instance.insertActualValues(line);
+		//out += processedLine + "\n";
+		out += instance.insertActualValues(line) + "\n";
 	}
 	out.erase(out.end() - 1);
 	return out;
@@ -57,13 +58,17 @@ char Renderer::getLightbulb(char cIn) {
 	int i = switchIndex[cIn]++;
 
 	// Regex: [0-9a-e]
-	bool charRepresentsRam = (cIn >= 'a' && cIn <= 'e') || (cIn >= '0' && cIn <= '9');
-	if (charRepresentsRam) {
-		int j = Util::hexToInt(cIn);
-		return getRamAt(j, i);
-	}
+	// bool charRepresentsRam = (cIn >= 'a' && cIn <= 'e') || (cIn >= '0' && cIn <= '9');
+	// if (charRepresentsRam) {
+	// 	int j = Util::hexToInt(cIn);
+	// 	return getRamAt(j, i);
+	// }
 
 	switch (cIn) {
+		case 'a':
+			return getInstructionRamBit(i);
+		case 'b':
+			return getDataRamBit(i);
 		case 'p':
 			return Util::getChar(pcIsPointingToAddress(i));
 		case 's':
@@ -75,7 +80,7 @@ char Renderer::getLightbulb(char cIn) {
 		case 'o':
 			return getFormattedOutput(i);
 	}
-	//There was an error parsing a drawing file. Problem with char cIn
+	fprintf(stderr, "There was an error parsing a drawing file. Problem with char %c", cIn);
 	return ' ';
 }
 
@@ -83,28 +88,24 @@ bool Renderer::pcIsPointingToAddress(int adr) {
 	return Util::getInt(cpu.getPc()) == adr;
 }
 
+bool Renderer::machineNotActive() {
+	bool executionHasntStarted = cpu.getCycle() == 0;
+	bool executionEnded = Util::getInt(cpu.getPc()) == RAM_SIZE;
+	return executionHasntStarted || executionEnded;
+}
+
 bool Renderer::instructionIsPointingToAddress(int adr) {
-	// If execution did't yet start
-	if (cpu.getCycle() == 0) {
-		return false;
-	}
-	// If pc is pointing to the last addres (execution reached the end)
-	if (Util::getInt(cpu.getPc()) == RAM_SIZE) {
+	if (machineNotActive()) {
 		return false;
 	}
 	return Util::getInt(cpu.getAddress()) == adr;
 }
 
 bool Renderer::instructionHasId(int id) {
-	// If execution did't yet start
-	if (cpu.getCycle() == 0) {
+	if (machineNotActive()) {
 		return false;
 	}
-	// If pc is pointing to the last addres (execution reached the end)
-	if (Util::getInt(cpu.getPc()) == RAM_SIZE) {
-		return false;
-	}
-	return Util::getInt(cpu.getInstruction()) == id;
+	return Util::getInt(cpu.getInstructionCode()) == id;
 }
 
 char Renderer::getFormattedOutput(int i) {
@@ -115,7 +116,19 @@ char Renderer::getFormattedOutput(int i) {
 	}
 }
 
-char Renderer::getRamAt(int j, int i) {
-	return Util::getChar(ram.state.at(j).at(i));
+char Renderer::getInstructionRamBit(int i) {
+	int j = i / WORD_SIZE;
+	i = i % WORD_SIZE;
+	return Util::getChar(ram.instructions.at(j).at(i));
 }
+
+char Renderer::getDataRamBit(int i) {
+	int j = i / WORD_SIZE;
+	i = i % WORD_SIZE;
+	return Util::getChar(ram.data.at(j).at(i));
+}
+
+// char Renderer::getRamAt(int j, int i) {
+// 	return Util::getChar(ram.state.at(j).at(i));
+//}
 

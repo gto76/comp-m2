@@ -8,6 +8,9 @@
 
 using namespace std;
 
+/*
+ * Returns 'false' when reaches last address
+ */
 bool Cpu::step() {
 	cycle++;
 
@@ -16,8 +19,8 @@ bool Cpu::step() {
 		return false;
 	}
 
-	vector<bool> instruction = getInstruction();
-	int instCode = Util::getInt(instruction);
+	vector<bool> instructionCodeBool = getInstructionCode();
+	int instCode = Util::getInt(instructionCodeBool);
 	vector<bool> adr = getAddress();
 
 	switch (instCode) {
@@ -64,8 +67,8 @@ vector<bool> Cpu::getPc() {
 	return pc;
 }
 
-vector<bool> Cpu::getInstruction() {
-	vector<bool> instruction = Util::getFirstNibble(ram.get(pc));
+vector<bool> Cpu::getInstructionCode() {
+	vector<bool> instruction = Util::getFirstNibble(ram.getInstruction(pc));
 	// If instruction id is larger than the number of instructions then 
 	// the instruction with id 1 (write) gets executed.
 	if (Util::getInt(instruction) >= NUM_OF_INSTRUCTIONS) {
@@ -75,7 +78,7 @@ vector<bool> Cpu::getInstruction() {
 }
 
 vector<bool> Cpu::getAddress() {
-	return Util::getSecondNibble(ram.get(pc));
+	return Util::getSecondNibble(ram.getInstruction(pc));
 }
 
 void Cpu::increasePc() {
@@ -83,22 +86,22 @@ void Cpu::increasePc() {
 }
 
 void Cpu::read(vector<bool> adr) {
-	reg = ram.get(adr);
+	reg = ram.getData(adr);
 	increasePc();
 }
 
 void Cpu::write(vector<bool> adr) {
-	ram.set(adr, reg);
+	ram.setData(adr, reg);
 	increasePc();
 }
 
 void Cpu::add(vector<bool> adr) {
-	reg = Util::getBoolByte(Util::getInt(reg) + Util::getInt(ram.get(adr)));
+	reg = Util::getBoolByte(Util::getInt(reg) + Util::getInt(ram.getData(adr)));
 	increasePc();
 }
 
 void Cpu::sub(vector<bool> adr) {
-	reg = Util::getBoolByte(Util::getInt(reg) - Util::getInt(ram.get(adr)));
+	reg = Util::getBoolByte(Util::getInt(reg) - Util::getInt(ram.getData(adr)));
 	increasePc();
 }
 

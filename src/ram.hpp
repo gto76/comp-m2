@@ -9,10 +9,16 @@ using namespace std;
 
 class Ram {
 	public:
-		vector<vector<bool>> state = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
-		vector<bool> get(vector<bool> adr);
-		void set(vector<bool> adr, vector<bool> wordIn);
+		vector<vector<bool>> instructions = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
+		vector<vector<bool>> data = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
+		vector<bool> getInstruction(vector<bool> adr);
+		vector<bool> getData(vector<bool> adr);
+		void setInstruction(vector<bool> adr, vector<bool> wordIn);
+		void setData(vector<bool> adr, vector<bool> wordIn);
 		string getString();
+
+	private:
+		void saveWord(int address, vector<bool> wordIn, bool toInstructions);
 };
 
 #endif

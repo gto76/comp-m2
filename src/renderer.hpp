@@ -26,7 +26,10 @@ class Renderer {
 		bool instructionIsPointingToAddress(int adr);
 		bool instructionHasId(int id);
 		char getFormattedOutput(int i);
-		char getRamAt(int j, int i);
+		//char getRamAt(int j, int i);
+		char getInstructionRamBit(int i);
+		char getDataRamBit(int i);
+		bool machineNotActive();
 };
 
 #endif

@@ -12,7 +12,7 @@
 
 #include "const.hpp"
 #include "util.hpp"
-#include "drawing.hpp"
+//#include "drawing.hpp"
 
 using namespace std;
 
@@ -176,11 +176,11 @@ vector<bool> Util::getRandomWord() {
 	return wordOut;
 }
 
-tuple<int,int> Util::getLocationOfFirstRamLightbulb() {
+tuple<int,int> Util::getCoordinatesOfFirstOccurance(string text, char cIn) {
 	int i = 0;
 	int j = 0;
-	for (char c : drawing) {
-		if (c == '0') {
+	for (char c : text) {
+		if (c == cIn) {
 			return tuple<int,int>(i, j);
 		}
 		if (c == '\n') {

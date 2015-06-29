@@ -12,7 +12,7 @@ class Cpu {
 		bool step();
 		vector<bool> getRegister();
 		vector<bool> getPc();
-		vector<bool> getInstruction();
+		vector<bool> getInstructionCode();
 		vector<bool> getAddress();
 		int getCycle();
 	private:
