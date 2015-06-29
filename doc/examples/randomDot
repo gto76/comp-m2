@@ -1,5 +1,8 @@
 # RANDOM DOT
+
 # Single bit that jumps randomly one spot to the left or to the right every cycle.
+# If input is piped in then jumps depending on the input value.
+# If value is larger than 127, then jumps left, otherwise right.
 
 ----***-
 ---*****

@@ -61,13 +61,10 @@ vector<bool> Util::getBoolByte(string sIn) {
 	vector<bool> out(8);
 	int i = 0;
 	for (char c : sIn) {
-		if (c == '-') {
-			out.at(i++) = false;
-		} else if (c == '*') {
-			out.at(i++) = true;
-		} else {
-			cout << "Input Error 02 - Unrecognized char";
-			exit(2);
+		// '*' is interpreted as true, all other characters as false.
+		out.at(i++) = c == '*';
+		if (i == WORD_SIZE) {
+			break;
 		}
 	}
 	return out;
@@ -96,6 +93,20 @@ char Util::getChar(bool b) {
 		return '-';
 	}
 }
+
+string Util::getFormatedInt(vector<bool> wordIn) {
+	char formatedInt [4];
+	sprintf(formatedInt, "%3d", Util::getInt(wordIn));
+	return formatedInt;
+}
+
+string Util::getStringWithFormatedInt(vector<bool> wordIn) {
+	return Util::getString(wordIn) + " " + Util::getFormatedInt(wordIn) + "\n";
+}
+
+/*
+ * GENERAL UTIL
+ */
 
 vector<string> Util::splitString(string stringIn) {
 	vector<string> out;
@@ -189,4 +200,35 @@ bool Util::fileExists(string filename) {
         return true;
     }
     return false;
+}
+
+bool Util::inputIsPiped() {
+	return !isatty(fileno(stdin));
+}
+
+bool Util::outputIsPiped() {
+	return !isatty(fileno(stdout));
+}
+
+bool Util::startsWithDigit(string line) {
+	if (line.empty()) {
+		return false;
+	}
+	return isdigit(line[0]);
+}
+
+int Util::extractInteger(string line) {
+	int i = 0;
+	for (char c : line) {
+		if (!isdigit(c)) {
+			break;
+		}
+		i++;
+	}
+	string stringNumber = line.substr(0, i);
+	stringstream ss;
+	ss << stringNumber;
+	int out;
+	ss >> out;
+	return out;
 }

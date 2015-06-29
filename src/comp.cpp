@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sstream>
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -32,6 +33,8 @@ extern "C" {
 	extern volatile sig_atomic_t screenResized;
 	extern volatile sig_atomic_t pleaseExit;
 }
+
+bool interactivieMode;
 
 Printer printer;
 Ram ram;
@@ -153,7 +156,7 @@ char readStdin(bool drawCursor) {
  */
 void run() { 
 	if (executionCounter > 0) {
-		printer.print("            \n");
+		printer.printEmptyLine();
 	}
 	savedRam = ram.state;
 	cpu.exec();
@@ -301,6 +304,26 @@ void loadRamFromFileStream(ifstream* fileStream) {
   	} 
 }
 
+void checkIfInputIsPiped() {
+	interactivieMode = !Util::inputIsPiped();
+}
+
+vector<bool> readLineFromPipe() {
+	string line;
+	// Read until next whitespace
+	cin >> line;
+	// If reached end of pipe input
+	if (!cin) {
+		exit(0);
+	}
+
+	if (Util::startsWithDigit(line)) {
+		int num = Util::extractInteger(line);
+		return Util::getBoolByte(num);
+	} else {
+		return Util::getBoolByte(line);
+	}
+}
 
 void loadRamIfFileSpecified(int argc, const char* argv[]) {
 	if (argc <= 1) {
@@ -320,9 +343,27 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
  * PRINTER
  */
 
-void Printer::print(string sIn) {
-	output += sIn;
-	printerOutputUpdated = false;
+/*
+ * If in interactive mode, then prints word together with decimal
+ * representation on the printer. If not in interactive mode,
+ * then prints to the stdout. If stdout is a pipe, then it doesen't
+ * add the decimal representation.
+ */
+void Printer::print(vector<bool> wordIn) {
+	if (interactivieMode) {
+		output += Util::getStringWithFormatedInt(wordIn);
+		printerOutputUpdated = false;
+	} else {
+		if (Util::outputIsPiped()) {
+			cout << Util::getString(wordIn) + "\n";
+		} else {
+			cout << Util::getStringWithFormatedInt(wordIn);
+		}
+	}
+}
+
+void Printer::printEmptyLine() {
+	output += "            \n";
 }
 
 string Printer::getOutput() {
@@ -362,10 +403,14 @@ string Printer::renderPrinterOutput() {
 
 vector<bool> Ram::get(vector<bool> adr) {
 	int address = Util::getInt(adr);
-	// return random if last address (reserved for output)
+	// Return random if last address (reserved for output),
+	// or read from pipe if input is piped in.
 	if (address == RAM_SIZE) {
-		vector<bool> wordOut = Util::getRandomWord();
-		return wordOut;
+		if (interactivieMode) {
+			return Util::getRandomWord();
+		} else {
+			return readLineFromPipe();
+		}
 	}
 	vector<bool> wordOut(WORD_SIZE);
 	for (int i = 0; i < WORD_SIZE; i++) {
@@ -383,10 +428,7 @@ void Ram::set(vector<bool> adr, vector<bool> wordIn) {
 		}
 	// Send word to printer
 	} else {
-		char formatedInt [4];
-		sprintf(formatedInt, "%3d", Util::getInt(wordIn));
-		string outputLine = Util::getString(wordIn) + " " + formatedInt + "\n";
-		printer.print(outputLine);
+		printer.print(wordIn);
 	}
 }
 
@@ -405,11 +447,15 @@ string Ram::getString() {
 void Cpu::exec() {
 	while(!executionCanceled) {
 		bool shouldContinue = step();
-		redrawScreen(); // always redraw
+		if (interactivieMode) {
+			redrawScreen();
+		}
 		if(!shouldContinue) {
 			return;
 		}
-		sleepAndCheckForKey();
+		if (interactivieMode) {
+			sleepAndCheckForKey();
+		}
 	}
 }
 
@@ -536,15 +582,24 @@ void Cpu::shiftRight() {
  * MAIN
  */
 
-int main(int argc, const char* argv[]) {
-	srand(time(NULL));
+void startInteractiveMode() {
 	setRamOffset();
 	setEnvironment();
 	prepareOutput();
-	loadRamIfFileSpecified(argc, argv);
 	redrawScreen();
 	highlightCursor(true);
 	userInput();
+}
+
+int main(int argc, const char* argv[]) {
+	srand(time(NULL));
+	checkIfInputIsPiped();
+	loadRamIfFileSpecified(argc, argv);
+	if (interactivieMode) {
+		startInteractiveMode();
+	} else {
+		cpu.exec();
+	}
 }
 
 
