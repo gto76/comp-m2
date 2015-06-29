@@ -1,5 +1,5 @@
-Comp
-====
+Comp Mark II
+============
 
 Simple 4-bit/1 Hz virtual computer for learning purposes
 
