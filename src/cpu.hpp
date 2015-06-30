@@ -1,9 +1,10 @@
 #ifndef CPU_H
 #define CPU_H
 
-#include "const.hpp"
+#include <stdio.h>
+#include <vector>
 
-#include<stdio.h>
+#include "const.hpp"
 
 using namespace std;
 

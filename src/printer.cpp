@@ -1,8 +1,9 @@
+#include "printer.hpp"
+
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
-#include "printer.hpp"
 #include "comp.hpp"
 #include "util.hpp"
 

@@ -1,6 +1,7 @@
+#include "ram.hpp"
+
 #include <string>
 
-#include "ram.hpp"
 #include "comp.hpp"
 #include "util.hpp"
 

@@ -1,17 +1,18 @@
+#include "util.hpp"
+
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <unistd.h>
 #include <sys/select.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
 #include <tuple>
+#include <vector>
 
 #include "const.hpp"
-#include "util.hpp"
 
 using namespace std;
 
@@ -185,12 +186,12 @@ vector<bool> Util::getRandomWord() {
 	return wordOut;
 }
 
-tuple<int,int> Util::getCoordinatesOfFirstOccurance(string text, char cIn) {
+tuple<int, int> Util::getCoordinatesOfFirstOccurance(string text, char cIn) {
 	int i = 0;
 	int j = 0;
 	for (char c : text) {
 		if (c == cIn) {
-			return tuple<int,int>(i, j);
+			return tuple<int, int>(i, j);
 		}
 		if (c == '\n') {
 			i = 0;

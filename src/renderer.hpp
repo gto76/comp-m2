@@ -1,12 +1,12 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <string>
 #include <map>
+#include <string>
 
+#include "cpu.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
-#include "cpu.hpp"
 
 using namespace std;
 
@@ -19,6 +19,7 @@ class Renderer {
 		Printer printer;
 		Ram ram;
 		Cpu cpu;
+		// Counts occurances of a char in a drawing.
 		map<char, int> switchIndex;
 		string insertActualValues(string lineIn);
 		char getLightbulb(char cIn);
@@ -26,7 +27,6 @@ class Renderer {
 		bool instructionIsPointingToAddress(int adr);
 		bool instructionHasId(int id);
 		char getFormattedOutput(int i);
-		//char getRamAt(int j, int i);
 		char getInstructionRamBit(int i);
 		char getDataRamBit(int i);
 		bool machineNotActive();

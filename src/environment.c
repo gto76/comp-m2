@@ -1,10 +1,10 @@
-#include <termios.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <termios.h>
+#include <unistd.h>
 
 void setEnvironment(void);
 void checkTerminal(void);

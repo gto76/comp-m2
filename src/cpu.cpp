@@ -1,8 +1,9 @@
+#include "cpu.hpp"
+
+#include <cmath>
 #include <string>
 #include <vector>
-#include <cmath>
 
-#include "cpu.hpp"
 #include "comp.hpp"
 #include "util.hpp"
 

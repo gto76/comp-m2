@@ -1,23 +1,23 @@
+#include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <signal.h>
-#include <sstream>
-#include <iostream>
 #include <algorithm>
-#include <vector>
-#include <string>
-#include <fstream>
-#include <streambuf>
-#include <tuple>
 #include <cmath>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <streambuf>
+#include <string>
+#include <tuple>
+#include <vector>
 
 #include "const.hpp"
-#include "util.hpp"
+#include "cpu.hpp"
+#include "drawing.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
-#include "cpu.hpp"
 #include "renderer.hpp"
-#include "drawing.hpp"
+#include "util.hpp"
 
 using namespace std;
 
@@ -33,35 +33,36 @@ extern "C" {
 	extern volatile sig_atomic_t pleaseExit;
 }
 
+// Two global variables.
 bool interactivieMode;
+bool executionCanceled = false;
 
 Printer printer;
 Ram ram;
 Cpu cpu;
 
-// Selected bit with the cursor.
-int cursorX = 0;
-int cursorY = 0;
-
 // Graphic representation of the computer state.
 vector<string> buffer;
+
+int executionCounter = 0;
 
 // Saved state of a ram.
 vector<vector<bool>> savedRamInstructions;
 vector<vector<bool>> savedRamData;
 
-// Offset of first ram lightbulb in the ascii drawing.
-int ramX;
-int ramY;
+// Coordinates of first ram lightbulb in the ascii drawing.
+tuple<int, int> instRamPosition = Util::getCoordinatesOfFirstOccurance(drawing, 'a');
+tuple<int, int> dataRamPosition = Util::getCoordinatesOfFirstOccurance(drawing, 'b');
 
-int executionCounter = 0;
-bool executionCanceled = false;
+bool cursorAtInstRam = true;
 
-void setRamOffset() {
-	tuple<int,int> t = Util::getCoordinatesOfFirstOccurance(drawing, 'a');
-	ramX = get<0>(t);
-	ramY = get<1>(t);
-}
+//int cursorX = 0;
+//int cursorY = 0;
+
+// Selected bit with the cursor.
+tuple<int, int> instCursorPosition = tuple<int, int>(0, 0);
+tuple<int, int> dataCursorPosition = tuple<int, int>(0, 0);
+
 
 void drawScreen() {
 	string out = Renderer::renderState(printer, ram, cpu);
@@ -72,10 +73,56 @@ void drawScreen() {
 	}
 }
 
+int getCursorPosition(int i) {
+	if (cursorAtInstRam) {
+		return get<i>(instCursorPosition);
+	} else {
+		return get<i>(dataCursorPosition);
+	}
+}
+
+int getCursorX() {
+	return getCursorPosition(0);
+}
+
+int getCursorY() {
+	return getCursorPosition(1);
+}
+
+int getRamPosition(int i) {
+	if (cursorAtInstRam) {
+		return get<i>(instRamPosition);
+	} else {
+		return get<i>(dataRamPosition);
+	}
+}
+
+int getRamPositionX() {
+	return getRam(0);
+}
+
+int getRamPositionY() {
+	return getRam(1);
+}
+
+int getCursorAbsoluteX() {
+	getCursorX() + getRamPositionX();
+}
+
+int getCursorAbsoluteY() {
+	getCursorY() + getRamPositionY();
+}
+
+char getCharUnderCursor() {
+	return buffer.at(getCursorAbsoluteX()).
+				  at(getCursorAbsoluteY());
+}
+
 void highlightCursor(bool highlight) {
 	char c;
 	try {
-		c = buffer.at(cursorY+ramY).at(cursorX+ramX);
+		c = getCharUnderCursor(); // buffer.at(cursorY+get<1>(instRamPosition))
+				  //.at(cursorX+get<0>(instRamPosition));
 	} catch (int e) {
 		cout << "Cursor out of bounds. Exception Nr. " << e << '\n';
 		return;
@@ -83,22 +130,57 @@ void highlightCursor(bool highlight) {
 	if (highlight) {
 		printf("\e[%dm\e[%dm", 30, 47);
 	}
-	printCharXY(c, cursorX+ramX, cursorY+ramY);
+	printCharXY(c, getCursorAbsoluteY(), //cursorX+get<0>(instRamPosition), 
+				   getCursorAbsoluteX()); //cursorY+get<1>(instRamPosition));
 	if (highlight) {
 		printf("\e[%dm\e[%dm", 37, 40);
 	}
 	fflush(stdout);
 }
 
+bool getRamAt(int addr, int bitIndex) {
+	if (cursorAtInstRam) {
+		return ram.instructions.at(addr).at(bitIndex);
+	} else {
+		return ram.data.at(addr).at(bitIndex);
+	}
+}
+
+void setRamAt(int addr, int bitIndex, bool value) {
+	if (cursorAtInstRam) {
+		ram.instructions.at(addr).at(bitIndex) = value;
+	} else {
+		ram.data.at(addr).at(bitIndex) = value;
+	}
+}
+
+vector<bool> getByteRamAt(int addr) {
+	if (cursorAtInstRam) {
+		return ram.getInstruction(Util::getBoolNibb(addr));
+	} else {
+		return ram.getData(Util::getBoolNibb(addr));
+	}
+}
+
+void setByteRamAt(int addr, vector<bool> value) {
+	if (cursorAtInstRam) {
+		ram.setInstruction(Util::getBoolNibb(addr), value);
+	} else {
+		ram.setData(Util::getBoolNibb(addr), value);
+	}
+}
+
 void switchBitUnderCursor() {
-	bool newBitValue = !ram.instructions.at(cursorY).at(cursorX); // TODO
-	ram.instructions.at(cursorY).at(cursorX) = newBitValue;
+	bool bitValue = getRamAt(getCursorY(), getCursorX()); // ram.instructions.at(cursorY).at(cursorX); 
+	setRamAt(getCursorY(), getCursorX(), !bitValue); // ram.instructions.at(cursorY).at(cursorX) = !bitValue;
 	// Only change char of the buffer, as to avoid screen redraw.
-	buffer.at(cursorY+ramY).at(cursorX+ramX) = Util::getChar(newBitValue);
+	buffer.at(getCursorAbsoluteY()).at(getCursorAbsoluteX()) = 
+		Util::getChar(!bitValue);
 }
 
 void eraseByteUnderCursor() {
-	ram.setInstruction(Util::getBoolNibb(cursorY), Util::getBoolByte(0)); // TODO
+	setByteRamAt(getCursorY(), Util::getBoolByte(0));
+	//ram.setInstruction(Util::getBoolNibb(cursorY), Util::getBoolByte(0));
 	redrawScreen();
 }
 
@@ -107,11 +189,16 @@ bool switchBytesInRam(int index1, int index2) {
 	if (index1 < 0 || index2 < 0 || index1 >= RAM_SIZE || index2 >= RAM_SIZE) {
 		return false;
 	}
-	vector<bool> addr1 = Util::getBoolNibb(index1);
-	vector<bool> addr2 = Util::getBoolNibb(index2);
-	vector<bool> temp = ram.getInstruction(addr1); // TODO
-	ram.setInstruction(addr1, ram.getInstruction(addr2)); // TODO
-	ram.setInstruction(addr2, temp); // TODO
+	//vector<bool> addr1 = Util::getBoolNibb(index1);
+	//vector<bool> addr2 = Util::getBoolNibb(index2);
+
+	vector<bool> temp = getByteRamAt(index1);
+	setByteRamAt(index1, getByteRamAt(index2));
+	setByteRamAt(index2, temp);
+
+	// vector<bool> temp = ram.getInstruction(addr1); 
+	// ram.setInstruction(addr1, ram.getInstruction(addr2)); 
+	// ram.setInstruction(addr2, temp); 
 	return true;
 }
 
@@ -150,10 +237,13 @@ char readStdin(bool drawCursor) {
 	return c;
 }
 
-//moveCursorToOtherRam
+void moveCursorToOtherRam() { 
+	cursorAtInstRam = !cursorAtInstRam;
+	redrawScreen();
+}
 
 /*
- * Run every cycle.
+ * Runs every cycle.
  */
 void sleepAndCheckForKey() {
 	usleep(FQ*1000);
@@ -162,8 +252,7 @@ void sleepAndCheckForKey() {
 		exit(0);
 	}
 	// Pauses execution if a key was hit, and waits for another key hit.
-	int keyCode = Util::getKey();
-	if (keyCode) {
+	if (int keyCode = Util::getKey()) {
 		// If escape was pressed.
 		if (keyCode == 27) {
 			executionCanceled = true;
@@ -275,7 +364,7 @@ void userInput() {
 				eraseByteUnderCursor();
 				break;
 			case 9:  // tab
-				// moveCursorToOtherRam(); TODO
+				moveCursorToOtherRam(); 
 				break;
 			case 10:  // enter
 				run();
@@ -365,7 +454,6 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
  */
 
 void startInteractiveMode() {
-	setRamOffset();
 	setEnvironment();
 	prepareOutput();
 	redrawScreen();

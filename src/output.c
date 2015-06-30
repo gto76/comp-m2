@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <sys/ioctl.h>
 #include <signal.h>
+#include <stdio.h>
 #include <string.h>
+#include <sys/ioctl.h>
 
 typedef void (*callback_function)(void);
 void setOutput(callback_function drawScreen, int width, int height);

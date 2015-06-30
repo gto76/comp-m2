@@ -1,15 +1,16 @@
+#include "renderer.hpp"
+
 #include <algorithm>
-#include <vector>
-#include <string>
 #include <fstream>
+#include <string>
+#include <vector>
 
 #include "const.hpp"
-#include "renderer.hpp"
+#include "cpu.hpp"
+#include "drawing.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
-#include "cpu.hpp"
 #include "util.hpp"
-#include "drawing.hpp"
 
 using namespace std;
 
@@ -56,7 +57,6 @@ string Renderer::insertActualValues(string lineIn) {
 
 char Renderer::getLightbulb(char cIn) {
 	int i = switchIndex[cIn]++;
-
 	switch (cIn) {
 		case 'a':
 			return getInstructionRamBit(i);
@@ -110,14 +110,16 @@ char Renderer::getFormattedOutput(int i) {
 	}
 }
 
-char Renderer::getInstructionRamBit(int i) {
+char getCharAt(int i, vector<vector<bool>>* matrix) {
 	int j = i / WORD_SIZE;
 	i = i % WORD_SIZE;
-	return Util::getChar(ram.instructions.at(j).at(i));
+	return Util::getChar((*matrix).at(j).at(i));
+}
+
+char Renderer::getInstructionRamBit(int i) {
+	return getCharAt(i, &ram.instructions);
 }
 
 char Renderer::getDataRamBit(int i) {
-	int j = i / WORD_SIZE;
-	i = i % WORD_SIZE;
-	return Util::getChar(ram.data.at(j).at(i));
+	return getCharAt(i, &ram.data);
 }
