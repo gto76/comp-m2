@@ -9,7 +9,8 @@ using namespace std;
 vector<bool> Ram::getInstruction(vector<bool> adr) {
 	int address = Util::getInt(adr);
 	if (address == RAM_SIZE) {
-		fprintf(stderr, "Error in function Ram::getInstruction, invalid address");
+		fprintf(stderr, "Error in function Ram::getInstruction, "
+			"invalid address");
 		exit(4);
 	}
 	return instructions[address];
@@ -23,7 +24,7 @@ vector<bool> Ram::getData(vector<bool> adr) {
 		if (interactivieMode) {
 			return Util::getRandomWord();
 		} else {
-			return Util::readLineFromPipe();
+			return Util::readWordFromPipe();
 		}
 	}
 	return data[address];
@@ -44,7 +45,8 @@ void Ram::setInstruction(vector<bool> adr, vector<bool> wordIn) {
 	if (address < RAM_SIZE) {
 		saveWord(address, wordIn, true);
 	} else {
-		fprintf(stderr, "Error in function Ram::setInstruction, invalid address");
+		fprintf(stderr, "Error in function Ram::setInstruction, "
+			"invalid address");
 		exit(5);
 	}
 }

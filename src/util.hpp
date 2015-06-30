@@ -20,7 +20,8 @@ class Util {
 		static string getStringWithFormatedInt(vector<bool> wordIn);
 		static vector<vector<bool>> getRamFromString(string ramString);
 		static vector<bool> getRandomWord();
-		static vector<bool> readLineFromPipe();
+		static vector<bool> parseWord(string word);
+		static vector<bool> readWordFromPipe();
 		static vector<string> splitString(string stringIn);
 		static string makeString(vector<string> lines);
 		static int hexToInt(char cIn);

@@ -12,7 +12,6 @@
 
 #include "const.hpp"
 #include "util.hpp"
-//#include "drawing.hpp"
 
 using namespace std;
 
@@ -35,6 +34,11 @@ vector<bool> Util::getBoolNibb(int num) {
 	return getBool(num, 4);
 }
 
+/*
+ * Returns binary representation of integer 'num', of length 'length'.
+ * If number is too large to fit, then maximum binary number of specified
+ * length is returned.
+ */
 vector<bool> Util::getBool(int num, int length) {
 	if (num <= 0) {
 		return vector<bool>(length, false);
@@ -104,21 +108,24 @@ string Util::getStringWithFormatedInt(vector<bool> wordIn) {
 	return Util::getString(wordIn) + " " + Util::getFormatedInt(wordIn) + "\n";
 }
 
-vector<bool> Util::readLineFromPipe() {
-	string line;
-	// Read until next whitespace
-	cin >> line;
-	// If reached end of pipe input
+vector<bool> Util::parseWord(string word) {
+	if (Util::startsWithDigit(word)) {
+		int num = Util::extractInteger(word);
+		return Util::getBoolByte(num);
+	} else {
+		return Util::getBoolByte(word);
+	}
+}
+
+vector<bool> Util::readWordFromPipe() {
+	string word;
+	// Read until next whitespace.
+	cin >> word;
+	// Exit when end of pipe input is reached.
 	if (!cin) {
 		exit(0);
 	}
-
-	if (Util::startsWithDigit(line)) {
-		int num = Util::extractInteger(line);
-		return Util::getBoolByte(num);
-	} else {
-		return Util::getBoolByte(line);
-	}
+	return Util::parseWord(word);
 }
 
 /*
@@ -160,7 +167,9 @@ string Util::getString(char cIn) {
 }
 
 vector<vector<bool>> Util::getRamFromString(string ramString) {
-	vector<vector<bool>> data = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
+	vector<vector<bool>> data = vector<vector<bool>>(
+		RAM_SIZE, 
+		vector<bool>(WORD_SIZE));
 	int i = 0;
 	for (string line : splitString(ramString)) {
 		data[i++] = getBoolByte(line);

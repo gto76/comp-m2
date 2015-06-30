@@ -27,7 +27,7 @@ int const DISABLE_REPEAT = 0;
 struct termios saved_attributes;
 volatile sig_atomic_t pleaseExit = 0;
 
-//////// AT START ////////////
+////////// AT START //////////
 
 void setEnvironment() {
 	checkTerminal();
@@ -48,19 +48,23 @@ void saveAttributes() {
 	tcgetattr(STDIN_FILENO, &saved_attributes);
 }
 
-// blocking mode (getc waits for input)
+/* 
+ * Sets blocking mode (getc waits for input).
+ */
 void setMenuMode() {
 	setNoncanonicalMode(1, 0);
 }
 
-// nonblocking mode (getc does not wait for input, it returns every 0.1 s)
+/*
+ * Sets nonblocking mode (getc does not wait for input, it returns every 0.1 s).
+ */
 void setRaceMode() {
 	setNoncanonicalMode(0, 1);
 }
 
 void setNoncanonicalMode(int vmin, int vtime) {
 	struct termios tattr;
-	// set noncanonical mode, disable echo
+	// Set noncanonical mode and disable echo.
 	atexit(resetEnvironment);
 	tcgetattr(STDIN_FILENO, &tattr);
 	tattr.c_lflag &= ~(ICANON|ECHO);
@@ -71,17 +75,17 @@ void setNoncanonicalMode(int vmin, int vtime) {
 
 void registerSigIntCatcher() {
 	struct sigaction action;
-	// reset all members
+	// Reset all members.
 	memset(&action, 0, sizeof(action));
 	action.sa_handler = sigIntCatcher;
 	sigaction(SIGINT, &action, NULL);
 }
 
-// method that gets executed when ctrl-c is pressed.
-// necesary so that atexit method gets executed,
-// that sets terminal back to the original state.
+/*
+ * Gets executed when ctrl-c is pressed. It necesary so that atexit method 
+ * gets executed. atexit sets terminal back to the original state.
+ */
 void sigIntCatcher(int signum) {
-	//exit(0);
 	pleaseExit = 1;
 }
 
@@ -93,19 +97,19 @@ void checkRetVal(int retVal, char const errMsg[]) {
 
 void disableRepeatAndCursor() {
 	if (DISABLE_REPEAT) {
-		// disable repeat in xwindow console
+		// Disable repeat in xwindow console.
 		int retVal = system("xset -r");
 		checkRetVal(retVal, "Could disable key repeat.");
-		// disable repeat in Linux console
+		// Disable repeat in Linux console.
 		retVal = system("setterm --repeat off");
 		checkRetVal(retVal, "Could disable key repeat.");
 	}
-	// set cursor off. could also probably use system("setterm -cursor off);
+	// Set cursor off. Could also probably use system("setterm -cursor off).
 	printf("\e[?25l");
 	fflush(stdout);
 }
 
-///////// AT END ////////////
+/////////// AT END ///////////
 
 void resetEnvironment() {
 	resetInputMode();
@@ -118,23 +122,25 @@ void resetConsole() {
 	checkRetVal(retVal, "Could not reset the screen.");
 }
 
+/*
+ * Brings back canonical mode.
+ */
 void resetInputMode() {
-	// bring back canonical mode
 	tcsetattr(STDIN_FILENO, TCSANOW, &saved_attributes);
 }
 
 void enableRepeatAndCursor() {
 	if (DISABLE_REPEAT) {
-		// enable repeat in Xwindow console
+		// Enables repeat in Xwindow console.
 		int retVal = system("xset r");
 		checkRetVal(retVal, "Could not enable key repeat.");
-		// disable repeat in Linux console
+		// Disables repeat in Linux console.
 		retVal = system("setterm --repeat on");
 		checkRetVal(retVal, "Could not enable key repeat.");
 	}
 	int retVal = system("clear");
 	checkRetVal(retVal, "Could not clear the screen.");
-	// bring back cursor
+	// Brings back cursor.
 	printf("\e[?25h");
 	fflush(stdout) ;
 }

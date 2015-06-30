@@ -48,6 +48,8 @@ Instruction set
 * `SHIFT R -***` - Moves every bit of the register one spot to the right. This way rightmost bit gets lost, and a leftmost becomes '*-*'. This is the only instruction that doesn't use the address part, making the last four bits irrelevant.  
 * Any instruction that is not defined above gets interpreted as `READ ----` instruction.
 
+"**OTHERS NOT YET IMPLEMENTED**"
+
 How to run on…
 --------------
 

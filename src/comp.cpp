@@ -39,18 +39,18 @@ Printer printer;
 Ram ram;
 Cpu cpu;
 
-// Selected bit with the cursor
+// Selected bit with the cursor.
 int cursorX = 0;
 int cursorY = 0;
 
-// Graphic representation of the computer state
+// Graphic representation of the computer state.
 vector<string> buffer;
 
-// Saved state of a ram
+// Saved state of a ram.
 vector<vector<bool>> savedRamInstructions;
 vector<vector<bool>> savedRamData;
 
-// Offset of first ram lightbulb in the asci drawing
+// Offset of first ram lightbulb in the ascii drawing.
 int ramX;
 int ramY;
 
@@ -58,7 +58,7 @@ int executionCounter = 0;
 bool executionCanceled = false;
 
 void setRamOffset() {
-	tuple<int,int> t = Util::getCoordinatesOfFirstOccurance(drawing, 'a') ;
+	tuple<int,int> t = Util::getCoordinatesOfFirstOccurance(drawing, 'a');
 	ramX = get<0>(t);
 	ramY = get<1>(t);
 }
@@ -89,7 +89,6 @@ void highlightCursor(bool highlight) {
 	}
 	fflush(stdout);
 }
-
 
 void switchBitUnderCursor() {
 	bool newBitValue = !ram.instructions.at(cursorY).at(cursorX); // TODO
@@ -138,7 +137,7 @@ char readStdin(bool drawCursor) {
 	errno = 0;
 	ssize_t num = read(0, &c, 1);
 	if (num == -1 && errno == EINTR) {
-		// Exit if ctrl-c was pressed
+		// Exits if ctrl-c was pressed.
 		if (pleaseExit) {
 			exit(0);
 		}
@@ -151,28 +150,28 @@ char readStdin(bool drawCursor) {
 	return c;
 }
 
+//moveCursorToOtherRam
+
 /*
  * Run every cycle.
  */
 void sleepAndCheckForKey() {
 	usleep(FQ*1000);
-
-	// Exit if ctrl-c was pressed
+	// Exit if ctrl-c was pressed.
 	if (pleaseExit) {
 		exit(0);
 	}
-	
-	// Pauses execution if a key was hit, and waits for another key hit
+	// Pauses execution if a key was hit, and waits for another key hit.
 	int keyCode = Util::getKey();
 	if (keyCode) {
-		// If escape was pressed
+		// If escape was pressed.
 		if (keyCode == 27) {
 			executionCanceled = true;
 			return;
 		}
-		// Press key to continue
+		// Press key to continue.
 		keyCode = readStdin(false);
-		// If the key was esc
+		// If the key was escape.
 		if (keyCode == 27) {
 			executionCanceled = true;
 		}
@@ -185,7 +184,7 @@ void exec() {
 		if (interactivieMode) {
 			redrawScreen();
 		}
-		if(!shouldContinue) {
+		if (!shouldContinue) {
 			return;
 		}
 		if (interactivieMode) {
@@ -196,8 +195,8 @@ void exec() {
 
 /*
  * Saves the state of the ram and starts the execution of a program.
- * When execution stops, due to it reaching last address or user pressing 'esc',
- * it loads back the saved state of the ram, and resets the cpu.
+ * When execution stops, due to it reaching last address or user pressing 
+ * 'esc', it loads back the saved state of the ram, and resets the cpu.
  */
 void run() { 
 	if (executionCounter > 0) {
@@ -206,7 +205,7 @@ void run() {
 	savedRamInstructions = ram.instructions;
 	savedRamData = ram.data;
 	exec();
-	// if 'esc' was pressed then it doesn't wait for keypress at the end
+	// If 'esc' was pressed then it doesn't wait for keypress at the end.
 	if (executionCanceled) {
 		executionCanceled = false;
 	} else {
@@ -239,43 +238,46 @@ void userInput() {
 
 		highlightCursor(false);
 		switch (c) {
-			case 65: // up
+			case 65:  // up
 				if (cursorY > 0) {
 					cursorY--;
 				}
 				break;
-			case 66: // down
+			case 66:  // down
 				if (cursorY < RAM_SIZE-1) {
 					cursorY++;
 				}
 				break;
-			case 67: // right
+			case 67:  // right
 				if (cursorX < WORD_SIZE-1) {
 					cursorX++;
 				}
 				break;
-			case 68: // left
+			case 68:  // left
 				if (cursorX > 0) {
 					cursorX--;
 				}
 				break;
-			case 107: // k
+			case 107:  // k
 				moveByteUnderCursorUp();
 				break;
-			case 106: // j
+			case 106:  // j
 				moveByteUnderCursorDown();
 				break;
-			case 115: // s
+			case 115:  // s
 				saveRamToFile();
 				break;
-			case 32: // space
-			case 102: // f
+			case 32:  // space
+			case 102:  // f
 				switchBitUnderCursor();
 				break;
-			case 100: // d
+			case 100:  // d
 				eraseByteUnderCursor();
 				break;
-			case 10: // enter
+			case 9:  // tab
+				// moveCursorToOtherRam(); TODO
+				break;
+			case 10:  // enter
 				run();
 				break;
 		}
@@ -283,11 +285,10 @@ void userInput() {
 	}
 }
 
-
-
 /*
- * Initializes 'output.c' by sending dimensions of a 'drawing' and a 'drawScreen'  
- * callback function, that output.c will use on every screen redraw.
+ * Initializes 'output.c' by sending dimensions of a 'drawing' and 
+ * a 'drawScreen' callback function, that output.c will use on every 
+ * screen redraw.
  */
 void prepareOutput() {
 	size_t drawingWidth = 0;

@@ -9,13 +9,12 @@
 using namespace std;
 
 /*
- * Returns 'false' when reaches last address
+ * Returns 'false' when reaches last address.
  */
 bool Cpu::step() {
 	cycle++;
-
-	// Stop if reached last address
-	if (Util::getInt(pc) >= RAM_SIZE) {
+	bool reachedLastAddress = Util::getInt(pc) >= RAM_SIZE;
+	if (reachedLastAddress) {
 		return false;
 	}
 
@@ -96,12 +95,16 @@ void Cpu::write(vector<bool> adr) {
 }
 
 void Cpu::add(vector<bool> adr) {
-	reg = Util::getBoolByte(Util::getInt(reg) + Util::getInt(ram.getData(adr)));
+	int regValue = Util::getInt(reg);
+	int ramValue = Util::getInt(ram.getData(adr));
+	reg = Util::getBoolByte(regValue + ramValue);
 	increasePc();
 }
 
 void Cpu::sub(vector<bool> adr) {
-	reg = Util::getBoolByte(Util::getInt(reg) - Util::getInt(ram.getData(adr)));
+	int regValue = Util::getInt(reg);
+	int ramValue = Util::getInt(ram.getData(adr));
+	reg = Util::getBoolByte(regValue - ramValue);
 	increasePc();
 }
 

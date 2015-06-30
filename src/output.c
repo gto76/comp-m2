@@ -18,7 +18,7 @@ void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
 void copyArray(char dest[], const char src[], int width);
 
-/////////////////////////////
+////////////////////////////
 
 #define PRINT_IN_CENTER 1
 #define DEFAULT_WIDTH 80
@@ -33,7 +33,7 @@ int rows = DEFAULT_HEIGHT;
 callback_function drawScreen;
 volatile sig_atomic_t screenResized = 0;
 
-///////// PUBLIC ////////////
+////////// PUBLIC //////////
 
 void setOutput(callback_function drawScreenThat, int width, int height) {
 	drawScreen = drawScreenThat;
@@ -41,11 +41,11 @@ void setOutput(callback_function drawScreenThat, int width, int height) {
 	pictureHeight = height;
 	registerSigWinChCatcher();
 	updateConsoleSize();
-	// set colors
+	// Set colors.
 	printf("\e[%dm\e[%dm", 37, 40);
 }
 
-/////////////////////////
+////////////////////////////
 
 void printCharXY(char c, int x, int y) {
 	if (coordinatesOutOfBounds(x, y))
@@ -90,8 +90,7 @@ int coordinatesOutOfBounds(int x, int y) {
 	return x >= columns || y >= rows || x < 0 || y < 0;
 }
 
-
-////////// DRAW ///////////
+/////////// DRAW ///////////
 
 void clearScreen(void) {
 	printf("\e[1;1H\e[2J");
@@ -105,7 +104,7 @@ void redrawScreen() {
 	fflush(stdout);
 }
 
-/////////// SIGNALS /////////////
+///////// SIGNALS //////////
 
 void registerSigWinChCatcher() {
 	struct sigaction action;
@@ -117,12 +116,16 @@ void registerSigWinChCatcher() {
 	sigaction(SIGWINCH, &action, NULL);
 }
 
-// Fires when window size changes
+/*
+ * Fires when window size changes.
+ */
 void sigWinChCatcher(int signum) {
 	screenResized = 1;
 }
 
-// Asks system about window size
+/*
+ * Asks system about window size.
+ */
 void updateConsoleSize() {
 	struct winsize w;
 	ioctl(0, TIOCGWINSZ, &w);
@@ -130,7 +133,7 @@ void updateConsoleSize() {
 	rows = w.ws_row;
 }
 
-///////// UTIL //////////
+/////////// UTIL ///////////
 
 void copyArray(char dest[], const char src[], int width) {
 	int i;
