@@ -35,6 +35,7 @@ class Cpu {
 		void writeOut(vector<bool> adr);
 		void addImd(vector<bool> value);
 		void subImd(vector<bool> value);
+		void jump(vector<bool> adr);
 		// UTIL
 		void increasePc();
 		void addOrSubtract(vector<bool> adr, bool add);

@@ -85,11 +85,11 @@ bool Cpu::step() {
 		case 11:
 			subImd(value);
 			break;
-
-/* TODO
 		case 12:
 			jump(value);
 			break;
+
+/* TODO
 		case 13:
 			jumpIfNotMax(value);
 			break;
@@ -202,6 +202,16 @@ void Cpu::subImd(vector<bool> value) {
 	addOrSubtractImd(value, false);
 	increasePc();
 }
+
+/*
+ * Jumps to address that is stored at passed addres.
+ */
+void Cpu::jump(vector<bool> adr) {
+	vector<bool> value = ram.get(DATA, adr);
+	// Takes the last four bits as a address.
+	pc = Util::getSecondNibble(value);
+}
+
 
 ///////////////////
 ////// UTIL ///////
