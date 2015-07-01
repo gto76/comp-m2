@@ -79,14 +79,14 @@ bool Cpu::step() {
 		case 9:
 			writeOut(value);
 			break;
-
-/* TODO
 		case 10:
 			addImd(value);
 			break;
 		case 11:
 			subImd(value);
 			break;
+
+/* TODO
 		case 12:
 			jump(value);
 			break;
@@ -187,6 +187,22 @@ void Cpu::writeOut(vector<bool> adr) {
 	increasePc();
 }
 
+/*
+ * Adds passed value to the register.
+ */
+void Cpu::addImd(vector<bool> value) {
+	addOrSubtractImd(value, true);
+	increasePc();
+}
+
+/*
+ * Subtracts passed value from the register.
+ */
+void Cpu::subImd(vector<bool> value) {
+	addOrSubtractImd(value, false);
+	increasePc();
+}
+
 ///////////////////
 ////// UTIL ///////
 ///////////////////
@@ -202,6 +218,16 @@ void Cpu::addOrSubtract(vector<bool> adr, bool add) {
 		reg = Util::getBoolByte(regValue + ramValue);
 	} else {
 		reg = Util::getBoolByte(regValue - ramValue);
+	}
+}
+
+void Cpu::addOrSubtractImd(vector<bool> value, bool add) {
+	int valueIn = Util::getInt(value);
+	int regValue = Util::getInt(reg);
+	if (add) {
+		reg = Util::getBoolByte(regValue + valueIn);
+	} else {
+		reg = Util::getBoolByte(regValue - valueIn);
 	}
 }
 

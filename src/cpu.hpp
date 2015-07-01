@@ -33,9 +33,12 @@ class Cpu {
 		void shift(vector<bool> value);
 		void readIn(vector<bool> adr);
 		void writeOut(vector<bool> adr);
+		void addImd(vector<bool> value);
+		void subImd(vector<bool> value);
 		// UTIL
 		void increasePc();
 		void addOrSubtract(vector<bool> adr, bool add);
+		void addOrSubtractImd(vector<bool> value, bool add);
 		bool getRegBit(int index);
 };
 
