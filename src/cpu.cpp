@@ -9,6 +9,37 @@
 
 using namespace std;
 
+
+/////////////////////////
+/////// INTERFACE ///////
+/////////////////////////
+
+int Cpu::getCycle() {
+	return cycle;
+}
+
+vector<bool> Cpu::getRegister() {
+	return reg;
+}
+
+vector<bool> Cpu::getPc() {
+	return pc;
+}
+
+vector<bool> Cpu::getInstructionCode() {
+	vector<bool> instruction = Util::getFirstNibble(ram.get(CODE, pc));
+	// If instruction id is larger than the number of instructions then 
+	// the instruction with id 1 (write) gets executed.
+	if (Util::getInt(instruction) >= NUM_OF_INSTRUCTIONS) {
+		return Util::getBoolNibb(0);
+	}
+	return instruction;
+}
+
+vector<bool> Cpu::getValue() {
+	return Util::getSecondNibble(ram.get(CODE, pc));
+}
+
 /*
  * Returns 'false' when reaches last address.
  */
@@ -46,7 +77,7 @@ bool Cpu::step() {
 			jumpIfMin(value);
 			break;
 		case 7:
-			shiftRight();
+			shift(value);
 			break;
 
 /* TODO
@@ -83,35 +114,9 @@ bool Cpu::step() {
 	return true;
 }
 
-int Cpu::getCycle() {
-	return cycle;
-}
-
-vector<bool> Cpu::getRegister() {
-	return reg;
-}
-
-vector<bool> Cpu::getPc() {
-	return pc;
-}
-
-vector<bool> Cpu::getInstructionCode() {
-	vector<bool> instruction = Util::getFirstNibble(ram.get(CODE, pc));
-	// If instruction id is larger than the number of instructions then 
-	// the instruction with id 1 (write) gets executed.
-	if (Util::getInt(instruction) >= NUM_OF_INSTRUCTIONS) {
-		return Util::getBoolNibb(0);
-	}
-	return instruction;
-}
-
-vector<bool> Cpu::getValue() {
-	return Util::getSecondNibble(ram.get(CODE, pc));
-}
-
-void Cpu::increasePc() {
-	pc = Util::getBoolNibb(Util::getInt(pc) + 1);
-}
+////////////////////////////
+/////// INSTRUCTIONS ///////
+////////////////////////////
 
 void Cpu::read(vector<bool> adr) {
 	reg = ram.get(DATA, adr);
@@ -124,23 +129,11 @@ void Cpu::write(vector<bool> adr) {
 }
 
 void Cpu::add(vector<bool> adr) {
-	int regValue = Util::getInt(reg);
-	int ramValue = Util::getInt(ram.get(DATA, adr));
-	reg = Util::getBoolByte(regValue + ramValue);
-	increasePc();
+	addOrSubtract(adr, true);
 }
 
-/*
- * The reason for code duplication is to avoid any private methods, or calls 
- * to Util, other then conversion. Since this is the heart of application,
- * it seemed important to keep it clean, and to make it 'feel' more like
- * the real thing.
- */
 void Cpu::sub(vector<bool> adr) {
-	int regValue = Util::getInt(reg);
-	int ramValue = Util::getInt(ram.get(DATA, adr));
-	reg = Util::getBoolByte(regValue - ramValue);
-	increasePc();
+	addOrSubtract(adr, false);
 }
 
 void Cpu::jumpImd(vector<bool> adr) {
@@ -163,22 +156,44 @@ void Cpu::jumpIfMin(vector<bool> adr) {
 	}
 }
 
-void Cpu::shiftRight() {
-	reg = Util::getBoolByte(Util::getInt(reg) / 2);
+void Cpu::shift(vector<bool> value) {
+	int noOfSpots = Util::getSignedIntFromNibble(value);
+	vector<bool> tmp = vector<bool>(WORD_SIZE);
+	for(int i = 0; i < WORD_SIZE; i++) {
+		tmp[i] = getRegBit(i - noOfSpots);
+	}
+	reg = tmp;
+	increasePc();
+}
+
+///////////////////
+////// UTIL ///////
+///////////////////
+
+void Cpu::increasePc() {
+	pc = Util::getBoolNibb(Util::getInt(pc) + 1);
+}
+
+void Cpu::addOrSubtract(vector<bool> adr, bool add) {
+	int regValue = Util::getInt(reg);
+	int ramValue = Util::getInt(ram.get(DATA, adr));
+	if (add) {
+		reg = Util::getBoolByte(regValue + ramValue);
+	} else {
+		reg = Util::getBoolByte(regValue - ramValue);
+	}
 	increasePc();
 }
 
 /*
-
-void Cpu::shift(vector<bool> value) {
-	bool left = value.at(0);
-	int spots = Util::getInt(value.erase(0));
-	if (left) {
-
+ * Returns bit with 'index' from register, or 'false' if index is 
+ * out of bounds.
+ */
+bool Cpu::getRegBit(int index) {
+	bool indexOutOfBounds = index < 0 || index >= WORD_SIZE;
+	if (indexOutOfBounds) {
+		return false;
 	}
-
-	reg = Util::getBoolByte(Util::getInt(reg) / 2);
-	increasePc();
+	return reg.at(index);
 }
 
-*/

@@ -20,7 +20,6 @@ class Cpu {
 		vector<bool> reg = vector<bool>(WORD_SIZE);
 		vector<bool> pc = vector<bool>(ADDR_SIZE);
 		int cycle = 0;
-		void increasePc();
 		void read(vector<bool> adr);
 		void write(vector<bool> adr);
 		void add(vector<bool> adr);
@@ -28,7 +27,11 @@ class Cpu {
 		void jumpImd(vector<bool> adr);
 		void jumpIfMax(vector<bool> adr);
 		void jumpIfMin(vector<bool> adr);
-		void shiftRight();
+		void shift(vector<bool> value);
+		// UTIL:
+		void increasePc();
+		void addOrSubtract(vector<bool> adr, bool add);
+		bool getRegBit(int index);
 };
 
 #endif

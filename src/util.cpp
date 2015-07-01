@@ -259,3 +259,13 @@ int Util::extractInteger(string line) {
 	ss >> out;
 	return out;
 }
+
+int Util::getSignedIntFromNibble(vector<bool> nibble) {
+	bool sign = nibble.at(0);
+	vector<bool> number = { nibble.at(1), nibble.at(2), nibble.at(3) };
+	int value = Util::getInt(number);
+	if (sign) {
+		value *= -1;
+	}
+	return value;
+}

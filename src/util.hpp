@@ -34,6 +34,7 @@ class Util {
 		static bool outputIsPiped();
 		static bool startsWithDigit(string line);
 		static int extractInteger(string line);
+		static int getSignedIntFromNibble(vector<bool> value);
 
 	private:
 		static vector<bool> getBool(int num, int length);
