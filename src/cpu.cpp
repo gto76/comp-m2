@@ -27,13 +27,7 @@ vector<bool> Cpu::getPc() {
 }
 
 vector<bool> Cpu::getInstructionCode() {
-	vector<bool> instruction = Util::getFirstNibble(ram.get(CODE, pc));
-	// If instruction id is larger than the number of instructions then 
-	// the instruction with id 1 (write) gets executed.
-	if (Util::getInt(instruction) >= NUM_OF_INSTRUCTIONS) {
-		return Util::getBoolNibb(0);
-	}
-	return instruction;
+	return Util::getFirstNibble(ram.get(CODE, pc));
 }
 
 vector<bool> Cpu::getValue() {
@@ -79,11 +73,11 @@ bool Cpu::step() {
 		case 7:
 			shift(value);
 			break;
-
-/* TODO
 		case 8:
 			readIn(value);
 			break;
+
+/* TODO
 		case 9:
 			writeOut(value);
 			break;
@@ -130,12 +124,17 @@ void Cpu::write(vector<bool> adr) {
 
 void Cpu::add(vector<bool> adr) {
 	addOrSubtract(adr, true);
+	increasePc();
 }
 
 void Cpu::sub(vector<bool> adr) {
 	addOrSubtract(adr, false);
+	increasePc();
 }
 
+/*
+ * Jumps to the address.
+ */
 void Cpu::jumpImd(vector<bool> adr) {
 	pc = adr;
 }
@@ -156,6 +155,10 @@ void Cpu::jumpIfMin(vector<bool> adr) {
 	}
 }
 
+/*
+ * Converts input value to signed int, and shifts the bits in 
+ * register that many spots.
+ */
 void Cpu::shift(vector<bool> value) {
 	int noOfSpots = Util::getSignedIntFromNibble(value);
 	vector<bool> tmp = vector<bool>(WORD_SIZE);
@@ -163,6 +166,16 @@ void Cpu::shift(vector<bool> value) {
 		tmp[i] = getRegBit(i - noOfSpots);
 	}
 	reg = tmp;
+	increasePc();
+}
+
+/*
+ * Copies input value (last address) to passed address.
+ */
+void Cpu::readIn(vector<bool> adr) {
+	//vector<bool> inputValue = ram.get(DATA, Util::getBoolNibb(RAM_SIZE));
+	vector<bool> inputValue = ram.get(DATA, {true, true, true, true});
+	ram.set(DATA, adr, inputValue);
 	increasePc();
 }
 
@@ -182,7 +195,6 @@ void Cpu::addOrSubtract(vector<bool> adr, bool add) {
 	} else {
 		reg = Util::getBoolByte(regValue - ramValue);
 	}
-	increasePc();
 }
 
 /*

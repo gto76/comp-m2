@@ -9,8 +9,6 @@ const int WORD_SIZE = 8;
 const int ADDR_SIZE = 4;
 const int RAM_SIZE = 15;
 
-const int NUM_OF_INSTRUCTIONS = 8;
-
 // Miliseconds between cycles (when run in interactive mode).
 const int FQ = 333;
 
