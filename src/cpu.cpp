@@ -88,14 +88,13 @@ bool Cpu::step() {
 		case 12:
 			jump(value);
 			break;
-
-/* TODO
 		case 13:
 			jumpIfNotMax(value);
 			break;
 		case 14:
 			jumpIfNotMin(value);
 			break;
+/* TODO
 		case 15:
 			andOr();
 			break;
@@ -210,6 +209,22 @@ void Cpu::jump(vector<bool> adr) {
 	vector<bool> value = ram.get(DATA, adr);
 	// Takes the last four bits as a address.
 	pc = Util::getSecondNibble(value);
+}
+
+void Cpu::jumpIfNotMax(vector<bool> adr) {
+	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
+		increasePc();
+	} else {
+		pc = adr;
+	}
+}
+
+void Cpu::jumpIfNotMin(vector<bool> adr) {
+	if (Util::getInt(reg) <= 0) {
+		increasePc();
+	} else {
+		pc = adr;
+	}
 }
 
 
