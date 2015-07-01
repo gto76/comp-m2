@@ -152,8 +152,8 @@ void Cpu::jumpIfMin(vector<bool> adr) {
 }
 
 /*
- * Converts input value to signed int, and shifts the bits in 
- * register that many spots.
+ * Splits passed value to first bit, that tells the direction of the shift,
+ * and last three bits, that tell the range.
  */
 void Cpu::shift(vector<bool> value) {
 	int noOfSpots = Util::getSignedIntFromNibble(value) * -1;
