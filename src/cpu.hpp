@@ -38,6 +38,7 @@ class Cpu {
 		void jump(vector<bool> adr);
 		void jumpIfNotMax(vector<bool> adr);
 		void jumpIfNotMin(vector<bool> adr);
+		void andOr(vector<bool> value);
 		// UTIL
 		void increasePc();
 		void addOrSubtract(vector<bool> adr, bool add);

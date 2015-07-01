@@ -269,3 +269,21 @@ int Util::getSignedIntFromNibble(vector<bool> nibble) {
 	}
 	return value;
 }
+
+vector<bool> Util::bitwiseAndOrOr(vector<bool> value1, vector<bool> value2,
+								  bool isAnd) {
+	if (value1.size() != value2.size()) {
+		fprintf(stderr, "Invalid parameters at Util::bitwiseAnd. "
+				"Vectors not of same size.");
+		exit(6);
+	}
+	vector<bool> out(value1.size());
+	for (size_t i = 0; i < value1.size(); i++) {
+		if (isAnd) {
+			out.at(i) = value1.at(i) && value2.at(i);
+		} else {
+			out.at(i) = value1.at(i) || value2.at(i);
+		}
+	}
+	return out;
+}

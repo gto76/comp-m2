@@ -94,12 +94,9 @@ bool Cpu::step() {
 		case 14:
 			jumpIfNotMin(value);
 			break;
-/* TODO
 		case 15:
-			andOr();
+			andOr(value);
 			break;
-*/
-
 		default:
 			read(value);
 	}
@@ -159,7 +156,7 @@ void Cpu::jumpIfMin(vector<bool> adr) {
  * register that many spots.
  */
 void Cpu::shift(vector<bool> value) {
-	int noOfSpots = Util::getSignedIntFromNibble(value);
+	int noOfSpots = Util::getSignedIntFromNibble(value) * -1;
 	vector<bool> tmp = vector<bool>(WORD_SIZE);
 	for(int i = 0; i < WORD_SIZE; i++) {
 		tmp[i] = getRegBit(i - noOfSpots);
@@ -227,6 +224,22 @@ void Cpu::jumpIfNotMin(vector<bool> adr) {
 	}
 }
 
+/*
+ * Splits passed value to first bit, that tells wether 'and' or 'or'
+ * should be executed, and last three bits, that tell the address.
+ * Then executes 'and' or 'or' operation between register value, and
+ * value at address and writes the result to register. Since only three
+ * bits are used for address, this instruction can only be used with first
+ * eight addresses of data ram.
+ */
+void Cpu::andOr(vector<bool> value) {
+	bool isAnd = !value.at(0);
+	vector<bool> adr = { false, value.at(1), value.at(2), value.at(3) };
+	vector<bool> ramValue = ram.get(DATA, adr);
+	reg = Util::bitwiseAndOrOr(reg, ramValue, isAnd);
+	increasePc();
+}
+
 
 ///////////////////
 ////// UTIL ///////
@@ -267,4 +280,3 @@ bool Cpu::getRegBit(int index) {
 	}
 	return reg.at(index);
 }
-

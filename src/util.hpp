@@ -35,6 +35,8 @@ class Util {
 		static bool startsWithDigit(string line);
 		static int extractInteger(string line);
 		static int getSignedIntFromNibble(vector<bool> value);
+		static vector<bool> bitwiseAndOrOr(vector<bool> value1, 
+										   vector<bool> value2, bool isAnd);
 
 	private:
 		static vector<bool> getBool(int num, int length);
