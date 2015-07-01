@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "addr_space.hpp"
 #include "const.hpp"
 #include "cpu.hpp"
 #include "drawing.hpp"
@@ -59,9 +60,9 @@ char Renderer::getLightbulb(char cIn) {
 	int i = switchIndex[cIn]++;
 	switch (cIn) {
 		case 'a':
-			return getInstructionRamBit(i);
+			return getCodeBit(i);
 		case 'b':
-			return getDataRamBit(i);
+			return getDataBit(i);
 		case 'p':
 			return Util::getChar(pcIsPointingToAddress(i));
 		case 's':
@@ -92,7 +93,7 @@ bool Renderer::instructionIsPointingToAddress(int adr) {
 	if (machineNotActive()) {
 		return false;
 	}
-	return Util::getInt(cpu.getAddress()) == adr;
+	return Util::getInt(cpu.getValue()) == adr;
 }
 
 bool Renderer::instructionHasId(int id) {
@@ -116,10 +117,10 @@ char getCharAt(int i, vector<vector<bool>>* matrix) {
 	return Util::getChar((*matrix).at(j).at(i));
 }
 
-char Renderer::getInstructionRamBit(int i) {
-	return getCharAt(i, &ram.instructions);
+char Renderer::getCodeBit(int i) {
+	return getCharAt(i, &ram.state[CODE]);
 }
 
-char Renderer::getDataRamBit(int i) {
-	return getCharAt(i, &ram.data);
+char Renderer::getDataBit(int i) {
+	return getCharAt(i, &ram.state[DATA]);
 }

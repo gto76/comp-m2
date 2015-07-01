@@ -21,35 +21,63 @@ bool Cpu::step() {
 
 	vector<bool> instructionCodeBool = getInstructionCode();
 	int instCode = Util::getInt(instructionCodeBool);
-	vector<bool> adr = getAddress();
+	vector<bool> value = getValue();
 
 	switch (instCode) {
 		case 0:
-			read(adr);
+			read(value);
 			break;
 		case 1:
-			write(adr);
+			write(value);
 			break;
 		case 2:
-			add(adr);
+			add(value);
 			break;
 		case 3:
-			sub(adr);
+			sub(value);
 			break;
 		case 4:
-			jump(adr);
+			jumpImd(value);
 			break;
 		case 5:
-			jumpIfMax(adr);
+			jumpIfMax(value);
 			break;
 		case 6:
-			jumpIfMin(adr);
+			jumpIfMin(value);
 			break;
 		case 7:
 			shiftRight();
 			break;
+
+/* TODO
+		case 8:
+			readIn(value);
+			break;
+		case 9:
+			writeOut(value);
+			break;
+		case 10:
+			addImd(value);
+			break;
+		case 11:
+			subImd(value);
+			break;
+		case 12:
+			jump(value);
+			break;
+		case 13:
+			jumpIfNotMax(value);
+			break;
+		case 14:
+			jumpIfNotMin(value);
+			break;
+		case 15:
+			andOr();
+			break;
+*/
+
 		default:
-			read(adr);
+			read(value);
 	}
 
 	return true;
@@ -68,7 +96,7 @@ vector<bool> Cpu::getPc() {
 }
 
 vector<bool> Cpu::getInstructionCode() {
-	vector<bool> instruction = Util::getFirstNibble(ram.getInstruction(pc));
+	vector<bool> instruction = Util::getFirstNibble(ram.get(CODE, pc));
 	// If instruction id is larger than the number of instructions then 
 	// the instruction with id 1 (write) gets executed.
 	if (Util::getInt(instruction) >= NUM_OF_INSTRUCTIONS) {
@@ -77,8 +105,8 @@ vector<bool> Cpu::getInstructionCode() {
 	return instruction;
 }
 
-vector<bool> Cpu::getAddress() {
-	return Util::getSecondNibble(ram.getInstruction(pc));
+vector<bool> Cpu::getValue() {
+	return Util::getSecondNibble(ram.get(CODE, pc));
 }
 
 void Cpu::increasePc() {
@@ -86,30 +114,36 @@ void Cpu::increasePc() {
 }
 
 void Cpu::read(vector<bool> adr) {
-	reg = ram.getData(adr);
+	reg = ram.get(DATA, adr);
 	increasePc();
 }
 
 void Cpu::write(vector<bool> adr) {
-	ram.setData(adr, reg);
+	ram.set(DATA, adr, reg);
 	increasePc();
 }
 
 void Cpu::add(vector<bool> adr) {
 	int regValue = Util::getInt(reg);
-	int ramValue = Util::getInt(ram.getData(adr));
+	int ramValue = Util::getInt(ram.get(DATA, adr));
 	reg = Util::getBoolByte(regValue + ramValue);
 	increasePc();
 }
 
+/*
+ * The reason for code duplication is to avoid any private methods, or calls 
+ * to Util, other then conversion. Since this is the heart of application,
+ * it seemed important to keep it clean, and to make it 'feel' more like
+ * the real thing.
+ */
 void Cpu::sub(vector<bool> adr) {
 	int regValue = Util::getInt(reg);
-	int ramValue = Util::getInt(ram.getData(adr));
+	int ramValue = Util::getInt(ram.get(DATA, adr));
 	reg = Util::getBoolByte(regValue - ramValue);
 	increasePc();
 }
 
-void Cpu::jump(vector<bool> adr) {
+void Cpu::jumpImd(vector<bool> adr) {
 	pc = adr;
 }
 
@@ -133,3 +167,18 @@ void Cpu::shiftRight() {
 	reg = Util::getBoolByte(Util::getInt(reg) / 2);
 	increasePc();
 }
+
+/*
+
+void Cpu::shift(vector<bool> value) {
+	bool left = value.at(0);
+	int spots = Util::getInt(value.erase(0));
+	if (left) {
+
+	}
+
+	reg = Util::getBoolByte(Util::getInt(reg) / 2);
+	increasePc();
+}
+
+*/

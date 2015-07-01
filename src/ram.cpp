@@ -3,72 +3,92 @@
 #include <string>
 
 #include "comp.hpp"
+#include "const.hpp"
 #include "util.hpp"
 
 using namespace std;
 
-vector<bool> Ram::getInstruction(vector<bool> adr) {
+Ram::Ram() {
+	// Initialize the state, one per address space.
+	state[CODE] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
+	state[DATA] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
+}
+
+////// GET //////
+
+vector<bool> Ram::get(AddrSpace addrSpace, vector<bool> adr) {
 	int address = Util::getInt(adr);
 	if (address == RAM_SIZE) {
+		return Ram::getLastAddress(addrSpace);
+	}
+	return state[addrSpace][address];
+}
+
+vector<bool> Ram::getLastAddress(AddrSpace addrSpace) {
+	if (addrSpace == CODE) {
 		fprintf(stderr, "Error in function Ram::getInstruction, "
 			"invalid address");
 		exit(4);
-	}
-	return instructions[address];
-}
-
-vector<bool> Ram::getData(vector<bool> adr) {
-	int address = Util::getInt(adr);
-	// Return random if last address (reserved for output),
-	// or read from pipe if input is piped in.
-	if (address == RAM_SIZE) {
-		if (interactivieMode) {
-			return Util::getRandomWord();
-		} else {
-			return Util::readWordFromPipe();
-		}
-	}
-	return data[address];
-}
-
-void Ram::saveWord(int address, vector<bool> wordIn, bool toInstructions) {
-	for (int i = 0; i < WORD_SIZE; i++) {
-		if (toInstructions) {
-			instructions[address][i] = wordIn[i];
-		} else {
-			data[address][i] = wordIn[i];
-		}
-	}
-}
-
-void Ram::setInstruction(vector<bool> adr, vector<bool> wordIn) {
-	int address = Util::getInt(adr);
-	if (address < RAM_SIZE) {
-		saveWord(address, wordIn, true);
 	} else {
-		fprintf(stderr, "Error in function Ram::setInstruction, "
-			"invalid address");
-		exit(5);
+		return Ram::getInput();
 	}
 }
 
-void Ram::setData(vector<bool> adr, vector<bool> wordIn) {
+/*
+ * Returns random value if last address is passed (reserved for output),
+ * or reads from pipe if also input is piped in.
+ */
+vector<bool> Ram::getInput() {
+	if (interactivieMode) {
+		return Util::getRandomWord();  
+	} else {
+		return Util::readWordFromPipe();  // TODO it must be possible to run it in noninteractive withouth pipe
+	}
+}
+
+////// SET //////
+
+void Ram::set(AddrSpace addrSpace, vector<bool> adr, vector<bool> wordIn) {
+	if (wordIn.size() != WORD_SIZE) {
+		fprintf(stderr, "Error in function Ram::set, invalid length of word");
+		exit(6);
+	}
 	int address = Util::getInt(adr);
 	if (address < RAM_SIZE) {
-		saveWord(address, wordIn, false);
+		saveWord(addrSpace, address, wordIn);
+	} else {
+		assignToLastAddress(addrSpace, wordIn);
+	}
+}
+
+void Ram::saveWord(AddrSpace addrSpace, int address, vector<bool> wordIn) {
+	state[addrSpace][address] = wordIn;
+}
+
+void Ram::assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn) {
+	if (addrSpace == CODE) {
+		fprintf(stderr, "Error in function Ram::setInstruction, "
+				"Trying to write to last address of code address space.");
+		exit(5);
 	} else {
 		printer.print(wordIn);
 	}
 }
 
+//// GET STRING ////
+
 string Ram::getString() {
 	string out;
-	out += "# Instructions:";
-	for (vector<bool> word : instructions) {
-		out += Util::getString(word) + '\n';
-	}
+	out += "# Code:";
+	out += getString(CODE);
 	out += "\n# Data:";
-	for (vector<bool> word : data) {
+	out += getString(DATA);
+	return out;
+}
+
+string Ram::getString(AddrSpace addrSpace) {
+	string out;
+	for (vector<bool> word : state[addrSpace]) {
 		out += Util::getString(word) + '\n';
 	}
 	return out;

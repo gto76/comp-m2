@@ -11,8 +11,10 @@
 #include <tuple>
 #include <vector>
 
+//#include "addr_space.hpp"
 #include "const.hpp"
 #include "cpu.hpp"
+#include "cursor.hpp"
 #include "drawing.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
@@ -33,6 +35,10 @@ extern "C" {
 	extern volatile sig_atomic_t pleaseExit;
 }
 
+//////////////////////////
+////////// VARS //////////
+//////////////////////////
+
 // Two global variables.
 bool interactivieMode;
 bool executionCanceled = false;
@@ -47,22 +53,14 @@ vector<string> buffer;
 int executionCounter = 0;
 
 // Saved state of a ram.
-vector<vector<bool>> savedRamInstructions;
-vector<vector<bool>> savedRamData;
+map<AddrSpace, vector<vector<bool>>> savedRamState;
 
-// Coordinates of first ram lightbulb in the ascii drawing.
-tuple<int, int> instRamPosition = Util::getCoordinatesOfFirstOccurance(drawing, 'a');
-tuple<int, int> dataRamPosition = Util::getCoordinatesOfFirstOccurance(drawing, 'b');
+// Class for keeping track of and moving around cursor.
+Cursor cursor;
 
-bool cursorAtInstRam = true;
-
-//int cursorX = 0;
-//int cursorY = 0;
-
-// Selected bit with the cursor.
-tuple<int, int> instCursorPosition = tuple<int, int>(0, 0);
-tuple<int, int> dataCursorPosition = tuple<int, int>(0, 0);
-
+//////////////////////////
+/////// FUNCTIONS ////////
+//////////////////////////
 
 void drawScreen() {
 	string out = Renderer::renderState(printer, ram, cpu);
@@ -73,56 +71,16 @@ void drawScreen() {
 	}
 }
 
-int getCursorPosition(int i) {
-	if (cursorAtInstRam) {
-		return get<i>(instCursorPosition);
-	} else {
-		return get<i>(dataCursorPosition);
-	}
-}
-
-int getCursorX() {
-	return getCursorPosition(0);
-}
-
-int getCursorY() {
-	return getCursorPosition(1);
-}
-
-int getRamPosition(int i) {
-	if (cursorAtInstRam) {
-		return get<i>(instRamPosition);
-	} else {
-		return get<i>(dataRamPosition);
-	}
-}
-
-int getRamPositionX() {
-	return getRam(0);
-}
-
-int getRamPositionY() {
-	return getRam(1);
-}
-
-int getCursorAbsoluteX() {
-	getCursorX() + getRamPositionX();
-}
-
-int getCursorAbsoluteY() {
-	getCursorY() + getRamPositionY();
-}
-
 char getCharUnderCursor() {
-	return buffer.at(getCursorAbsoluteX()).
-				  at(getCursorAbsoluteY());
+	return buffer.at(cursor.getY()).at(cursor.getX());
 }
 
 void highlightCursor(bool highlight) {
 	char c;
 	try {
-		c = getCharUnderCursor(); // buffer.at(cursorY+get<1>(instRamPosition))
-				  //.at(cursorX+get<0>(instRamPosition));
+		c = getCharUnderCursor();
+		//fprintf(stderr, "Char under cursor %c, y %d, x %d highlight %d",
+		//		c, cursor.getY(), cursor.getX(), highlight);
 	} catch (int e) {
 		cout << "Cursor out of bounds. Exception Nr. " << e << '\n';
 		return;
@@ -130,93 +88,23 @@ void highlightCursor(bool highlight) {
 	if (highlight) {
 		printf("\e[%dm\e[%dm", 30, 47);
 	}
-	printCharXY(c, getCursorAbsoluteY(), //cursorX+get<0>(instRamPosition), 
-				   getCursorAbsoluteX()); //cursorY+get<1>(instRamPosition));
+	printCharXY(c, cursor.getX(), cursor.getY());
 	if (highlight) {
 		printf("\e[%dm\e[%dm", 37, 40);
 	}
 	fflush(stdout);
 }
 
-bool getRamAt(int addr, int bitIndex) {
-	if (cursorAtInstRam) {
-		return ram.instructions.at(addr).at(bitIndex);
-	} else {
-		return ram.data.at(addr).at(bitIndex);
-	}
-}
-
-void setRamAt(int addr, int bitIndex, bool value) {
-	if (cursorAtInstRam) {
-		ram.instructions.at(addr).at(bitIndex) = value;
-	} else {
-		ram.data.at(addr).at(bitIndex) = value;
-	}
-}
-
-vector<bool> getByteRamAt(int addr) {
-	if (cursorAtInstRam) {
-		return ram.getInstruction(Util::getBoolNibb(addr));
-	} else {
-		return ram.getData(Util::getBoolNibb(addr));
-	}
-}
-
-void setByteRamAt(int addr, vector<bool> value) {
-	if (cursorAtInstRam) {
-		ram.setInstruction(Util::getBoolNibb(addr), value);
-	} else {
-		ram.setData(Util::getBoolNibb(addr), value);
-	}
-}
-
 void switchBitUnderCursor() {
-	bool bitValue = getRamAt(getCursorY(), getCursorX()); // ram.instructions.at(cursorY).at(cursorX); 
-	setRamAt(getCursorY(), getCursorX(), !bitValue); // ram.instructions.at(cursorY).at(cursorX) = !bitValue;
-	// Only change char of the buffer, as to avoid screen redraw.
-	buffer.at(getCursorAbsoluteY()).at(getCursorAbsoluteX()) = 
+	bool bitValue = cursor.getBit(); 
+	cursor.setBit(!bitValue);
+	buffer.at(cursor.getY()).at(cursor.getX()) = 
 		Util::getChar(!bitValue);
 }
 
 void eraseByteUnderCursor() {
-	setByteRamAt(getCursorY(), Util::getBoolByte(0));
-	//ram.setInstruction(Util::getBoolNibb(cursorY), Util::getBoolByte(0));
+	cursor.setWord(Util::getBoolByte(0));
 	redrawScreen();
-}
-
-//TODO
-bool switchBytesInRam(int index1, int index2) {
-	if (index1 < 0 || index2 < 0 || index1 >= RAM_SIZE || index2 >= RAM_SIZE) {
-		return false;
-	}
-	//vector<bool> addr1 = Util::getBoolNibb(index1);
-	//vector<bool> addr2 = Util::getBoolNibb(index2);
-
-	vector<bool> temp = getByteRamAt(index1);
-	setByteRamAt(index1, getByteRamAt(index2));
-	setByteRamAt(index2, temp);
-
-	// vector<bool> temp = ram.getInstruction(addr1); 
-	// ram.setInstruction(addr1, ram.getInstruction(addr2)); 
-	// ram.setInstruction(addr2, temp); 
-	return true;
-}
-
-void moveByteFor(int delta) {
-	bool failed = !switchBytesInRam(cursorY, cursorY+delta);
-	if (failed) {
-		return;
-	}
-	cursorY += delta;
-	redrawScreen();
-}
-
-void moveByteUnderCursorUp() {
-	moveByteFor(-1);
-}
-
-void moveByteUnderCursorDown() {
-	moveByteFor(1);
 }
 
 char readStdin(bool drawCursor) {
@@ -235,11 +123,6 @@ char readStdin(bool drawCursor) {
 		return readStdin(drawCursor);
 	}
 	return c;
-}
-
-void moveCursorToOtherRam() { 
-	cursorAtInstRam = !cursorAtInstRam;
-	redrawScreen();
 }
 
 /*
@@ -291,8 +174,7 @@ void run() {
 	if (executionCounter > 0) {
 		printer.printEmptyLine();
 	}
-	savedRamInstructions = ram.instructions;
-	savedRamData = ram.data;
+	savedRamState = ram.state;
 	exec();
 	// If 'esc' was pressed then it doesn't wait for keypress at the end.
 	if (executionCanceled) {
@@ -301,8 +183,7 @@ void run() {
 		readStdin(false);
 	}
 	ram = Ram();
-	ram.instructions = savedRamInstructions;
-	ram.data = savedRamData;
+	ram.state = savedRamState;
 	cpu = Cpu();
 	redrawScreen();
 	executionCounter++;
@@ -324,34 +205,28 @@ void saveRamToFile() {
 void userInput() {
 	while(1) {
 		char c = readStdin(true);
-
 		highlightCursor(false);
+
 		switch (c) {
 			case 65:  // up
-				if (cursorY > 0) {
-					cursorY--;
-				}
+				cursor.decreaseY();
 				break;
 			case 66:  // down
-				if (cursorY < RAM_SIZE-1) {
-					cursorY++;
-				}
+				cursor.increaseY();
 				break;
 			case 67:  // right
-				if (cursorX < WORD_SIZE-1) {
-					cursorX++;
-				}
+				cursor.increaseX();
 				break;
 			case 68:  // left
-				if (cursorX > 0) {
-					cursorX--;
-				}
+				cursor.decreaseX();
 				break;
 			case 107:  // k
-				moveByteUnderCursorUp();
+				cursor.moveByteUp();
+				redrawScreen();
 				break;
 			case 106:  // j
-				moveByteUnderCursorDown();
+				cursor.moveByteDown();
+				redrawScreen();
 				break;
 			case 115:  // s
 				saveRamToFile();
@@ -364,7 +239,8 @@ void userInput() {
 				eraseByteUnderCursor();
 				break;
 			case 9:  // tab
-				moveCursorToOtherRam(); 
+				cursor.switchAddressSpace();
+				redrawScreen();
 				break;
 			case 10:  // enter
 				run();
@@ -394,17 +270,17 @@ bool getBool(char c) {
 }
 
 void writeInstructionBitToRam(int address, int bitIndex, bool bitValue) {
-	ram.instructions.at(address).at(bitIndex) = bitValue;
+	ram.state[CODE].at(address).at(bitIndex) = bitValue;
 }
 
 void writeDataBitToRam(int address, int bitIndex, bool bitValue) {
-	ram.data.at(address).at(bitIndex) = bitValue;
+	ram.state[DATA].at(address).at(bitIndex) = bitValue;
 }
 
 void writeLineToRam(string line, int address) {
 	int bitIndex = 0;
 	for (char c : line) {
-		if (address < WORD_SIZE) { 
+		if (address < RAM_SIZE) { 
 			writeInstructionBitToRam(address, bitIndex, getBool(c));
 		} else {
 			writeDataBitToRam(address, bitIndex, getBool(c));
@@ -449,9 +325,9 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
    	}
 }
 
-/*
- * MAIN
- */
+//////////////////////////
+////////// MAIN //////////
+//////////////////////////
 
 void startInteractiveMode() {
 	setEnvironment();

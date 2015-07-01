@@ -14,7 +14,7 @@ class Cpu {
 		vector<bool> getRegister();
 		vector<bool> getPc();
 		vector<bool> getInstructionCode();
-		vector<bool> getAddress();
+		vector<bool> getValue();
 		int getCycle();
 	private:
 		vector<bool> reg = vector<bool>(WORD_SIZE);
@@ -25,7 +25,7 @@ class Cpu {
 		void write(vector<bool> adr);
 		void add(vector<bool> adr);
 		void sub(vector<bool> adr);
-		void jump(vector<bool> adr);
+		void jumpImd(vector<bool> adr);
 		void jumpIfMax(vector<bool> adr);
 		void jumpIfMin(vector<bool> adr);
 		void shiftRight();

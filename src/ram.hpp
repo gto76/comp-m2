@@ -2,23 +2,26 @@
 #define RAM_H
 
 #include <vector>
+#include <map>
 
-#include "const.hpp"
+#include "addr_space.hpp"
 
 using namespace std;
 
 class Ram {
 	public:
-		vector<vector<bool>> instructions = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
-		vector<vector<bool>> data = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
-		vector<bool> getInstruction(vector<bool> adr);
-		vector<bool> getData(vector<bool> adr);
-		void setInstruction(vector<bool> adr, vector<bool> wordIn);
-		void setData(vector<bool> adr, vector<bool> wordIn);
+		Ram();
+		map<AddrSpace, vector<vector<bool>>> state;
+		vector<bool> get(AddrSpace addrSpace, vector<bool> adr);
+		void set(AddrSpace addrSpace, vector<bool> adr, vector<bool> wordIn);
 		string getString();
 
 	private:
-		void saveWord(int address, vector<bool> wordIn, bool toInstructions);
+		vector<bool> getLastAddress(AddrSpace addrSpace);
+		vector<bool> getInput();
+		void saveWord(AddrSpace addrSpace, int address, vector<bool> wordIn);
+		void assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn);
+		string getString(AddrSpace addrSpace);
 };
 
 #endif
