@@ -10,6 +10,7 @@ using namespace std;
 
 class Cpu {
 	public:
+		// INTERFACE
 		bool step();
 		vector<bool> getRegister();
 		vector<bool> getPc();
@@ -17,9 +18,11 @@ class Cpu {
 		vector<bool> getValue();
 		int getCycle();
 	private:
+		// STATE
 		vector<bool> reg = vector<bool>(WORD_SIZE);
 		vector<bool> pc = vector<bool>(ADDR_SIZE);
 		int cycle = 0;
+		// INSTRUCTION SET
 		void read(vector<bool> adr);
 		void write(vector<bool> adr);
 		void add(vector<bool> adr);
@@ -29,7 +32,8 @@ class Cpu {
 		void jumpIfMin(vector<bool> adr);
 		void shift(vector<bool> value);
 		void readIn(vector<bool> adr);
-		// UTIL:
+		void writeOut(vector<bool> adr);
+		// UTIL
 		void increasePc();
 		void addOrSubtract(vector<bool> adr, bool add);
 		bool getRegBit(int index);

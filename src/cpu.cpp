@@ -76,11 +76,11 @@ bool Cpu::step() {
 		case 8:
 			readIn(value);
 			break;
-
-/* TODO
 		case 9:
 			writeOut(value);
 			break;
+
+/* TODO
 		case 10:
 			addImd(value);
 			break;
@@ -108,9 +108,9 @@ bool Cpu::step() {
 	return true;
 }
 
-////////////////////////////
-/////// INSTRUCTIONS ///////
-////////////////////////////
+///////////////////////////////
+/////// INSTRUCTION SET ///////
+///////////////////////////////
 
 void Cpu::read(vector<bool> adr) {
 	reg = ram.get(DATA, adr);
@@ -173,9 +173,17 @@ void Cpu::shift(vector<bool> value) {
  * Copies input value (last address) to passed address.
  */
 void Cpu::readIn(vector<bool> adr) {
-	//vector<bool> inputValue = ram.get(DATA, Util::getBoolNibb(RAM_SIZE));
-	vector<bool> inputValue = ram.get(DATA, {true, true, true, true});
+	vector<bool> inputValue = ram.get(DATA, Util::getBoolNibb(RAM_SIZE));
 	ram.set(DATA, adr, inputValue);
+	increasePc();
+}
+
+/*
+ * Writes value at passed address to output.
+ */
+void Cpu::writeOut(vector<bool> adr) {
+	vector<bool> outputValue = ram.get(DATA, adr);
+	ram.set(DATA, Util::getBoolNibb(RAM_SIZE), outputValue);
 	increasePc();
 }
 
