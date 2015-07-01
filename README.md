@@ -60,8 +60,8 @@ How to run on…
 
 ### UNIX
 ```bash
-git clone https://github.com/gto76/comp-cpp.git
-cd comp-cpp
+git clone https://github.com/gto76/comp-m2.git
+cd comp-m2
 ./run
 ```
 
