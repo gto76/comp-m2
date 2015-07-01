@@ -79,9 +79,9 @@ void Ram::assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn) {
 
 string Ram::getString() {
 	string out;
-	out += "# Code:";
+	out += "# Code:\n";
 	out += getString(CODE);
-	out += "\n# Data:";
+	out += "\n# Data:\n";
 	out += getString(DATA);
 	return out;
 }

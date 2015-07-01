@@ -283,7 +283,7 @@ void writeLineToRam(string line, int address) {
 		if (address < RAM_SIZE) { 
 			writeInstructionBitToRam(address, bitIndex, getBool(c));
 		} else {
-			writeDataBitToRam(address, bitIndex, getBool(c));
+			writeDataBitToRam(address-RAM_SIZE, bitIndex, getBool(c));
 		}
 		if (++bitIndex >= WORD_SIZE) {
 			return;
