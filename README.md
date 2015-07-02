@@ -40,7 +40,7 @@ Instruction set
 
  _Name_        | _Code_ | _Description_  
 :------------- |:------:| --------------------------------------------------------
-––––––––––     | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+–––––––––– | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 **READ**       | ----   | Copies the value at the specified address into register.  
 **WRITE**      | ---\*  | Copies value of the register to the specified address.  
 **ADD**        | --\*-  | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
@@ -49,7 +49,7 @@ Instruction set
 **IF MAX**     | -\*-\* | Jumps to the specified address if register has value _255_* = '********'. 
 **IF MIN**     | -\*\*- | Jumps to the specified address if register has value _0_ = '--------'. 
 **SHIFT L/R**  | -\*\*\*| Moves bits in the register in the direction specified by the value. If first bit of the value is '-', then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots, that they get moved.
-––––––––––     | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+–––––––––– | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 **READ IN**    | \*---  | Copies the value at the last address (random or stdin) to the specified address.
 **WRITE OUT**  | \*--\* | Copies the value at the specified address to the last address (printer or stdout).
 **ADD IMD**    | \*-\*- | Adds specified value to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
