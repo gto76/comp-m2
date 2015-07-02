@@ -58,7 +58,10 @@ Instruction set
 
 Non-interactive mode
 ------------------
-If `comp` binary is executed with a pipe input, then it runs in non-iteractive mode, meaning there is no graphical interface. Also, instead of a random number when reading from last address we get a value from stdin and instead to a printer, output is sent to stdout. Input can either consist of strings of '*' and '-', or integers.  
+Non-interactive mode is started if any input is piped to the program. In this mode computer prints to 'stdout', there is no
+user interface, there is no pause between cycles, and when program reads from last address, instead of random value, it
+gets one word from stdin (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If there
+is not enough characters, all missing bits are set to false; and all characters after the eight one are ignored. If word starts with a digit, then it is red as a number and converted appropriately.
 
 Example of multiplication:
 ```
