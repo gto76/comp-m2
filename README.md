@@ -98,8 +98,6 @@ In this mode computer prints to 'stdout', there is no user interface, there is n
 * Multiplication:
 ```
 $ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
-```
-```
 -----**-   6
 ----*--*   9
 ----**--  12
@@ -108,8 +106,6 @@ $ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
 * Moving single bit with 'a' and 'd' keys:
 ```
 $ examples/keyFilter | ./comp examples/randomDot
-```
-```
 ----*---   8
 -----*--   4
 ----*---   8
