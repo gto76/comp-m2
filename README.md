@@ -72,7 +72,7 @@ cd comp-m2
 
 Non-interactive mode
 ------------------
-If comp binary is executed with a pipe input, then it runs in non-iteractive mode, meaning there is no graphical interface, instead of a random number when reading from last address we get a value from stdin and instead of printer, output is sent to stdout. Input can either consist of strings of "*" and "-", or integers.  
+If `comp` binary is executed with a pipe input, then it runs in non-iteractive mode, meaning there is no graphical interface. Also, instead of a random number when reading from last address we get a value from stdin and instead to a printer, output is sent to stdout. Input can either consist of strings of "*" and "-", or integers.  
 
 Example of multiplication:
 ```
