@@ -186,10 +186,11 @@ vector<bool> Util::getRandomWord() {
 	return wordOut;
 }
 
-tuple<int, int> Util::getCoordinatesOfFirstOccurance(string text, char cIn) {
+tuple<int, int> Util::getCoordinatesOfFirstOccurance(const string* text, char cIn) {
 	int i = 0;
 	int j = 0;
-	for (char c : text) {
+	
+	for (char c : *text) {
 		if (c == cIn) {
 			return tuple<int, int>(i, j);
 		}
