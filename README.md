@@ -23,6 +23,7 @@ cd comp-m2
 Keys
 ----
 * `space`, `f` - switch bit under cursor
+* `tab` - switch address space
 * `enter` - start/pause execution
 * `esc` - cancel execution
 * `d` - delete word under cursor
