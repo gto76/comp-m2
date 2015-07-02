@@ -63,6 +63,7 @@ Keys
 * `d` - delete word under cursor
 * `j` - move word up
 * `k` - move word down
+* `s` - save ram in textfile named `saved-ram-<num>`. To load it, start program with `./comp <file>`
 
 Non-interactive mode
 ------------------
