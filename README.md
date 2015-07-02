@@ -74,13 +74,14 @@ Keys
 * `s` - save ram in textfile named `saved-ram-<num>`. To load it, start program with `./comp <file>`
 
 Non-interactive mode
-------------------
+--------------------
 Non-interactive mode is started if any input is piped to the program. In this mode computer prints to 'stdout', there is no
 user interface, there is no pause between cycles, and when program reads from last address, instead of random value, it
 gets one word from 'stdin' (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If there
 is not enough characters, all missing bits are set to false; and all characters after the eight one are ignored. If word starts with a digit, then it is red as a number and converted appropriately.
 
-Multiplication:
+### Examples
+* Multiplication:
 ```
 $ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
 -----**-   6
@@ -88,7 +89,7 @@ $ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
 ----**--  12
 ```
 
-Moving a bit with 'a' and 'd' keys:
+* Moving a bit with 'a' and 'd' keys:
 ```
 $ examples/keyFilter | ./comp examples/randomDot
 ----*---   8
