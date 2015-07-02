@@ -1,23 +1,23 @@
                        CPU            
-                   ____________  
-                  |            | 
-   CODE   PC      | [rrrrrrrr] |         DATA   AD
- ________ _       |____________|       ________ _  
-|aaaaaaaa|p| ---- |i|READ      | ---- |bbbbbbbb|s| 
-|aaaaaaaa|p| ---* |i|WRITE     | ---* |bbbbbbbb|s| 
-|aaaaaaaa|p| --*- |i|ADD       | --*- |bbbbbbbb|s| 
-|aaaaaaaa|p| --** |i|SUB       | --** |bbbbbbbb|s|           PRINTER  
-|aaaaaaaa|p| -*-- |i|JUMP IMD  | -*-- |bbbbbbbb|s|   ________________________ 
-|aaaaaaaa|p| -*-* |i|IF MAX    | -*-* |bbbbbbbb|s|  |                        |
-|aaaaaaaa|p| -**- |i|IF MIN    | -**- |bbbbbbbb|s| (|   |=============[]=|   |)
-|aaaaaaaa|p| -*** |i|SHIFT L/R | -*** |bbbbbbbb|s|  |__ _ ______________ _ __|
-|aaaaaaaa|p| *--- |i|READ IN   | *--- |bbbbbbbb|s|   | oooooooooooooooooooo | 
-|aaaaaaaa|p| *--* |i|WRITE OUT | *--* |bbbbbbbb|s|   | oooooooooooooooooooo |
-|aaaaaaaa|p| *-*- |i|ADD IMD   | *-*- |bbbbbbbb|s|   | oooooooooooooooooooo | 
-|aaaaaaaa|p| *-** |i|SUB IMD   | *-** |bbbbbbbb|s|   | oooooooooooooooooooo |
-|aaaaaaaa|p| **-- |i|JUMP      | **-- |bbbbbbbb|s|   | oooooooooooooooooooo |
-|aaaaaaaa|p| **-* |i|IF NOT MAX| **-* |bbbbbbbb|s|   | oooooooooooooooooooo |
-|aaaaaaaa|p| ***- |i|IF NOT MIN| ***- |bbbbbbbb|s|   | oooooooooooooooooooo |
-|  STOP  |p| **** |i|AND/OR    | **** | IN/OUT |s|   | oooooooooooooooooooo |
- ##########        ############        ##########     ###################### 
-  []    [] \______/ []      [] \______/ []    [] \___/ []                [] 
+                   ______________  
+                  |              | 
+   CODE   PC      |  [rrrrrrrr]  |         DATA   AD
+ ________ _       |______________|       ________ _  
+|aaaaaaaa|p| ---- |i| READ       | ---- |bbbbbbbb|s| 
+|aaaaaaaa|p| ---* |i| WRITE      | ---* |bbbbbbbb|s| 
+|aaaaaaaa|p| --*- |i| ADD        | --*- |bbbbbbbb|s| 
+|aaaaaaaa|p| --** |i| SUB        | --** |bbbbbbbb|s|           PRINTER  
+|aaaaaaaa|p| -*-- |i| JUMP IMD   | -*-- |bbbbbbbb|s|   ________________________ 
+|aaaaaaaa|p| -*-* |i| IF MAX     | -*-* |bbbbbbbb|s|  |                        |
+|aaaaaaaa|p| -**- |i| IF MIN     | -**- |bbbbbbbb|s| (|   |=============[]=|   |)
+|aaaaaaaa|p| -*** |i| SHIFT L/R  | -*** |bbbbbbbb|s|  |__ _ ______________ _ __|
+|aaaaaaaa|p| *--- |i| READ IN    | *--- |bbbbbbbb|s|   | oooooooooooooooooooo | 
+|aaaaaaaa|p| *--* |i| WRITE OUT  | *--* |bbbbbbbb|s|   | oooooooooooooooooooo |
+|aaaaaaaa|p| *-*- |i| ADD IMD    | *-*- |bbbbbbbb|s|   | oooooooooooooooooooo | 
+|aaaaaaaa|p| *-** |i| SUB IMD    | *-** |bbbbbbbb|s|   | oooooooooooooooooooo |
+|aaaaaaaa|p| **-- |i| JUMP       | **-- |bbbbbbbb|s|   | oooooooooooooooooooo |
+|aaaaaaaa|p| **-* |i| IF NOT MAX | **-* |bbbbbbbb|s|   | oooooooooooooooooooo |
+|aaaaaaaa|p| ***- |i| IF NOT MIN | ***- |bbbbbbbb|s|   | oooooooooooooooooooo |
+|  STOP  |p| **** |i| AND/OR     | **** | IN/OUT |s|   | oooooooooooooooooooo |
+ ##########        ##############        ##########     ###################### 
+  []    [] \______/ []        [] \______/ []    [] \___/ []                [] 
