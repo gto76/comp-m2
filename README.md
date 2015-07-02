@@ -70,16 +70,13 @@ cd comp-m2
 ./run
 ```
 
-Noninteractve mode
+Non-interactive mode
 ------------------
-If comp binary is executed with a pipe input, then it runs in noniteractive mode, meaning there is no graphical interface, instead of a random number when reading from last address we get a value from stdin and instead of printer, output is sent to stdout. Input can either consist of strings of "*" and "-", or integers.  
+If comp binary is executed with a pipe input, then it runs in non-iteractive mode, meaning there is no graphical interface, instead of a random number when reading from last address we get a value from stdin and instead of printer, output is sent to stdout. Input can either consist of strings of "*" and "-", or integers.  
 
 Example of multiplication:
 ```
 $ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
-```
-output:
-```
 -----**-   6
 ----*--*   9
 ----**--  12
