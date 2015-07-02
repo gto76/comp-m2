@@ -76,7 +76,7 @@ Instruction set
 **IF_MIN**     | -\*\*- | Jumps to the specified address if register has value _0_ = '--------'. 
 **SHIFT_L/R**  | -\*\*\*| Moves bits in the register in the direction specified by the value. If first bit of the value is '-', then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots that they get moved.
 
-### Variations
+### Extended
  _Name_        | _Code_ | _Description_  
 :------------- |:------:| --------------------------------------------------------
 **READ_IN**    | \*---  | Copies the value at the last address (random or stdin) to the specified address.
