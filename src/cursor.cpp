@@ -9,7 +9,13 @@
 
 ///////// CONSTRUCTOR ///////////
 
-Cursor::Cursor() {
+/*
+ * Constructor is ipmlemented as function, because on some
+ * systems 'const string drawing' from drawing.hpp is not yet
+ * initialized at this point. So instead this function is called
+ * the first time any of this class variables are needed.
+ */
+void Cursor::initialize() {
 	// Coordinates of first ram lightbulb in the ascii drawing. 
 	// One per address space.
 	tuple<int, int> codeRamPosition = 
@@ -122,27 +128,40 @@ void Cursor::moveByteDown() {
 
 /////////// PRIVATE //////////
 
+void Cursor::initCheck() {
+	if (notInitialized) {
+		initialize();
+	}
+	notInitialized = false;
+}
+
 int Cursor::getRamPositionX() {
+	initCheck(); 
 	return ramPosition[addrSpace][X];
 }
 
 int Cursor::getRamPositionY() {
+	initCheck(); 
 	return ramPosition[addrSpace][Y];
 }
 
 int Cursor::getBitIndex() {
+	initCheck(); 
 	return cursorPosition[addrSpace][X];
 }
 
 int Cursor::getAddr() { 
+	initCheck(); 
 	return cursorPosition[addrSpace][Y];
 }
 
 void Cursor::setBitIndex(int bitIndex) {
+	initCheck(); 
 	cursorPosition[addrSpace][X] = bitIndex;
 }
 
 void Cursor::setAddr(int addr) {
+	initCheck(); 
 	cursorPosition[addrSpace][Y] = addr;
 }
 

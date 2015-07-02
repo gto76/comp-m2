@@ -15,7 +15,6 @@ using namespace std;
 
 class Cursor {
 	public:
-		Cursor();
 		void switchAddressSpace();
 
 		//////// COORDINATES API /////////
@@ -41,6 +40,10 @@ class Cursor {
 		map<AddrSpace, map<Axis, int>> ramPosition;
 		// Selected bit with the cursor.
 		map<AddrSpace, map<Axis, int>> cursorPosition;
+
+		bool notInitialized = true;
+		void initCheck();
+		void initialize();
 
 		int getRamPositionX();
 		int getRamPositionY();
