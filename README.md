@@ -74,7 +74,7 @@ Instruction set
 **JUMP_IMD**   | -\*--  | Changes the value of the program counter to the specified address, meaning that in the next cycle execution will continue at that address.  
 **IF_MAX**     | -\*-\* | Jumps to the specified address if register has value _255_* = '********'. 
 **IF_MIN**     | -\*\*- | Jumps to the specified address if register has value _0_ = '--------'. 
-**SHIFT_L/R**  | -\*\*\*| Moves bits in the register in the direction specified by the value. If first bit of the value is '-', then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots, that they get moved.
+**SHIFT_L/R**  | -\*\*\*| Moves bits in the register in the direction specified by the value. If first bit of the value is '-', then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots that they get moved.
 
 ### Variations
  _Name_        | _Code_ | _Description_  
