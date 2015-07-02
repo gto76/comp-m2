@@ -55,21 +55,39 @@ Instruction set
 * `IF NOT MIN ***-` - Jumps to the specified address if register does not have value 0 = `--------`. 
 * `AND/OR     ****` - If first bit of the value is '-', then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of register and value at the specified address, and result is written to register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data ram.
 
+Keys
+----
+* `space`, `f` - switch bit under cursor
+* `enter` - start/pause execution
+* `esc` - cancel execution
+* `d` - delete word under cursor
+* `j` - move word up
+* `k` - move word down
 
 Non-interactive mode
 ------------------
 Non-interactive mode is started if any input is piped to the program. In this mode computer prints to 'stdout', there is no
 user interface, there is no pause between cycles, and when program reads from last address, instead of random value, it
-gets one word from stdin (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If there
+gets one word from 'stdin' (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If there
 is not enough characters, all missing bits are set to false; and all characters after the eight one are ignored. If word starts with a digit, then it is red as a number and converted appropriately.
 
-Example of multiplication:
+Multiplication:
 ```
 $ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
 -----**-   6
 ----*--*   9
 ----**--  12
 ```
+
+Moving a bit with 'a' and 'd' keys:
+```
+$ examples/keyFilter | ./comp examples/randomDot
+----*---   8
+-----*--   4
+----*---   8
+---*----  16
+```
+
 
 How to run on…
 --------------
