@@ -5,6 +5,32 @@ Updated version of [**Comp**](https://github.com/gto76/comp-cpp) – Simple 4-bi
 
 ![screenshot](doc/screenshot.png)
 
+How to run on…
+--------------
+
+### Windows
+
+* Install *Tiny Core Linux* on *VirtualBox* using this [**instructions**](https://github.com/gto76/my-linux-setup/tree/gh-pages/conf-files/tiny-core-linux).
+* Run the *UNIX* commands.
+
+### UNIX
+```bash
+git clone https://github.com/gto76/comp-m2.git
+cd comp-m2
+./run
+```
+
+Keys
+----
+* `space`, `f` - switch bit under cursor
+* `tab` - switch address space
+* `enter` - start/pause execution
+* `esc` - cancel execution
+* `d` - delete word under cursor
+* `j` - move word up
+* `k` - move word down
+* `s` - save ram in textfile named `saved-ram-<num>`. To load it, start program with `./comp <file>`
+
 Memory
 ------
 ```
@@ -46,9 +72,9 @@ Instruction set
 **ADD**        | --\*-  | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
 **SUB**        | --\*\* | Subtracts value at the speicfied address from the value of the register, and writes result to the register. If result is smaller than _0_, then _0_ gets written.  
 **JUMP_IMD**   | -\*--  | Changes the value of the program counter to the specified address, meaning that in the next cycle execution will continue at that address.  
-**IF_MAX**     | -\*-\* | Jumps to the specified address if register has value _255_* = '********'. 
+**IF_MAX**     | -\*-\* | Jumps to the specified address if register has value _255_ = '********'. 
 **IF_MIN**     | -\*\*- | Jumps to the specified address if register has value _0_ = '--------'. 
-**SHIFT_L/R**  | -\*\*\*| Moves bits in the register in the direction specified by the value. If first bit of the value is '-', then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots, that they get moved.
+**SHIFT_L/R**  | -\*\*\*| Moves bits in the register in the direction specified by the value. If first bit of the value is '-', then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots that they get moved.
 
 ### Variations
  _Name_        | _Code_ | _Description_  
@@ -60,18 +86,7 @@ Instruction set
 **JUMP**       | \*\*-- | Changes the value of the program counter to the value stored at the specified address.
 **IF_NOT_MAX** | \*\*-* | Jumps to the specified address if register does not have value _255_ = '********'. 
 **IF_NOT_MIN** | \*\*\*-| Jumps to the specified address if register does not have value _0_ = '--------'. 
-**AND/OR**     | \*\*\*\* | If first bit of the value is '-', then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of register and value at the specified address, and result is written to register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data ram.
-
-
-Keys
-----
-* `space`, `f` - switch bit under cursor
-* `enter` - start/pause execution
-* `esc` - cancel execution
-* `d` - delete word under cursor
-* `j` - move word up
-* `k` - move word down
-* `s` - save ram in textfile named `saved-ram-<num>`. To load it, start program with `./comp <file>`
+**AND/OR**     | \*\*\*\* | If first bit of the value is '-', then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of the register and value at the specified address, and result is written to the register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data memory.
 
 Non-interactive mode
 --------------------
@@ -98,21 +113,6 @@ $ examples/keyFilter | ./comp examples/randomDot
 ---*----  16
 ```
 
-
-How to run on…
---------------
-
-### Windows
-
-* Install *Tiny Core Linux* on *VirtualBox* using this [**instructions**](https://github.com/gto76/my-linux-setup/tree/gh-pages/conf-files/tiny-core-linux).
-* Run the *UNIX* commands.
-
-### UNIX
-```bash
-git clone https://github.com/gto76/comp-m2.git
-cd comp-m2
-./run
-```
 
 
 
