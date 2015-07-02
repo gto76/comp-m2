@@ -54,7 +54,7 @@ Instruction set
 **`SUB_IMD`**    | `*-**` | Subtracts specified value from the value of the register, and writes result to the register. If result is smaller than `0`, then `0` gets written.
 **`JUMP`**       | `**  ` |
 **`IF_NOT_MAX`** | `**-*` | Jumps to the specified address if register does not have value `255 = '********'`. 
-**`IF_NOT_MIN`** | `***-` | Jumps to the specified address if register does not have value `0 = '--------'`. 
+**IF NOT MIN** | `***-` | Jumps to the specified address if register does not have value `0 = '--------'`. 
 **`AND/OR`**     | `****` | If first bit of the value is `'-'`, then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of register and value at the specified address, and result is written to register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data ram.
 
 Keys
