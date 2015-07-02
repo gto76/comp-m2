@@ -38,9 +38,10 @@ instructions - 4 bits
 Instruction set
 ---------------
 
+### Basic
  _Name_        | _Code_ | _Description_  
 :------------- |:------:| --------------------------------------------------------
-–––––––––– | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+–––––––––––    | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 **READ**       | ----   | Copies the value at the specified address into register.  
 **WRITE**      | ---\*  | Copies value of the register to the specified address.  
 **ADD**        | --\*-  | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
@@ -49,7 +50,11 @@ Instruction set
 **IF MAX**     | -\*-\* | Jumps to the specified address if register has value _255_* = '********'. 
 **IF MIN**     | -\*\*- | Jumps to the specified address if register has value _0_ = '--------'. 
 **SHIFT L/R**  | -\*\*\*| Moves bits in the register in the direction specified by the value. If first bit of the value is '-', then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots, that they get moved.
-–––––––––– | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+### Extended
+ _Name_        | _Code_ | _Description_  
+:------------- |:------:| --------------------------------------------------------
+–––––––––––    | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 **READ IN**    | \*---  | Copies the value at the last address (random or stdin) to the specified address.
 **WRITE OUT**  | \*--\* | Copies the value at the specified address to the last address (printer or stdout).
 **ADD IMD**    | \*-\*- | Adds specified value to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
@@ -58,7 +63,6 @@ Instruction set
 **IF NOT MAX** | \*\*-* | Jumps to the specified address if register does not have value _255_ = '********'. 
 **IF NOT MIN** | \*\*\*-| Jumps to the specified address if register does not have value _0_ = '--------'. 
 **AND/OR**     | \*\*\*\* | If first bit of the value is '-', then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of register and value at the specified address, and result is written to register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data ram.
-––––––––––     | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 Keys
 ----
