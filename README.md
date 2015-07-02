@@ -86,7 +86,7 @@ Instruction set
 **JUMP**       | \*\*-- | Changes the value of the program counter to the value stored at the specified address.
 **IF_NOT_MAX** | \*\*-* | Jumps to the specified address if register does not have value _255_ = '********'. 
 **IF_NOT_MIN** | \*\*\*-| Jumps to the specified address if register does not have value _0_ = '--------'. 
-**AND/OR**     | \*\*\*\* | If first bit of the value is '-', then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of register and value at the specified address, and result is written to register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data ram.
+**AND/OR**     | \*\*\*\* | If first bit of the value is '-', then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of the register and value at the specified address, and result is written to the register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data memory.
 
 Non-interactive mode
 --------------------
