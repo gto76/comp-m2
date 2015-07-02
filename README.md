@@ -42,20 +42,20 @@ Instruction set
 :------------- |:------:| --------------------------------------------------------
 **READ**       | _----_ | Copies the value at the specified address into register.  
 **WRITE**      | _---*_ | Copies value of the register to the specified address.  
-**ADD**        | _--*-_ | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of `255 = '********'`, then `255` gets written. 
-**SUB**        | _--**_ | Subtracts value at the speicfied address from the value of the register, and writes result to the register. If result is smaller than `0`, then `0` gets written.  
+**ADD**        | _--*-_ | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of *255* = '********', then *255* gets written. 
+**SUB**        | _--**_ | Subtracts value at the speicfied address from the value of the register, and writes result to the register. If result is smaller than *0*, then *0* gets written.  
 **JUMP IMD**   | _-*--_ | Changes the value of the program counter to the specified address, meaning that in the next cycle execution will continue at that address.  
-**IF MAX**     | _-*-*_ | Jumps to the specified address if register has value `255 = '********'`. 
-**IF MIN**     | _-**-_ | Jumps to the specified address if register has value `0 = '--------'`. 
+**IF MAX**     | _-*-*_ | Jumps to the specified address if register has value *255* = '********'. 
+**IF MIN**     | _-**-_ | Jumps to the specified address if register has value *0* = '--------'. 
 **SHIFT L/R**  | _-***_ | Moves bits in the register in the direction specified by the value. If first bit of the value is `'-'`, then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots, that they get moved.
 **READ IN**    | _*---_ | Copies the value at the last address (random or stdin) to the specified address.
 **WRITE OUT**  | _*--*_ | Copies the value at the specified address to the last address (printer or stdout).
-**ADD IMD**    | _*-*-_ | Adds specified value to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of `255 = '********'`, then `255` gets written. 
-**SUB IMD**    | _*-**_ | Subtracts specified value from the value of the register, and writes result to the register. If result is smaller than `0`, then `0` gets written.
+**ADD IMD**    | _*-*-_ | Adds specified value to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of *255* = '********', then *255* gets written. 
+**SUB IMD**    | _*-**_ | Subtracts specified value from the value of the register, and writes result to the register. If result is smaller than *0*, then *0* gets written.
 **JUMP**       | _**--_ | Changes the value of the program counter to the value stored at the specified address.
-**IF NOT MAX** | _**-*_ | Jumps to the specified address if register does not have value `255 = '********'`. 
-**IF NOT MIN** | _***-_ | Jumps to the specified address if register does not have value `0 = '--------'`. 
-**AND/OR**     | _****_ | If first bit of the value is `'-'`, then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of register and value at the specified address, and result is written to register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data ram.
+**IF NOT MAX** | _**-*_ | Jumps to the specified address if register does not have value *255* = '********'. 
+**IF NOT MIN** | _***-_ | Jumps to the specified address if register does not have value *0* = '--------'. 
+**AND/OR**     | _****_ | If first bit of the value is '-', then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of register and value at the specified address, and result is written to register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data ram.
 –––––––––––––– |  ––––  | ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 Keys
