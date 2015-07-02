@@ -1,7 +1,7 @@
 Comp Mark II
 ============
 
-Simple 4-bit/1 Hz virtual computer for learning purposes
+Updated version of [**Comp**](https://github.com/gto76/comp-cpp) – Simple 4-bit/1 Hz virtual computer for learning purposes
 
 ![screenshot](doc/screenshot.png)
 
