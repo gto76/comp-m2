@@ -1,0 +1,9 @@
+
+while true; do
+	read -n 1 -s key
+	case "$key" in        
+		'a') echo '255';;
+		'd') echo '0';; 
+		*) break
+	esac
+done
