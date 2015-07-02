@@ -41,7 +41,7 @@ Instruction set
 ### Basic
  _Name_        | _Code_ | _Description_  
 :------------- |:------:| --------------------------------------------------------
-–––––––––––    | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+–––––––––––    | –––––  | ––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 **READ**       | ----   | Copies the value at the specified address into register.  
 **WRITE**      | ---\*  | Copies value of the register to the specified address.  
 **ADD**        | --\*-  | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
@@ -54,7 +54,7 @@ Instruction set
 ### Extended
  _Name_        | _Code_ | _Description_  
 :------------- |:------:| --------------------------------------------------------
-–––––––––––    | –––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+–––––––––––    | –––––  | ––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 **READ IN**    | \*---  | Copies the value at the last address (random or stdin) to the specified address.
 **WRITE OUT**  | \*--\* | Copies the value at the specified address to the last address (printer or stdout).
 **ADD IMD**    | \*-\*- | Adds specified value to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
