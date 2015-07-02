@@ -42,7 +42,7 @@ Instruction set
 :------------- |:------:| --------------------------------------------------------
 **READ**       | _----_ | Copies the value at the specified address into register.  
 **WRITE**      | _---*_ | Copies value of the register to the specified address.  
-**ADD**        | _--*-_ | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of *255* = '********', then *255* gets written. 
+**ADD**        | _--*-_ | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
 **SUB**        | _--**_ | Subtracts value at the speicfied address from the value of the register, and writes result to the register. If result is smaller than *0*, then *0* gets written.  
 **JUMP IMD**   | _-*--_ | Changes the value of the program counter to the specified address, meaning that in the next cycle execution will continue at that address.  
 **IF MAX**     | _-*-*_ | Jumps to the specified address if register has value *255* = '********'. 
