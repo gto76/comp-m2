@@ -104,7 +104,7 @@ $ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
 ----**--  12
 ```
 
-* Moving a bit with 'a' and 'd' keys:
+* Moving single bit with 'a' and 'd' keys:
 ```
 $ examples/keyFilter | ./comp examples/randomDot
 ----*---   8
