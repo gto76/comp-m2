@@ -92,7 +92,7 @@ Non-interactive mode
 --------------------
 Non-interactive mode is started if input is piped to the program. 
 
-In this mode computer prints to 'stdout', there is no user interface, there is no pause between cycles, and when program reads from last address, instead of random value, it gets one word from 'stdin' (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If there is not enough characters, all missing bits are set to false and all characters after the eight one are ignored. If word starts with a digit, then it is red as a number and converted appropriately.
+In this mode computer prints to 'stdout', there is no user interface, there is no pause between cycles, and when program reads from last address, instead of random value, it gets one word from 'stdin' (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If word starts with a digit, then it is red as a number and converted appropriately.
 
 ### Examples
 * Multiplication:
