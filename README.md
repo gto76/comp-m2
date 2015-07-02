@@ -55,6 +55,19 @@ Instruction set
 * `IF NOT MIN ***-` - Jumps to the specified address if register does not have value 0 = `--------`. 
 * `AND/OR     ****` - If first bit of the value is '-', then AND gets executed, otherwise OR. Other three bits specify the address. Operation is executed between the value of register and value at the specified address, and result is written to register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data ram.
 
+
+Non-interactive mode
+------------------
+If `comp` binary is executed with a pipe input, then it runs in non-iteractive mode, meaning there is no graphical interface. Also, instead of a random number when reading from last address we get a value from stdin and instead to a printer, output is sent to stdout. Input can either consist of strings of '*' and '-', or integers.  
+
+Example of multiplication:
+```
+$ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
+-----**-   6
+----*--*   9
+----**--  12
+```
+
 How to run on…
 --------------
 
@@ -68,18 +81,6 @@ How to run on…
 git clone https://github.com/gto76/comp-m2.git
 cd comp-m2
 ./run
-```
-
-Non-interactive mode
-------------------
-If `comp` binary is executed with a pipe input, then it runs in non-iteractive mode, meaning there is no graphical interface. Also, instead of a random number when reading from last address we get a value from stdin and instead to a printer, output is sent to stdout. Input can either consist of strings of "*" and "-", or integers.  
-
-Example of multiplication:
-```
-$ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
------**-   6
-----*--*   9
-----**--  12
 ```
 
 
