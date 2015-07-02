@@ -40,7 +40,7 @@ Instruction set
 
  _Name_        | _Code_ | _Description_  
 :------------- |:------:| --------------------------------------------------------
-–––––––––––––– |  ––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––
+–––––––––––– |  ––––  | –––––––––––––––––––––––––––––––––––––––––––––––––––––
 **READ**       | ---- | Copies the value at the specified address into register.  
 **WRITE**      | ---\* | Copies value of the register to the specified address.  
 **ADD**        | --\*- | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
