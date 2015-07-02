@@ -72,7 +72,7 @@ Instruction set
 **ADD**        | --\*-  | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
 **SUB**        | --\*\* | Subtracts value at the speicfied address from the value of the register, and writes result to the register. If result is smaller than _0_, then _0_ gets written.  
 **JUMP_IMD**   | -\*--  | Changes the value of the program counter to the specified address, meaning that in the next cycle execution will continue at that address.  
-**IF_MAX**     | -\*-\* | Jumps to the specified address if register has value _255_* = '********'. 
+**IF_MAX**     | -\*-\* | Jumps to the specified address if register has value _255_ = '********'. 
 **IF_MIN**     | -\*\*- | Jumps to the specified address if register has value _0_ = '--------'. 
 **SHIFT_L/R**  | -\*\*\*| Moves bits in the register in the direction specified by the value. If first bit of the value is '-', then it moves them to the left, otherwise to the right. Remaining three bits specify the number of spots that they get moved.
 
