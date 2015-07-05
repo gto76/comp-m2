@@ -5,19 +5,19 @@
  _ ________       |______________|       ________ _  
 |p|aaaaaaaa| ---- |i| READ       | ---- |bbbbbbbb|s| 
 |p|aaaaaaaa| ---* |i| WRITE      | ---* |bbbbbbbb|s| 
-|p|aaaaaaaa| --*- |i| ADD        | --*- |bbbbbbbb|s| 
-|p|aaaaaaaa| --** |i| SUB        | --** |bbbbbbbb|s|           PRINTER  
-|p|aaaaaaaa| -*-- |i| JUMP IMD   | -*-- |bbbbbbbb|s|   ________________________ 
+|p|aaaaaaaa| --*- |i| ADD/SUB    | --*- |bbbbbbbb|s| 
+|p|aaaaaaaa| --** |i| INC/DEC    | --** |bbbbbbbb|s|           PRINTER  
+|p|aaaaaaaa| -*-- |i| JUMP       | -*-- |bbbbbbbb|s|   ________________________ 
 |p|aaaaaaaa| -*-* |i| IF MAX     | -*-* |bbbbbbbb|s|  |                        |
 |p|aaaaaaaa| -**- |i| IF MIN     | -**- |bbbbbbbb|s| (|   |=============[]=|   |)
-|p|aaaaaaaa| -*** |i| SHIFT L/R  | -*** |bbbbbbbb|s|  |__ _ ______________ _ __|
-|p|aaaaaaaa| *--- |i| READ IN    | *--- |bbbbbbbb|s|   | oooooooooooooooooooo | 
-|p|aaaaaaaa| *--* |i| WRITE OUT  | *--* |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|aaaaaaaa| *-*- |i| ADD IMD    | *-*- |bbbbbbbb|s|   | oooooooooooooooooooo | 
-|p|aaaaaaaa| *-** |i| SUB IMD    | *-** |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|aaaaaaaa| **-- |i| JUMP       | **-- |bbbbbbbb|s|   | oooooooooooooooooooo |
+|p|aaaaaaaa| -*** |i| ADD IMD    | -*** |bbbbbbbb|s|  |__ _ ______________ _ __|
+|p|aaaaaaaa| *--- |i| READ *     | *--- |bbbbbbbb|s|   | oooooooooooooooooooo | 
+|p|aaaaaaaa| *--* |i| WRITE *    | *--* |bbbbbbbb|s|   | oooooooooooooooooooo |
+|p|aaaaaaaa| *-*- |i| SHIFT L/R  | *-*- |bbbbbbbb|s|   | oooooooooooooooooooo | 
+|p|aaaaaaaa| *-** |i| AND/OR     | *-** |bbbbbbbb|s|   | oooooooooooooooooooo |
+|p|aaaaaaaa| **-- |i| JUMP *     | **-- |bbbbbbbb|s|   | oooooooooooooooooooo |
 |p|aaaaaaaa| **-* |i| IF NOT MAX | **-* |bbbbbbbb|s|   | oooooooooooooooooooo |
 |p|aaaaaaaa| ***- |i| IF NOT MIN | ***- |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|  STOP  | **** |i| AND/OR     | **** | IN/OUT |s|   | oooooooooooooooooooo |
+|p|  STOP  | **** |i| SUB IMD    | **** | IN/OUT |s|   | oooooooooooooooooooo |
  ##########        ##############        ##########     ###################### 
   []    [] \______/ []        [] \______/ []    [] \___/ []                [] 

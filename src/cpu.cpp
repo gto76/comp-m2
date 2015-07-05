@@ -56,46 +56,46 @@ bool Cpu::step() {
 			write(value);
 			break;
 		case 2:
-			add(value);
+			addSub(value);
 			break;
 		case 3:
-			sub(value);
+			incDec(value);
 			break;
 		case 4:
-			jumpImd(value);
-			break;
-		case 5:
-			jumpIfMax(value);
-			break;
-		case 6:
-			jumpIfMin(value);
-			break;
-		case 7:
-			shift(value);
-			break;
-		case 8:
-			readIn(value);
-			break;
-		case 9:
-			writeOut(value);
-			break;
-		case 10:
-			addImd(value);
-			break;
-		case 11:
-			subImd(value);
-			break;
-		case 12:
 			jump(value);
 			break;
+		case 5:
+			ifMax(value);
+			break;
+		case 6:
+			ifMin(value);
+			break;
+		case 7:
+			addImd(value);
+			break;
+		case 8:
+			readPointer(value);
+			break;
+		case 9:
+			writePointer(value);
+			break;
+		case 10:
+			shiftLR(value);
+			break;
+		case 11:
+			andOr(value);
+			break;
+		case 12:
+			jumpPointer(value);
+			break;
 		case 13:
-			jumpIfNotMax(value);
+			ifNotMax(value);
 			break;
 		case 14:
-			jumpIfNotMin(value);
+			ifNotMin(value);
 			break;
 		case 15:
-			andOr(value);
+			subImd(value);
 			break;
 		default:
 			read(value);
@@ -118,24 +118,25 @@ void Cpu::write(vector<bool> adr) {
 	increasePc();
 }
 
-void Cpu::add(vector<bool> adr) {
-	addOrSubtract(adr, true);
+void Cpu::addSub(vector<bool> value) {
+	bool isAnd = !value.at(0);
+	vector<bool> adr = { false, value.at(1), value.at(2), value.at(3) };
+	addOrSubtract(adr, isAnd);
 	increasePc();
 }
 
-void Cpu::sub(vector<bool> adr) {
-	addOrSubtract(adr, false);
+void Cpu::incDec(vector<bool> value) {
+	bool isInc = !value.at(0);
+	vector<bool> adr = { false, value.at(1), value.at(2), value.at(3) };
+	incOrDec(adr, isInc);
 	increasePc();
 }
 
-/*
- * Jumps to the address.
- */
-void Cpu::jumpImd(vector<bool> adr) {
+void Cpu::jump(vector<bool> adr) {
 	pc = adr;
 }
 
-void Cpu::jumpIfMax(vector<bool> adr) {
+void Cpu::ifMax(vector<bool> adr) {
 	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
 		pc = adr;
 	} else {
@@ -143,44 +144,12 @@ void Cpu::jumpIfMax(vector<bool> adr) {
 	}
 }
 
-void Cpu::jumpIfMin(vector<bool> adr) {
+void Cpu::ifMin(vector<bool> adr) {
 	if (Util::getInt(reg) <= 0) {
 		pc = adr;
 	} else {
 		increasePc();
 	}
-}
-
-/*
- * Splits passed value to first bit, that tells the direction of the shift,
- * and last three bits, that tell the range.
- */
-void Cpu::shift(vector<bool> value) {
-	int noOfSpots = Util::getSignedIntFromNibble(value) * -1;
-	vector<bool> tmp = vector<bool>(WORD_SIZE);
-	for(int i = 0; i < WORD_SIZE; i++) {
-		tmp[i] = getRegBit(i - noOfSpots);
-	}
-	reg = tmp;
-	increasePc();
-}
-
-/*
- * Copies input value (last address) to passed address.
- */
-void Cpu::readIn(vector<bool> adr) {
-	vector<bool> inputValue = ram.get(DATA, Util::getBoolNibb(RAM_SIZE));
-	ram.set(DATA, adr, inputValue);
-	increasePc();
-}
-
-/*
- * Writes value at passed address to output.
- */
-void Cpu::writeOut(vector<bool> adr) {
-	vector<bool> outputValue = ram.get(DATA, adr);
-	ram.set(DATA, Util::getBoolNibb(RAM_SIZE), outputValue);
-	increasePc();
 }
 
 /*
@@ -192,36 +161,35 @@ void Cpu::addImd(vector<bool> value) {
 }
 
 /*
- * Subtracts passed value from the register.
+ * Reads from the address that is stored at passed address.
  */
-void Cpu::subImd(vector<bool> value) {
-	addOrSubtractImd(value, false);
+void Cpu::readPointer(vector<bool> adr) {
+	vector<bool> pointer = ram.get(DATA, adr);
+	reg = ram.get(DATA, pointer);
 	increasePc();
 }
 
 /*
- * Jumps to address that is stored at passed addres.
+ * Writes 'reg' to the address that is stored at passed address.
  */
-void Cpu::jump(vector<bool> adr) {
-	vector<bool> value = ram.get(DATA, adr);
-	// Takes the last four bits as a address.
-	pc = Util::getSecondNibble(value);
+void Cpu::writePointer(vector<bool> adr) {
+	vector<bool> pointer = ram.get(DATA, adr);
+	ram.set(DATA, pointer, reg);
+	increasePc();
 }
 
-void Cpu::jumpIfNotMax(vector<bool> adr) {
-	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
-		increasePc();
-	} else {
-		pc = adr;
+/*
+ * Splits passed value to first bit, that tells the direction of the shift,
+ * and last three bits, that tell the range.
+ */
+void Cpu::shiftLR(vector<bool> value) {
+	int noOfSpots = Util::getSignedIntFromNibble(value) * -1;
+	vector<bool> tmp = vector<bool>(WORD_SIZE);
+	for(int i = 0; i < WORD_SIZE; i++) {
+		tmp[i] = getRegBit(i - noOfSpots);
 	}
-}
-
-void Cpu::jumpIfNotMin(vector<bool> adr) {
-	if (Util::getInt(reg) <= 0) {
-		increasePc();
-	} else {
-		pc = adr;
-	}
+	reg = tmp;
+	increasePc();
 }
 
 /*
@@ -240,6 +208,38 @@ void Cpu::andOr(vector<bool> value) {
 	increasePc();
 }
 
+/*
+ * Jumps to address that is stored at passed addres.
+ */
+void Cpu::jumpPointer(vector<bool> adr) {
+	vector<bool> value = ram.get(DATA, adr);
+	// Takes the last four bits as a address.
+	pc = Util::getSecondNibble(value);
+}
+
+void Cpu::ifNotMax(vector<bool> adr) {
+	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
+		increasePc();
+	} else {
+		pc = adr;
+	}
+}
+
+void Cpu::ifNotMin(vector<bool> adr) {
+	if (Util::getInt(reg) <= 0) {
+		increasePc();
+	} else {
+		pc = adr;
+	}
+}
+
+/*
+ * Subtracts passed value from the register.
+ */
+void Cpu::subImd(vector<bool> value) {
+	addOrSubtractImd(value, false);
+	increasePc();
+}
 
 ///////////////////
 ////// UTIL ///////
@@ -257,6 +257,18 @@ void Cpu::addOrSubtract(vector<bool> adr, bool add) {
 	} else {
 		reg = Util::getBoolByte(regValue - ramValue);
 	}
+}
+
+void Cpu::incOrDec(vector<bool> adr, bool isInc) {
+	vector<bool> value = ram.get(DATA, adr);
+	int delta = 0;
+	if (isInc) {
+		delta = 1;
+	} else {
+		delta = -1;
+	}
+	int intValue = Util::getInt(value) + delta;
+	ram.set(DATA, adr, Util::getBoolByte(intValue));
 }
 
 void Cpu::addOrSubtractImd(vector<bool> value, bool add) {

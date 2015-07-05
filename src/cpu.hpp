@@ -25,23 +25,24 @@ class Cpu {
 		// INSTRUCTION SET
 		void read(vector<bool> adr);
 		void write(vector<bool> adr);
-		void add(vector<bool> adr);
-		void sub(vector<bool> adr);
-		void jumpImd(vector<bool> adr);
-		void jumpIfMax(vector<bool> adr);
-		void jumpIfMin(vector<bool> adr);
-		void shift(vector<bool> value);
-		void readIn(vector<bool> adr);
-		void writeOut(vector<bool> adr);
-		void addImd(vector<bool> value);
-		void subImd(vector<bool> value);
+		void addSub(vector<bool> adr);
+		void incDec(vector<bool> adr);
 		void jump(vector<bool> adr);
-		void jumpIfNotMax(vector<bool> adr);
-		void jumpIfNotMin(vector<bool> adr);
+		void ifMax(vector<bool> adr);
+		void ifMin(vector<bool> adr);
+		void addImd(vector<bool> value);
+		void readPointer(vector<bool> adr);
+		void writePointer(vector<bool> adr);
+		void shiftLR(vector<bool> value);
 		void andOr(vector<bool> value);
+		void jumpPointer(vector<bool> adr);
+		void ifNotMax(vector<bool> adr);
+		void ifNotMin(vector<bool> adr);
+		void subImd(vector<bool> value);
 		// UTIL
 		void increasePc();
 		void addOrSubtract(vector<bool> adr, bool add);
+		void incOrDec(vector<bool> adr, bool isInc);
 		void addOrSubtractImd(vector<bool> value, bool add);
 		bool getRegBit(int index);
 };
