@@ -56,6 +56,17 @@ vector<bool> Cpu::getDataAddress() {
 	}
 }
 
+bool Cpu::hasCodeAddress() {
+	vector<bool> instructionCodeBool = getInstructionCode();
+	int instCode = Util::getInt(instructionCodeBool);
+	set<int> instWithCodeAddress = { 4, 5, 6, 13, 14 };
+	return instWithCodeAddress.count(instCode) == 1;
+}
+
+vector<bool> Cpu::getCodeAddress() {
+	return Util::getSecondNibble(ram.get(CODE, pc));
+}
+
 /*
  * Returns 'false' when reaches last address.
  */

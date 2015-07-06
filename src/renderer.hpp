@@ -24,7 +24,8 @@ class Renderer {
 		string insertActualValues(string lineIn);
 		char getLightbulb(char cIn);
 		bool pcIsPointingToAddress(int adr);
-		bool instructionIsPointingToAddress(int adr);
+		bool pointingToCodeAddress(int adr);
+		bool pointingToDataAddress(int adr);
 		bool instructionHasId(int id);
 		char getFormattedOutput(int i);
 		char getCodeBit(int i);

@@ -16,6 +16,8 @@ class Cpu {
 		vector<bool> getPc();
 		vector<bool> getInstructionCode();
 		vector<bool> getValue();
+		bool hasCodeAddress();
+		vector<bool> getCodeAddress();
 		bool hasDataAddress();
 		vector<bool> getDataAddress();
 		int getCycle();

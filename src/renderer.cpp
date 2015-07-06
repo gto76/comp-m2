@@ -65,8 +65,10 @@ char Renderer::getLightbulb(char cIn) {
 			return getDataBit(i);
 		case 'p':
 			return Util::getChar(pcIsPointingToAddress(i));
+		case 'd':
+			return Util::getChar(pointingToCodeAddress(i));
 		case 's':
-			return Util::getChar(instructionIsPointingToAddress(i));
+			return Util::getChar(pointingToDataAddress(i));
 		case 'r':
 			return  Util::getChar(cpu.getRegister().at(i));
 		case 'i':
@@ -92,7 +94,17 @@ bool Renderer::machineNotActive() {
 	return executionHasntStarted || executionEnded;
 }
 
-bool Renderer::instructionIsPointingToAddress(int adr) {
+bool Renderer::pointingToCodeAddress(int adr) {
+	if (machineNotActive()) {
+		return false;
+	}
+	if (!cpu.hasCodeAddress()) {
+		return false;
+	}
+	return cpu.getCodeAddress() == Util::getBoolNibb(adr);
+}
+
+bool Renderer::pointingToDataAddress(int adr) {
 	if (machineNotActive()) {
 		return false;
 	}
