@@ -80,6 +80,9 @@ char Renderer::getLightbulb(char cIn) {
 }
 
 bool Renderer::pcIsPointingToAddress(int adr) {
+	if (machineNotActive()) {
+		return false;
+	}
 	return Util::getInt(cpu.getPc()) == adr;
 }
 
@@ -91,6 +94,9 @@ bool Renderer::machineNotActive() {
 
 bool Renderer::instructionIsPointingToAddress(int adr) {
 	if (machineNotActive()) {
+		return false;
+	}
+	if (cpu.hasDataAddress()) {
 		return false;
 	}
 	return Util::getInt(cpu.getValue()) == adr;

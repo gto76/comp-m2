@@ -3,6 +3,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <set>
 
 #include "comp.hpp"
 #include "util.hpp"
@@ -32,6 +33,27 @@ vector<bool> Cpu::getInstructionCode() {
 
 vector<bool> Cpu::getValue() {
 	return Util::getSecondNibble(ram.get(CODE, pc));
+}
+
+bool Cpu::hasDataAddress() {
+	vector<bool> instructionCodeBool = getInstructionCode();
+	int instCode = Util::getInt(instructionCodeBool);
+	set<int> instWithoutDataAddress = { 4, 5, 6, 7, 10, 13, 14, 15 };
+	return instWithoutDataAddress.count(instCode) == 1;
+}
+
+vector<bool> Cpu::getDataAddress() {
+	vector<bool> instructionCodeBool = getInstructionCode();
+	int instCode = Util::getInt(instructionCodeBool);
+
+	// If instruction has only 3 bits for address.
+	set<int> instWith3bitAddress = { 2, 3, 11 };
+	if (instWith3bitAddress.count(instCode) == 1) {
+		vector<bool> value = getValue();
+		return { false, value.at(1), value.at(2), value.at(3) };
+	} else { 
+		return Util::getSecondNibble(ram.get(CODE, pc));
+	}
 }
 
 /*
