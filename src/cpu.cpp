@@ -39,7 +39,7 @@ bool Cpu::hasDataAddress() {
 	vector<bool> instructionCodeBool = getInstructionCode();
 	int instCode = Util::getInt(instructionCodeBool);
 	set<int> instWithoutDataAddress = { 4, 5, 6, 7, 10, 13, 14, 15 };
-	return instWithoutDataAddress.count(instCode) == 1;
+	return instWithoutDataAddress.count(instCode) == 0;
 }
 
 vector<bool> Cpu::getDataAddress() {

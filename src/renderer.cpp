@@ -96,10 +96,10 @@ bool Renderer::instructionIsPointingToAddress(int adr) {
 	if (machineNotActive()) {
 		return false;
 	}
-	if (cpu.hasDataAddress()) {
+	if (!cpu.hasDataAddress()) {
 		return false;
 	}
-	return Util::getInt(cpu.getValue()) == adr;
+	return cpu.getDataAddress() == Util::getBoolNibb(adr);
 }
 
 bool Renderer::instructionHasId(int id) {
