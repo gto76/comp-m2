@@ -34,7 +34,7 @@ int rows = DEFAULT_HEIGHT;
 callback_function drawScreen;
 volatile sig_atomic_t screenResized = 0;
 
-vector<string> screenBuffer = { "", "", "" };
+vector<string> screenBuffer;
 vector<string> onScreen;
 
 ////////// PUBLIC //////////
@@ -114,7 +114,7 @@ int getAbsoluteY(int y) {
 int getAbsoluteCoordinate(int value, int console, int track) {
 	int offset = 0;
 	if (PRINT_IN_CENTER) {
-		offset = (console - track) / 2;
+		offset = ((console - track) / 2);// + ((console - track) % 2);
 		if (offset < 0)
 			offset = 0;
 	}
@@ -127,17 +127,43 @@ int coordinatesOutOfBounds(int x, int y) {
 
 /////////// DRAW ///////////
 
+void refresh() {
+	for (size_t i = 0; i < screenBuffer.size(); i++) {
+		if (onScreen.size() <= i) {
+			onScreen.push_back("");
+		}
+		printf("\033[%d;%dH%s", getAbsoluteY(i), getAbsoluteX(0), screenBuffer.at(i).c_str());
+		if (screenBuffer.at(i) != onScreen.at(i)) {
+			onScreen.at(i) = screenBuffer.at(i);
+		}
+	}
+}
+
 void clearScreen(void) {
+	onScreen = {};
+	screenBuffer = {};
 	printf("\e[1;1H\e[2J");
 }
 
-void redrawScreen() {
+void refreshScreen() {
 	screenResized = 0;
 	updateConsoleSize();
-	//clearScreen();
+	clearScreen();
 	drawScreen();
-	updateScreen();
+	refresh();
 	fflush(stdout);
+}
+
+
+void redrawScreen() {
+	if (screenResized == 1) {
+		refreshScreen();
+	} else {
+		updateConsoleSize();
+		drawScreen();
+		updateScreen();
+		fflush(stdout);
+	}
 }
 
 ///////// SIGNALS //////////
