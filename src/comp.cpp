@@ -83,7 +83,7 @@ void highlightCursor(bool highlight) {
 	if (highlight) {
 		printf("\e[%dm\e[%dm", 30, 47);
 	}
-	printCharXY(c, cursor.getX(), cursor.getY());
+	printCharImediately(c, cursor.getX(), cursor.getY());
 	if (highlight) {
 		printf("\e[%dm\e[%dm", 37, 40);
 	}

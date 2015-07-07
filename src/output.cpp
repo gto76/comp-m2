@@ -34,7 +34,7 @@ int rows = DEFAULT_HEIGHT;
 callback_function drawScreen;
 volatile sig_atomic_t screenResized = 0;
 
-vector<string> screenBuffer;
+vector<string> screenBuffer = { "", "", "" };
 vector<string> onScreen;
 
 ////////// PUBLIC //////////
@@ -51,6 +51,9 @@ void setOutput(callback_function drawScreenThat, int width, int height) {
 
 void updateScreen() {
 	for (size_t i = 0; i < screenBuffer.size(); i++) {
+		if (onScreen.size() <= i) {
+			onScreen.push_back("");
+		}
 		if (screenBuffer.at(i) != onScreen.at(i)) {
 			onScreen.at(i) = screenBuffer.at(i);
 			printf("\033[%d;%dH%s", getAbsoluteY(i), getAbsoluteX(0), screenBuffer.at(i).c_str());
@@ -59,27 +62,44 @@ void updateScreen() {
 }
 
 void setBuffer(string s, int x, int y) {
+	int size = screenBuffer.size();
+	if (size <= y) {
+		for (int i = size; i <= y+1; i++) {
+			screenBuffer.push_back("");
+		}
+	}
 	screenBuffer.at(y).replace(x, s.length(), s);
 }
 
 void printCharXY(char c, int x, int y) {
-	if (coordinatesOutOfBounds(x, y))
+	if (coordinatesOutOfBounds(x, y)) {
 		return;
+	}
+	setBuffer(string(1, c), x, y);
+	//printf("\033[%d;%dH%c", getAbsoluteY(y), getAbsoluteX(x), c);
+}
+
+void printCharImediately(char c, int x, int y) {
+	if (coordinatesOutOfBounds(x, y)) {
+		return;
+	}
 	printf("\033[%d;%dH%c", getAbsoluteY(y), getAbsoluteX(x), c);
 }
 
 void printString(char const s[], int x, int y) {
 	if (coordinatesOutOfBounds(x, y))
 		return;
-	int itDoesntFitTheScreen = strlen(s) + x > columns;
+	int itDoesntFitTheScreen = strlen(s) + (unsigned) x > (unsigned) columns;
 	if (itDoesntFitTheScreen) {
 		int distanceToTheRightEdge = columns - x - 1;
 		char subArray[distanceToTheRightEdge+2];
 		copyArray(subArray, s, distanceToTheRightEdge+2);
 		s = subArray;
-		printf("\033[%d;%dH%s", getAbsoluteY(y), getAbsoluteX(x), subArray);
+		setBuffer(subArray, x, y);
+		//printf("\033[%d;%dH%s", getAbsoluteY(y), getAbsoluteX(x), subArray);
 	} else {
-		printf("\033[%d;%dH%s", getAbsoluteY(y), getAbsoluteX(x), s);
+		setBuffer(s, x, y);
+		//printf("\033[%d;%dH%s", getAbsoluteY(y), getAbsoluteX(x), s);
 	}
 }
 
