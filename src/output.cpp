@@ -114,7 +114,7 @@ int getAbsoluteY(int y) {
 int getAbsoluteCoordinate(int value, int console, int track) {
 	int offset = 0;
 	if (PRINT_IN_CENTER) {
-		offset = ((console - track) / 2);// + ((console - track) % 2);
+		offset = ((console - track) / 2) + ((console - track) % 2);
 		if (offset < 0)
 			offset = 0;
 	}
