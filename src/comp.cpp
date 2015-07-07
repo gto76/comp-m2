@@ -327,6 +327,7 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
 void startInteractiveMode() {
 	setEnvironment();
 	prepareOutput();
+	clearScreen();
 	redrawScreen();
 	highlightCursor(true);
 	userInput();

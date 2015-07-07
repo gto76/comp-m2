@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <string>
+#include <vector>
 
 ////////////////////////////
 
@@ -18,7 +20,7 @@ void updateConsoleSize(void);
 void copyArray(char dest[], const char src[], int width);
 
 ////////////////////////////
-		
+
 #define PRINT_IN_CENTER 1
 #define DEFAULT_WIDTH 80
 #define DEFAULT_HEIGHT 24
@@ -32,6 +34,9 @@ int rows = DEFAULT_HEIGHT;
 callback_function drawScreen;
 volatile sig_atomic_t screenResized = 0;
 
+vector<string> screenBuffer;
+vector<string> onScreen;
+
 ////////// PUBLIC //////////
 
 void setOutput(callback_function drawScreenThat, int width, int height) {
@@ -44,7 +49,18 @@ void setOutput(callback_function drawScreenThat, int width, int height) {
 	printf("\e[%dm\e[%dm", 37, 40);
 }
 
-////////////////////////////
+void updateScreen() {
+	for (size_t i = 0; i < screenBuffer.size(); i++) {
+		if (screenBuffer.at(i) != onScreen.at(i)) {
+			onScreen.at(i) = screenBuffer.at(i);
+			printf("\033[%d;%dH%s", getAbsoluteY(i), getAbsoluteX(0), screenBuffer.at(i).c_str());
+		}
+	}
+}
+
+void setBuffer(string s, int x, int y) {
+	screenBuffer.at(y).replace(x, s.length(), s);
+}
 
 void printCharXY(char c, int x, int y) {
 	if (coordinatesOutOfBounds(x, y))
@@ -98,8 +114,9 @@ void clearScreen(void) {
 void redrawScreen() {
 	screenResized = 0;
 	updateConsoleSize();
-	clearScreen();
+	//clearScreen();
 	drawScreen();
+	updateScreen();
 	fflush(stdout);
 }
 
