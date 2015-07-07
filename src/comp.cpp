@@ -20,18 +20,13 @@
 #include "ram.hpp"
 #include "renderer.hpp"
 #include "util.hpp"
+#include "output.hpp"
 
 using namespace std;
 
 extern "C" {
-	typedef void (*callback_function)(void);
 	void setEnvironment();
-	void setOutput(callback_function drawScreen, int width, int height);
-	void printCharXY(char c, int x, int y);
-	void printString(const char s[], int x, int y);
-	void redrawScreen();
 	void resetEnvironment();
-	extern volatile sig_atomic_t screenResized;
 	extern volatile sig_atomic_t pleaseExit;
 }
 

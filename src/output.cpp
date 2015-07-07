@@ -1,25 +1,24 @@
+#include "output.hpp"
+
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
 
-typedef void (*callback_function)(void);
-void setOutput(callback_function drawScreen, int width, int height);
-void printCharXY(char c, int x, int y);
-void printString(char const s[], int x, int y);
+////////////////////////////
+
 int getAbsoluteX(int x);
 int getAbsoluteY(int y);
 int getAbsoluteCoordinate(int value, int console, int track);
 int coordinatesOutOfBounds(int x, int y);
 void clearScreen(void);
-void redrawScreen();
 void registerSigWinChCatcher(void);
 void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
 void copyArray(char dest[], const char src[], int width);
 
 ////////////////////////////
-
+		
 #define PRINT_IN_CENTER 1
 #define DEFAULT_WIDTH 80
 #define DEFAULT_HEIGHT 24

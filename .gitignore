@@ -33,3 +33,6 @@ comp
 
 # Backup files
 *.bak
+
+#######
+saved-ram-*
