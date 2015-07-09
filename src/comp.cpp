@@ -11,7 +11,6 @@
 #include <tuple>
 #include <vector>
 
-//#include "addr_space.hpp"
 #include "const.hpp"
 #include "cpu.hpp"
 #include "cursor.hpp"
@@ -25,9 +24,9 @@
 using namespace std;
 
 extern "C" {
+	extern volatile sig_atomic_t pleaseExit;
 	void setEnvironment();
 	void resetEnvironment();
-	extern volatile sig_atomic_t pleaseExit;
 }
 
 //////////////////////////
@@ -327,6 +326,7 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
 void startInteractiveMode() {
 	setEnvironment();
 	prepareOutput();
+	clearScreen();
 	clearScreen();
 	redrawScreen();
 	highlightCursor(true);
