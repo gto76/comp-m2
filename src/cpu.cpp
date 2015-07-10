@@ -226,9 +226,7 @@ void Cpu::logic(vector<bool> value) {
 			readReg();
 			break;
 		default:
-			fprintf(stderr, "Passed value to method Cpu::logic"
-					" out of range: %d. Caneling this "
-					"instruction.", Util::getInt(value));
+			break;
 	}
 }
 

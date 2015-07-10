@@ -104,9 +104,7 @@ Examples
 --------
 * Multiplication:
 ```
-$ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
------**-   6
-----*--*   9
+$ echo "3 4" | ./comp examples/multiply
 ----**--  12
 ```
 
