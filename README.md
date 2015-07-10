@@ -63,7 +63,7 @@ Instruction set
 **READ_***     | \*---    | Copies the value that specified address is pointing to into register.  
 **WRITE_***    | \*--\*   | Copies value of the register to the address, that specified address is pointing to.  
 **PRINT**      | \*-\*\*  | Copies the value at the specified address to the last address of data ram, thus sends it to the printer.
-**READ_REG**   | -\*\*\*-\*\*- | Copies the value that register is pointing to into register.  
+**READ_REG**   | <code>-***-**-</code> | Copies the value that register is pointing to into register.  
 
 ### Arithmetic
  _Name_        | _Code_   | _Description_  
