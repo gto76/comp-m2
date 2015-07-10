@@ -71,35 +71,35 @@ Instruction set
 **WRITE**      | ---\*    | Copies value of the register to the specified address. 
 **READ_***     | \*---    | Copies the value that specified address is pointing to into register.  
 **WRITE_***    | \*--\*   | Copies value of the register to the address, that specified address is pointing to.  
+**PRINT**      | \*-\*\*  | Copies the value at the specified address to the last address of data ram, thus sends it to the printer.
+**READ_REG**   | -\*\*\*-\*\*- | Copies the value that register is pointing to into register.  
 
 ### Arithmetic
  _Name_        | _Code_   | _Description_  
 :------------- |:--------:| ---------------------------------------------------
 **ADD**        | --\*--   | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
 **SUB**        | --\*-\*  | Subtracts value at the speicfied address from the value of the register, and writes result to the register. If result is smaller than _0_, then _0_ gets written.  
-**INC**        | --\*--   | Adds 1 to value at the specified address. 
-**DEC**        | --\*-\*  | Subtracts 1 from value at the speicfied address.
-**ADD_IMD**    | -\*\*\*  | Adds specified value to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
-**SUB_IMD**    | \*\*\*\* | Subtracts specified value from the value of the register, and writes result to the register. If result is smaller than _0_, then _0_ gets written.
+**INC**        | --\*--   | Adds 1 to value at the specified address, and copies it to the register.
+**DEC**        | --\*-\*  | Subtracts 1 from value at the speicfied address, and copies it to the register.
 
 ### Bitwise/Logic
- _Name_        | _Code_   | _Description_  
-:------------- |:--------:| ---------------------------------------------------
-**SHIFT_L**    | \*-\*--  | Moves bits in the register to the left. Remaining three bits specify the number of spots that they get moved.
-**SHIFT_R**    | \*-\*-\* | Moves bits in the register to the right. Remaining three bits specify the number of spots that they get moved.
-**AND**        | \*-\*\*- | Bitwise AND is executed between the value of the register and value at the specified address, and result is written to the register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data memory.
-**OR**         | \*-\*\*\*| Bitwise OR is executed between the value of the register and value at the specified address, and result is written to the register. Since only three bits are used for the address, this instruction can only be used with first eight addresses of the data memory.
+ _Name_        | _Code_        | _Description_  
+:------------- |:-------------:| ---------------------------------------------------
+**SHIFT_L**    | -\*\*\*----   | Moves bits in the register one spot to the left.
+**SHIFT_R**    |  -\*\*\*---\* | Moves bits in the register one spot to the right.
+**AND**        | -\*\*\*--\*-  | Bitwise AND is executed between the value of the register and value at the first address of data ram, and result is written to the register.
+**OR**         | -\*\*\*--\*\* | Bitwise OR is executed between the value of the register and value at the first address of data ram, and result is written to the register.
+**NOT**        | -\*\*\*-\*--  | Changes value of every bit in the the register. 
 
 ### Execution Control
  _Name_        | _Code_   | _Description_  
 :------------- |:--------:| ---------------------------------------------------
 **JUMP**       | -\*--    | Changes the value of the program counter to the specified address, meaning that in the next cycle execution will continue at that address.  
-**JUMP_***     | \*\*--   | Changes the value of the program counter to the value stored at the specified address.
 **IF_MAX**     | -\*-\*   | Jumps to the specified address if register has value _255_ = '********'. 
 **IF_MIN**     | -\*\*-   | Jumps to the specified address if register has value _0_ = '--------'. 
 **IF_NOT_MAX** | \*\*-*   | Jumps to the specified address if register does not have value _255_ = '********'. 
 **IF_NOT_MIN** | \*\*\*-  | Jumps to the specified address if register does not have value _0_ = '--------'. 
-
+**JUMP_REG**   | -\*\*\*-\*\*\* | Jumps to the address that register is pointing to.
 
 Non-interactive mode
 --------------------
@@ -107,7 +107,8 @@ Non-interactive mode is started if input is piped to the program.
 
 In this mode computer prints to 'stdout', there is no user interface, there is no pause between cycles, and when program reads from last address, instead of random value, it gets one word from 'stdin' (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If word starts with a digit, then it is red as a number and converted appropriately.
 
-### Examples
+Examples
+--------
 * Multiplication:
 ```
 $ echo "3 4" | ./comp examples/mulToSum | ./comp examples/sumAll
