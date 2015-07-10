@@ -288,3 +288,20 @@ vector<bool> Util::bitwiseAndOrOr(vector<bool> value1, vector<bool> value2,
 	}
 	return out;
 }
+
+vector<bool> Util::bitwiseNot(vector<bool> val) {
+	for (size_t i = 0; i < val.size(); i++) {
+		val.at(i) = !val.at(i);
+	}
+	return val;
+}
+
+vector<bool> Util::getFirstAddress() {
+	return vector<bool> (ADDR_SIZE, false);
+}
+
+vector<bool> Util::getLastAddress() {
+	return vector<bool> (ADDR_SIZE, true);
+}
+
+

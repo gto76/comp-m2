@@ -5,19 +5,19 @@ PC AD  CODE         |  [rrrrrrrr]  |         DATA   AD
  _ _ ________       |______________|       ________ _  
 |p|d|aaaaaaaa| ---- |i| READ       | ---- |bbbbbbbb|s| 
 |p|d|aaaaaaaa| ---* |i| WRITE      | ---* |bbbbbbbb|s| 
-|p|d|aaaaaaaa| --*- |i| ADD/SUB    | --*- |bbbbbbbb|s| 
-|p|d|aaaaaaaa| --** |i| INC/DEC    | --** |bbbbbbbb|s|           PRINTER  
+|p|d|aaaaaaaa| --*- |i| ADD        | --*- |bbbbbbbb|s| 
+|p|d|aaaaaaaa| --** |i| SUB        | --** |bbbbbbbb|s|           PRINTER  
 |p|d|aaaaaaaa| -*-- |i| JUMP       | -*-- |bbbbbbbb|s|   ________________________ 
 |p|d|aaaaaaaa| -*-* |i| IF MAX     | -*-* |bbbbbbbb|s|  |                        |
 |p|d|aaaaaaaa| -**- |i| IF MIN     | -**- |bbbbbbbb|s| (|   |=============[]=|   |)
-|p|d|aaaaaaaa| -*** |i| ADD IMD    | -*** |bbbbbbbb|s|  |__ _ ______________ _ __|
+|p|d|aaaaaaaa| -*** |i| <<>>&|^=JR | -*** |bbbbbbbb|s|  |__ _ ______________ _ __|
 |p|d|aaaaaaaa| *--- |i| READ *     | *--- |bbbbbbbb|s|   | oooooooooooooooooooo | 
 |p|d|aaaaaaaa| *--* |i| WRITE *    | *--* |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|d|aaaaaaaa| *-*- |i| SHIFT L/R  | *-*- |bbbbbbbb|s|   | oooooooooooooooooooo | 
-|p|d|aaaaaaaa| *-** |i| AND/OR     | *-** |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|d|aaaaaaaa| **-- |i| JUMP *     | **-- |bbbbbbbb|s|   | oooooooooooooooooooo |
+|p|d|aaaaaaaa| *-*- |i| INC/DEC    | *-*- |bbbbbbbb|s|   | oooooooooooooooooooo | 
+|p|d|aaaaaaaa| *-** |i| PRINT      | *-** |bbbbbbbb|s|   | oooooooooooooooooooo |
+|p|d|aaaaaaaa| **-- |i|            | **-- |bbbbbbbb|s|   | oooooooooooooooooooo |
 |p|d|aaaaaaaa| **-* |i| IF NOT MAX | **-* |bbbbbbbb|s|   | oooooooooooooooooooo |
 |p|d|aaaaaaaa| ***- |i| IF NOT MIN | ***- |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|d|  STOP  | **** |i| SUB IMD    | **** | IN/OUT |s|   | oooooooooooooooooooo |
+|p|d|  STOP  | **** |i|            | **** | IN/OUT |s|   | oooooooooooooooooooo |
  ############        ##############        ##########     ###################### 
   []      [] \______/ []        [] \______/ []    [] \___/ []                [] 

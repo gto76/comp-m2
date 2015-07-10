@@ -77,7 +77,7 @@ char Renderer::getLightbulb(char cIn) {
 			return getFormattedOutput(i);
 	}
 	fprintf(stderr, "There was an error parsing a drawing file."
-					" Problem with char %c", cIn);
+					" Problem with char %c. Will ignore it.", cIn);
 	return ' ';
 }
 

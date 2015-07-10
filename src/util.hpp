@@ -37,6 +37,9 @@ class Util {
 		static int getSignedIntFromNibble(vector<bool> value);
 		static vector<bool> bitwiseAndOrOr(vector<bool> value1, 
 										   vector<bool> value2, bool isAnd);
+		static vector<bool> bitwiseNot(vector<bool> val);
+		static vector<bool> getFirstAddress();
+		static vector<bool> getLastAddress();
 
 	private:
 		static vector<bool> getBool(int num, int length);
