@@ -44,7 +44,7 @@ Overview
 instruction code - 4 bits
   |  +-- address - 4 bits
   v  v
-----***-  ->  READ 14
+----***-  ->  READ 14  ->  Copy value stored at address 14 of "DATA" ram to register.
 ```
 * All addresses specified by instructions refer to "DATA" ram, except for addresses of "Execution Control" instructions (JUMP, IF MAX, IF MIN...). They refer to "CODE" part of ram.
 * Some instructions (logic, READ REG, JUMP REG) do not specify address. They operate on register (SHIFT L/R, NOT, ...) or between register and first address of "DATA" ram (AND, OR, ...)
@@ -73,15 +73,6 @@ Instruction set
 **INC**        | --\*--   | Adds 1 to value at the specified address, and copies it to the register.
 **DEC**        | --\*-\*  | Subtracts 1 from value at the speicfied address, and copies it to the register.
 
-### Bitwise/Logic
- _Name_        | _Code_        | _Description_  
-:------------- |:-------------:| ---------------------------------------------------
-**SHIFT_L**    | -\*\*\*----   | Moves bits in the register one spot to the left.
-**SHIFT_R**    |  -\*\*\*---\* | Moves bits in the register one spot to the right.
-**AND**        | -\*\*\*--\*-  | Bitwise AND is executed between the value of the register and value at the first address of data ram, and result is written to the register.
-**OR**         | -\*\*\*--\*\* | Bitwise OR is executed between the value of the register and value at the first address of data ram, and result is written to the register.
-**NOT**        | -\*\*\*-\*--  | Changes value of every bit in the the register. 
-
 ### Execution Control
  _Name_        | _Code_   | _Description_  
 :------------- |:--------:| ---------------------------------------------------
@@ -92,11 +83,22 @@ Instruction set
 **IF_NOT_MIN** | \*\*\*-  | Jumps to the specified address if register does not have value _0_ = '--------'. 
 **JUMP_REG**   | -\*\*\*-\*\*\* | Jumps to the address that register is pointing to.
 
+### Bitwise/Logic
+ _Name_        | _Code_        | _Description_  
+:------------- |:-------------:| ---------------------------------------------------
+**SHIFT_L**    | -\*\*\*----   | Moves bits in the register one spot to the left.
+**SHIFT_R**    |  -\*\*\*---\* | Moves bits in the register one spot to the right.
+**AND**        | -\*\*\*--\*-  | Bitwise AND is executed between the value of the register and value at the first address of data ram, and result is written to the register.
+**OR**         | -\*\*\*--\*\* | Bitwise OR is executed between the value of the register and value at the first address of data ram, and result is written to the register.
+**NOT**        | -\*\*\*-\*--  | Changes value of every bit in the the register. 
+
 Non-interactive mode
 --------------------
-Non-interactive mode is started if input is piped to the program. 
-
-In this mode computer prints to 'stdout', there is no user interface, there is no pause between cycles, and when program reads from last address, instead of random value, it gets one word from 'stdin' (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If word starts with a digit, then it is red as a number and converted appropriately.
+Non-interactive mode is started if input is piped to the program. In this mode:  
+* computer prints to 'stdout', 
+* there is no user interface, 
+* there is no pause between cycles, 
+* and when program reads from last address, it gets one word from 'stdin' (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If word starts with a digit, then it is red as a number and converted appropriately.
 
 Examples
 --------
