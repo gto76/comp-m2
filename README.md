@@ -31,35 +31,26 @@ Keys
 * `k` - move word down
 * `s` - save ram in textfile named `saved-ram-<num>`. To load it, start program with `./comp <file>`
 
-Memory
-------
-```
-instructions - 4 bits
-  |  +-- addresses - 4 bits
-  v  v
-----***-  <- 0  ----
---*-**-*  <- 1  ---*
----***--  <- 2  --*-
----*****  <- 3  --**
-----***-  <- 4  -*--
----***-*  <- 5  -*-*
-----**--  <- 6  -**-
----****-  <- 7  -***
--***---*  <- 8  *---
--*--****  <- 9  *--*
---------  <- 10 *-*-
---------  <- 11 *-**
---------  <- 12 **--
--------*  <- 13 **-*
--------*  <- 14 ***-
-<OUTPUT>  <- 15 ****
-```
+Overview
+--------
 
-* Execution starts at the first address (0). 
-* Execution stops when program reaches last address (15).
-* Whatever gets written to the last address is sent to the printer.
-* Computer has one 8 bit register.
-* When reading from the last address (15), we get a random byte value.
+* Procesor has one 8 bit register.
+* Ram is separated into two address spaces; one for instructions, called "CODE", and one for data, called "DATA".
+* All instructions are 8 bits long.
+* Execution starts at the first address (0) of "CODE" ram. 
+* Execution stops when program reaches last address (15) of "CODE" ram.
+* Most of instructions consist of instruction code and address:
+```
+instruction code - 4 bits
+  |  +-- address - 4 bits
+  v  v
+----***-  ->  READ 14
+```
+* All addresses specified by instructions refer to "DATA" ram, except for addresses of "Execution Control" instructions (JUMP, IF MAX, IF MIN...). They refer to "CODE" part of ram.
+* Some instructions (logic, READ REG, JUMP REG) do not specify address. They operate on register (SHIFT L/R, NOT, ...) or between register and first address of "DATA" ram (AND, OR, ...)
+* Whatever gets written to the last address is sent to the printer, or to 'stdout' if program is running in non-interactive mode.
+* When reading from the last address (15), we get a random byte value, or a single word from 'stdin' if program is running in non-interactive mode.
+
 
 Instruction set
 ---------------
