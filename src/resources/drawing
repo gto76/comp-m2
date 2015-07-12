@@ -10,7 +10,7 @@ PC AD  CODE         |  [rrrrrrrr]  |         DATA   AD
 |p|d|aaaaaaaa| -*-- |i| JUMP       | -*-- |bbbbbbbb|s|    ________________________ 
 |p|d|aaaaaaaa| -*-* |i| IF MAX     | -*-* |bbbbbbbb|s|   |                        |
 |p|d|aaaaaaaa| -**- |i| IF MIN     | -**- |bbbbbbbb|s|  (|   |=============[]=|   |)
-|p|d|aaaaaaaa| -*** |i| <>&OR^=JR  | -*** |bbbbbbbb|s|   |__ _ ______________ _ __|
+|p|d|aaaaaaaa| -*** |i| <>&OR~=JR  | -*** |bbbbbbbb|s|   |__ _ ______________ _ __|
 |p|d|aaaaaaaa| *--- |i| READ *     | *--- |bbbbbbbb|s|    | oooooooooooooooooooo | 
 |p|d|aaaaaaaa| *--* |i| WRITE *    | *--* |bbbbbbbb|s|    | oooooooooooooooooooo |
 |p|d|aaaaaaaa| *-*- |i| INC/DEC    | *-*- |bbbbbbbb|s|    | oooooooooooooooooooo | 
