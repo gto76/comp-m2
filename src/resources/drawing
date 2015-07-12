@@ -2,22 +2,22 @@
                      ______________  
                     |              | 
 PC AD  CODE         |  [rrrrrrrr]  |         DATA   AD
- _ _ ________       |______________|       ________ _  
-|p|d|aaaaaaaa| ---- |i| READ       | ---- |bbbbbbbb|s| 
-|p|d|aaaaaaaa| ---* |i| WRITE      | ---* |bbbbbbbb|s| 
-|p|d|aaaaaaaa| --*- |i| ADD        | --*- |bbbbbbbb|s| 
-|p|d|aaaaaaaa| --** |i| SUB        | --** |bbbbbbbb|s|           PRINTER  
-|p|d|aaaaaaaa| -*-- |i| JUMP       | -*-- |bbbbbbbb|s|   ________________________ 
-|p|d|aaaaaaaa| -*-* |i| IF MAX     | -*-* |bbbbbbbb|s|  |                        |
-|p|d|aaaaaaaa| -**- |i| IF MIN     | -**- |bbbbbbbb|s| (|   |=============[]=|   |)
-|p|d|aaaaaaaa| -*** |i| <>&OR^=JR  | -*** |bbbbbbbb|s|  |__ _ ______________ _ __|
-|p|d|aaaaaaaa| *--- |i| READ *     | *--- |bbbbbbbb|s|   | oooooooooooooooooooo | 
-|p|d|aaaaaaaa| *--* |i| WRITE *    | *--* |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|d|aaaaaaaa| *-*- |i| INC/DEC    | *-*- |bbbbbbbb|s|   | oooooooooooooooooooo | 
-|p|d|aaaaaaaa| *-** |i| PRINT      | *-** |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|d|aaaaaaaa| **-- |i|            | **-- |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|d|aaaaaaaa| **-* |i| IF NOT MAX | **-* |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|d|aaaaaaaa| ***- |i| IF NOT MIN | ***- |bbbbbbbb|s|   | oooooooooooooooooooo |
-|p|d|  STOP  | **** |i|            | **** | IN/OUT |s|   | oooooooooooooooooooo |
- ############        ##############        ##########     ###################### 
-  []      [] \______/ []        [] \______/ []    [] \___/ []                [] 
+ _ _ ________       |______________|       ________ _   
+|p|d|aaaaaaaa| ---- |i| READ       | ---- |bbbbbbbb|s|  
+|p|d|aaaaaaaa| ---* |i| WRITE      | ---* |bbbbbbbb|s|  
+|p|d|aaaaaaaa| --*- |i| ADD        | --*- |bbbbbbbb|s|  
+|p|d|aaaaaaaa| --** |i| SUB        | --** |bbbbbbbb|s|            PRINTER  
+|p|d|aaaaaaaa| -*-- |i| JUMP       | -*-- |bbbbbbbb|s|    ________________________ 
+|p|d|aaaaaaaa| -*-* |i| IF MAX     | -*-* |bbbbbbbb|s|   |                        |
+|p|d|aaaaaaaa| -**- |i| IF MIN     | -**- |bbbbbbbb|s|  (|   |=============[]=|   |)
+|p|d|aaaaaaaa| -*** |i| <>&OR^=JR  | -*** |bbbbbbbb|s|   |__ _ ______________ _ __|
+|p|d|aaaaaaaa| *--- |i| READ *     | *--- |bbbbbbbb|s|    | oooooooooooooooooooo | 
+|p|d|aaaaaaaa| *--* |i| WRITE *    | *--* |bbbbbbbb|s|    | oooooooooooooooooooo |
+|p|d|aaaaaaaa| *-*- |i| INC/DEC    | *-*- |bbbbbbbb|s|    | oooooooooooooooooooo | 
+|p|d|aaaaaaaa| *-** |i| PRINT      | *-** |bbbbbbbb|s|    | oooooooooooooooooooo |
+|p|d|aaaaaaaa| **-- |i|            | **-- |bbbbbbbb|s|    | oooooooooooooooooooo |
+|p|d|aaaaaaaa| **-* |i| IF NOT MAX | **-* |bbbbbbbb|s|    | oooooooooooooooooooo |
+|p|d|aaaaaaaa| ***- |i| IF NOT MIN | ***- |bbbbbbbb|s|    | oooooooooooooooooooo |
+|p|d|  STOP  | **** |i|            | **** | IN/OUT |s|    | oooooooooooooooooooo |
+ ############        ##############        ##########      ###################### 
+  []      [] \______/ []        [] \______/ []    [] \____/ []                [] 
