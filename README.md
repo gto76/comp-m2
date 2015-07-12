@@ -35,10 +35,10 @@ Overview
 --------
 
 * Processor has one 8 bit register.
-* Ram is separated into two address spaces; one for instructions, called "CODE", and one for data, called "DATA".
+* Ram is separated into two address spaces; one for instructions, called CODE, and one for data, called DATA.
 * All instructions are 8 bits long.
-* Execution starts at the first address (0) of "CODE" ram. 
-* Execution stops when program reaches last address (15) of "CODE" ram.
+* Execution starts at the first address (0) of CODE ram. 
+* Execution stops when program reaches last address (15) of CODE ram.
 * Most of instructions consist of instruction code and address:
 ```
 instruction code - 4 bits
@@ -46,8 +46,8 @@ instruction code - 4 bits
   v  v
 ----***-  ->  READ 14  ->  Copy value stored at address 14 of "DATA" ram to register.
 ```
-* All addresses specified by instructions refer to "DATA" ram, except for addresses of "Execution Control" instructions (JUMP, IF MAX, IF MIN...). They refer to "CODE" part of ram.
-* Some instructions (logic, READ REG, JUMP REG) do not specify address. They operate on register (SHIFT L/R, NOT, ...) or between register and first address of "DATA" ram (AND, OR, ...)
+* All addresses specified by instructions refer to DATA ram, except for addresses of "Execution Control" instructions (JUMP, IF MAX, IF MIN...). They refer to CODE part of ram.
+* Some instructions (logic, READ REG, JUMP REG) do not specify address. They operate on register (SHIFT L/R, NOT, ...) or between register and first address of DATA ram (AND, OR, ...)
 * Whatever gets written to the last address is sent to the printer, or to 'stdout' if program is running in non-interactive mode.
 * When reading from the last address (15), we get a random byte value, or a single word from 'stdin' if program is running in non-interactive mode.
 
