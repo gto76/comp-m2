@@ -66,9 +66,9 @@ char Renderer::getLightbulb(char cIn) {
 		case 'p':
 			return Util::getChar(pcIsPointingToAddress(i));
 		case 'd':
-			return Util::getChar(pointingToCodeAddress(i));
+			return Util::getChar(pointingToAddress(CODE, i));
 		case 's':
-			return Util::getChar(pointingToDataAddress(i));
+			return Util::getChar(pointingToAddress(DATA, i));
 		case 'r':
 			return  Util::getChar(cpu.getRegister().at(i));
 		case 'i':
@@ -82,7 +82,8 @@ char Renderer::getLightbulb(char cIn) {
 }
 
 bool Renderer::pcIsPointingToAddress(int adr) {
-	if (machineNotActive()) {
+	bool executionHasntStarted = cpu.getCycle() == 0;
+	if (executionHasntStarted) {
 		return false;
 	}
 	return Util::getInt(cpu.getPc()) == adr;
@@ -94,31 +95,24 @@ bool Renderer::machineNotActive() {
 	return executionHasntStarted || executionEnded;
 }
 
-bool Renderer::pointingToCodeAddress(int adr) {
+/*
+ * Is instruction pointing to passed address in passed address space.
+ */
+bool Renderer::pointingToAddress(AddrSpace addrSpace, int adr) {
 	if (machineNotActive()) {
 		return false;
 	}
-	if (!cpu.hasCodeAddress()) {
+	if (!cpu.hasAddress(addrSpace)) {
 		return false;
 	}
-	return cpu.getCodeAddress() == Util::getBoolNibb(adr);
-}
-
-bool Renderer::pointingToDataAddress(int adr) {
-	if (machineNotActive()) {
-		return false;
-	}
-	if (!cpu.hasDataAddress()) {
-		return false;
-	}
-	return cpu.getDataAddress() == Util::getBoolNibb(adr);
+	return cpu.getAddress() == Util::getBoolNibb(adr);
 }
 
 bool Renderer::instructionHasId(int id) {
 	if (machineNotActive()) {
 		return false;
 	}
-	return Util::getInt(cpu.getInstructionCode()) == id;
+	return cpu.getInstructionCodeInt() == id;
 }
 
 char Renderer::getFormattedOutput(int i) {

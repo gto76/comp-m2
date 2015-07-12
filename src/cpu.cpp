@@ -10,6 +10,17 @@
 
 using namespace std;
 
+// STATIC FIELDS
+const map<AddrSpace, set<int>> Cpu::INST_WITH_ADDRESS = { 
+	{ DATA, { 0, 1, 2, 3, 8, 9, 10, 11 } },
+	{ CODE, { 4, 5, 6, 13, 14 } }
+};
+const map<AddrSpace, set<int>> Cpu::LOGIC_INST_WITH_ADDRESS = { 
+	{ DATA, { 2, 3, 5, 7 } },
+	{ CODE, { 6 } }
+};
+const int Cpu::LOGIC_INST_ID = 7;
+const set<int> Cpu::INST_WITH_3_BIT_ADDRESS = { 10 };
 
 /////////////////////////
 /////// INTERFACE ///////
@@ -31,40 +42,58 @@ vector<bool> Cpu::getInstructionCode() {
 	return Util::getFirstNibble(ram.get(CODE, pc));
 }
 
+int Cpu::getInstructionCodeInt() {
+	vector<bool> instructionCodeBool = getInstructionCode();
+	return Util::getInt(instructionCodeBool);
+}
+
 vector<bool> Cpu::getValue() {
 	return Util::getSecondNibble(ram.get(CODE, pc));
 }
 
-bool Cpu::hasDataAddress() {
-	vector<bool> instructionCodeBool = getInstructionCode();
-	int instCode = Util::getInt(instructionCodeBool);
-	set<int> instWithoutDataAddress = { 4, 5, 6, 7, 10, 13, 14, 15 };
-	return instWithoutDataAddress.count(instCode) == 0;
+/*
+ * Used by renderer, to check to which address space instruction 
+ * points to. Not for use by 'cpu' class.
+ */
+bool Cpu::hasAddress(AddrSpace addrSpace) {
+	int instCode = getInstructionCodeInt();
+	vector<bool> valueBool = getValue();
+	int value = Util::getInt(valueBool);
+	bool hasAddress = INST_WITH_ADDRESS.at(addrSpace).count(instCode) == 1;
+	bool isLogicInstWithAddress = (instCode == LOGIC_INST_ID) &&
+			(LOGIC_INST_WITH_ADDRESS.at(addrSpace).count(value) == 1);
+	return hasAddress || isLogicInstWithAddress;
 }
 
-vector<bool> Cpu::getDataAddress() {
-	vector<bool> instructionCodeBool = getInstructionCode();
-	int instCode = Util::getInt(instructionCodeBool);
-
+/*
+ * Used by renderer, for indication of where does instructin point to.
+ * Not for use by 'cpu' class.
+ */
+vector<bool> Cpu::getAddress() {
+	int instCode = getInstructionCodeInt();
+	vector<bool> value = getValue();
+	// If it's logic operation.
+	if (instCode == LOGIC_INST_ID) {
+		int valueCode = Util::getInt(value);
+		switch (valueCode) {
+			case 6:
+			case 7:
+				return Util::getSecondNibble(reg);
+				break;
+			default:
+				return Util::getFirstAddress();
+		}
+	}
 	// If instruction has only 3 bits for address.
-	set<int> instWith3bitAddress = { 2, 3, 11 };
-	if (instWith3bitAddress.count(instCode) == 1) {
+	else if (INST_WITH_3_BIT_ADDRESS.count(instCode) == 1) {
 		vector<bool> value = getValue();
 		return { false, value.at(1), value.at(2), value.at(3) };
+	// If instruction address is a pointer to another address.
+	} else if (instCode == 8 || instCode == 9) {
+		return Util::getSecondNibble(ram.get(DATA, value));
 	} else { 
 		return Util::getSecondNibble(ram.get(CODE, pc));
-	}
-}
-
-bool Cpu::hasCodeAddress() {
-	vector<bool> instructionCodeBool = getInstructionCode();
-	int instCode = Util::getInt(instructionCodeBool);
-	set<int> instWithCodeAddress = { 4, 5, 6, 13, 14 };
-	return instWithCodeAddress.count(instCode) == 1;
-}
-
-vector<bool> Cpu::getCodeAddress() {
-	return Util::getSecondNibble(ram.get(CODE, pc));
+	} // TODO *
 }
 
 /*
@@ -77,8 +106,7 @@ bool Cpu::step() {
 		return false;
 	}
 
-	vector<bool> instructionCodeBool = getInstructionCode();
-	int instCode = Util::getInt(instructionCodeBool);
+	int instCode = getInstructionCodeInt();
 	vector<bool> value = getValue();
 
 	switch (instCode) {

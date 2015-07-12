@@ -2,8 +2,11 @@
 #define CPU_H
 
 #include <stdio.h>
+#include <map>
+#include <set>
 #include <vector>
 
+#include "addr_space.hpp"
 #include "const.hpp"
 
 using namespace std;
@@ -15,13 +18,17 @@ class Cpu {
 		vector<bool> getRegister();
 		vector<bool> getPc();
 		vector<bool> getInstructionCode();
+		int getInstructionCodeInt();
 		vector<bool> getValue();
-		bool hasCodeAddress();
-		vector<bool> getCodeAddress();
-		bool hasDataAddress();
-		vector<bool> getDataAddress();
+		bool hasAddress(AddrSpace addrSpace);
+		vector<bool> getAddress();
 		int getCycle();
 	private:
+		// STATIC FIELDS
+		static const map<AddrSpace, set<int>> INST_WITH_ADDRESS;
+		static const map<AddrSpace, set<int>> LOGIC_INST_WITH_ADDRESS;
+		static const int LOGIC_INST_ID;
+		static const set<int> INST_WITH_3_BIT_ADDRESS;
 		// STATE
 		vector<bool> reg = vector<bool>(WORD_SIZE);
 		vector<bool> pc = vector<bool>(ADDR_SIZE);
