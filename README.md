@@ -34,7 +34,7 @@ Keys
 Overview
 --------
 
-* Procesor has one 8 bit register.
+* Processor has one 8 bit register.
 * Ram is separated into two address spaces; one for instructions, called "CODE", and one for data, called "DATA".
 * All instructions are 8 bits long.
 * Execution starts at the first address (0) of "CODE" ram. 
@@ -69,9 +69,9 @@ Instruction set
  _Name_        | -_Code_-   | _Description_  
 :------------- |:--------:| ---------------------------------------------------
 **ADD**        | --\*--   | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
-**SUB**        | --\*-\*  | Subtracts value at the speicfied address from the value of the register, and writes result to the register. If result is smaller than _0_, then _0_ gets written.  
+**SUB**        | --\*-\*  | Subtracts value at the specified address from the value of the register, and writes result to the register. If result is smaller than _0_, then _0_ gets written.  
 **INC**        | --\*--   | Adds 1 to value at the specified address, and copies it to the register.
-**DEC**        | --\*-\*  | Subtracts 1 from value at the speicfied address, and copies it to the register.
+**DEC**        | --\*-\*  | Subtracts 1 from value at the specified address, and copies it to the register.
 
 ### Execution Control
  _Name_        | -_Code_-   | _Description_  
