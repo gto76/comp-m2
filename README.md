@@ -94,7 +94,7 @@ Instruction set
 
 Non-interactive mode
 --------------------
-Non-interactive mode is started if input is piped to the program. In this mode:  
+Non-interactive mode is started if any input is piped to the program. In this mode:  
 * computer prints to 'stdout', 
 * there is no user interface, 
 * there is no pause between cycles, 
