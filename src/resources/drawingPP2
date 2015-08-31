@@ -1,0 +1,23 @@
+       CPU                        
+ ________________ 
+|                | 
+|   [rrrrrrrr]   |         INST   PC         DATA   AD 
+|________________|       ________ _        ________ _   
+| [i] READ       | ---- |aaaaaaaa|p| ---- |bbbbbbbb|s|  
+| [i] WRITE      | ---* |aaaaaaaa|p| ---* |bbbbbbbb|s|  
+| [i] ADD        | --*- |aaaaaaaa|p| --*- |bbbbbbbb|s|  
+| [i] SUBTRACT   | --** |aaaaaaaa|p| --** |bbbbbbbb|s|            PRINTER  
+| [i] JUMP IMD   | -*-- |aaaaaaaa|p| -*-- |bbbbbbbb|s|    ________________________ 
+| [i] IF MAX     | -*-* |aaaaaaaa|p| -*-* |bbbbbbbb|s|   |                        |
+| [i] IF MIN     | -**- |aaaaaaaa|p| -**- |bbbbbbbb|s|  (|   |=============[]=|   |)
+| [i] SHIFT L/R  | -*** |aaaaaaaa|p| -*** |bbbbbbbb|s|   |__ _ ______________ _ __|
+| [i] WRITE IN   | *--- |aaaaaaaa|p| *--- |bbbbbbbb|s|    | oooooooooooooooooooo | 
+| [i] WRITE OUT  | *--* |aaaaaaaa|p| *--* |bbbbbbbb|s|    | oooooooooooooooooooo |
+| [i] ADD IMD    | *-*- |aaaaaaaa|p| *-*- |bbbbbbbb|s|    | oooooooooooooooooooo | 
+| [i] SUB IMD    | *-** |aaaaaaaa|p| *-** |bbbbbbbb|s|    | oooooooooooooooooooo |
+| [i] JUMP       | **-- |aaaaaaaa|p| **-- |bbbbbbbb|s|    | oooooooooooooooooooo |
+| [i] IF NOT MAX | **-* |aaaaaaaa|p| **-* |bbbbbbbb|s|    | oooooooooooooooooooo |
+| [i] IF NOT MIN | ***- |aaaaaaaa|p| ***- |bbbbbbbb|s|    | oooooooooooooooooooo |
+| [i] AND/OR     | **** |  STOP  |p| **** | IN/OUT |s|    | oooooooooooooooooooo |
+ ################        ##########        ##########      ###################### 
+  []          [] \______/ []    [] \______/ []    [] \____/ []                [] 
