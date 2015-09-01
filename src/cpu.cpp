@@ -22,6 +22,12 @@ const map<AddrSpace, set<int>> Cpu::LOGIC_INST_WITH_ADDRESS = {
 const int Cpu::LOGIC_INST_ID = 7;
 const set<int> Cpu::INST_WITH_3_BIT_ADDRESS = { 10 };
 
+// set<int> codeIndexes = INST_WITH_ADDRESS.at(CODE)
+// condeIndexes.insert(LOGIC_INST_WITH_ADDRESS.at(CODE))
+
+// set<int> dataIndexes = INST_WITH_ADDRESS.at(DATA)
+// dataIndexes.insert(LOGIC_INST_WITH_ADDRESS.at(DATA))
+
 /////////////////////////
 /////// INTERFACE ///////
 /////////////////////////
@@ -430,3 +436,47 @@ bool Cpu::getRegBit(int index) {
 	}
 	return reg.at(index);
 }
+
+int Cpu::getInstructionCodeOfInstruction(vector<bool> instruction) {
+	vector<bool> instructionCodeBool = Util::getFirstNibble(instruction);
+	return Util::getInt(instructionCodeBool);
+}
+
+int Cpu::getValueCodeOfInstruction(vector<bool> instruction) {
+	vector<bool> valueCodeBool = Util::getSecondNibble(instruction);
+	return Util::getInt(valueCodeBool);
+}
+
+AddrSpace Cpu::getAddressSpaceOfInstruction(vector<bool> instruction) {
+	int instCode = getInstructionCodeOfInstruction(instruction);
+	int valueCode = getValueCodeOfInstruction(instruction);
+
+	bool hasCodeAddress = INST_WITH_ADDRESS.at(CODE).count(instCode) == 1;
+	bool isLogicOpWithCodeCodeAddress = (instCode == LOGIC_INST_ID) &&
+			(LOGIC_INST_WITH_ADDRESS.at(CODE).count(valueCode) == 1);
+
+	if (hasCodeAddress || isLogicOpWithCodeCodeAddress) {
+		return CODE;
+	} else {
+		return DATA;
+	}
+}
+
+vector<bool> Cpu::getAddressOfInstruction(vector<bool> instruction, Ram ram) {
+	int instCode = getInstructionCodeOfInstruction(instruction);
+	vector<bool> value = Util::getSecondNibble(instruction);
+	// If it's logic operation.
+	if (instCode == LOGIC_INST_ID) {
+		return Util::getFirstAddress();
+	}
+	// If instruction has only 3 bits for address.
+	else if (INST_WITH_3_BIT_ADDRESS.count(instCode) == 1) {
+		return { false, value.at(1), value.at(2), value.at(3) };
+	// If instruction address is a pointer to another address.
+	} else if (instCode == 8 || instCode == 9) {
+		return Util::getSecondNibble(ram.get(DATA, value));
+	} else { 
+		return value;
+	}
+}
+

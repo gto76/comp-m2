@@ -82,6 +82,10 @@ void Cursor::switchAddressSpace() {
 	}
 }
 
+AddrSpace Cursor::getAddressSpace() {
+	return addrSpace;
+}
+
 /////////// RAM API ////////////
 
 bool Cursor::getBit() {

@@ -7,18 +7,20 @@
 #include "cpu.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
+#include "cursor.hpp"
 
 using namespace std;
 
 class Renderer {
 	public:
-		static string renderState(Printer printerIn, Ram ramIn, Cpu cpuIn);
+		static string renderState(Printer printerIn, Ram ramIn, Cpu cpuIn, Cursor cursorIn);
 
 	private:
-		Renderer (Printer printerIn, Ram ramIn, Cpu cpuIn);
+		Renderer (Printer printerIn, Ram ramIn, Cpu cpuIn, Cursor cursorIn);
 		Printer printer;
 		Ram ram;
 		Cpu cpu;
+		Cursor cursor;
 		// Counts occurances of a char in a drawing.
 		map<char, int> switchIndex;
 		string insertActualValues(string lineIn);

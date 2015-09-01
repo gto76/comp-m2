@@ -12,6 +12,7 @@
 #include "printer.hpp"
 #include "ram.hpp"
 #include "util.hpp"
+#include "cursor.hpp"
 
 using namespace std;
 
@@ -19,8 +20,8 @@ using namespace std;
  * Only public method. Also static. It creates new object every time 
  * it gets called.
  */
-string Renderer::renderState(Printer printerIn, Ram ramIn, Cpu cpuIn) {
-	Renderer instance(printerIn, ramIn, cpuIn);
+string Renderer::renderState(Printer printerIn, Ram ramIn, Cpu cpuIn, Cursor cursorIn) {
+	Renderer instance(printerIn, ramIn, cpuIn, cursorIn);
 	string out;
 	for (string line : Util::splitString(drawing)) {
 		out += instance.insertActualValues(line) + "\n";
@@ -32,10 +33,11 @@ string Renderer::renderState(Printer printerIn, Ram ramIn, Cpu cpuIn) {
 /*
  * Private constructor.
  */
-Renderer::Renderer(Printer printerIn, Ram ramIn, Cpu cpuIn) {
+Renderer::Renderer(Printer printerIn, Ram ramIn, Cpu cpuIn, Cursor cursorIn) {
 	Renderer::printer = printerIn;
 	Renderer::ram = ramIn;
 	Renderer::cpu = cpuIn;
+	Renderer::cursor = cursorIn;
 	switchIndex.clear();
 }
 
@@ -45,7 +47,7 @@ string Renderer::insertActualValues(string lineIn) {
 		char cOut;
 		// Regex: [0-9a-z]
 		bool charIsALightbulb = (cIn >= 'a' && cIn <= 'z') || 
-								(cIn >= '0' && cIn <= '9');
+				(cIn >= '0' && cIn <= '9');
 		if (charIsALightbulb) {
 			cOut = getLightbulb(cIn);
 		} else {
@@ -100,7 +102,19 @@ bool Renderer::machineNotActive() {
  */
 bool Renderer::pointingToAddress(AddrSpace addrSpace, int adr) {
 	if (machineNotActive()) {
-		return false;
+		// TODO
+		int cursorOnData = cursor.getAddressSpace() == DATA;
+		if (cursorOnData) {
+			return false;
+		}
+		vector<bool> instruction = cursor.getWord();
+		AddrSpace instructionsAddrSpace = Cpu::getAddressSpaceOfInstruction(instruction);
+		if (instructionsAddrSpace != addrSpace) {
+			return false;
+		}
+		vector<bool> instructionsAddress = Cpu::getAddressOfInstruction(instruction, ram);
+		bool instructionIsPointingToCurrentAddress = Util::getInt(instructionsAddress) == adr;
+		return instructionIsPointingToCurrentAddress;
 	}
 	if (!cpu.hasAddress(addrSpace)) {
 		return false;
@@ -110,7 +124,13 @@ bool Renderer::pointingToAddress(AddrSpace addrSpace, int adr) {
 
 bool Renderer::instructionHasId(int id) {
 	if (machineNotActive()) {
-		return false;
+		int cursorOnData = cursor.getAddressSpace() == DATA;
+		if (cursorOnData) {
+			return false;
+		}
+		vector<bool> instruction = Util::getFirstNibble(cursor.getWord());
+		int instructionCode = Util::getInt(instruction);
+		return instructionCode == id;
 	}
 	return cpu.getInstructionCodeInt() == id;
 }

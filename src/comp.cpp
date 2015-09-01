@@ -57,7 +57,7 @@ Cursor cursor;
 //////////////////////////
 
 void drawScreen() {
-	string out = Renderer::renderState(printer, ram, cpu);
+	string out = Renderer::renderState(printer, ram, cpu, cursor);
 	buffer = Util::splitString(out);
 	int i = 0;
 	for (string line : buffer) {
@@ -216,11 +216,11 @@ void userInput() {
 				break;
 			case 107:  // k
 				cursor.moveByteUp();
-				redrawScreen();
+				// redrawScreen();
 				break;
 			case 106:  // j
 				cursor.moveByteDown();
-				redrawScreen();
+				// redrawScreen();
 				break;
 			case 115:  // s
 				saveRamToFile();
@@ -234,12 +234,13 @@ void userInput() {
 				break;
 			case 9:  // tab
 				cursor.switchAddressSpace();
-				redrawScreen();
+				// redrawScreen();
 				break;
 			case 10:  // enter
 				run();
 				break;
 		}
+		redrawScreen();
 		highlightCursor(true);
 	}
 }
@@ -298,7 +299,7 @@ void loadRamFromFileStream(ifstream* fileStream) {
 		if (++address >= 2*RAM_SIZE) {
 			return;
 		}
-  	} 
+  } 
 }
 
 void checkIfInputIsPiped() {
@@ -309,14 +310,14 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
 	if (argc <= 1) {
 		return;
 	}
-   	ifstream fileStream;    
+  ifstream fileStream;    
 	fileStream.open(argv[1]);   
 	if (fileStream.fail()) {
-    	fprintf(stderr, "Invalid filename '%s'. Aborting ram load.", argv[1]);
-   	} else {
-   		loadRamFromFileStream(&fileStream);
-      	fileStream.close();  
-   	}
+   	fprintf(stderr, "Invalid filename '%s'. Aborting ram load.", argv[1]);
+  } else {
+   	loadRamFromFileStream(&fileStream);
+    fileStream.close();  
+  }
 }
 
 //////////////////////////

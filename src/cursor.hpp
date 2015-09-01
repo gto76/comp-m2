@@ -16,8 +16,10 @@ using namespace std;
 class Cursor {
 	public:
 		void switchAddressSpace();
+		AddrSpace getAddressSpace();
 
 		//////// COORDINATES API /////////
+
 		int getX();
 		int getY();
 		void increaseX();
@@ -26,6 +28,7 @@ class Cursor {
 		void decreaseY();
 
 		/////////// RAM API ////////////
+
 		bool getBit();
 		void setBit(bool bit);
 		vector<bool> getWord();

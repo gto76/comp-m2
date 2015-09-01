@@ -8,6 +8,7 @@
 
 #include "addr_space.hpp"
 #include "const.hpp"
+#include "ram.hpp"
 
 using namespace std;
 
@@ -23,6 +24,10 @@ class Cpu {
 		bool hasAddress(AddrSpace addrSpace);
 		vector<bool> getAddress();
 		int getCycle();
+
+		static AddrSpace getAddressSpaceOfInstruction(vector<bool> instruction);
+		static vector<bool> getAddressOfInstruction(vector<bool> instruction, Ram ram);
+
 	private:
 		// STATIC FIELDS
 		static const map<AddrSpace, set<int>> INST_WITH_ADDRESS;
@@ -59,6 +64,9 @@ class Cpu {
 		void readReg();
 		void incOrDec(vector<bool> adr, bool isInc);
 		bool getRegBit(int index);
+
+		static int getInstructionCodeOfInstruction(vector<bool> instruction);
+		static int getValueCodeOfInstruction(vector<bool> instruction);
 };
 
 #endif
