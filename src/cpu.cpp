@@ -23,12 +23,6 @@ const map<AddrSpace, set<int>> Cpu::LOGIC_INST_WITH_ADDRESS = {
 const int Cpu::LOGIC_INST_ID = 7;
 const set<int> Cpu::INST_WITH_3_BIT_ADDRESS = { 10 };
 
-// set<int> codeIndexes = INST_WITH_ADDRESS.at(CODE)
-// condeIndexes.insert(LOGIC_INST_WITH_ADDRESS.at(CODE))
-
-// set<int> dataIndexes = INST_WITH_ADDRESS.at(DATA)
-// dataIndexes.insert(LOGIC_INST_WITH_ADDRESS.at(DATA))
-
 /////////////////////////
 /////// INTERFACE ///////
 /////////////////////////
@@ -79,31 +73,6 @@ bool Cpu::hasAddress(AddrSpace addrSpace) {
 vector<bool> Cpu::getAddress() {
 	vector<bool> instruction = ram.get(CODE, pc);
 	return getAddressOfInstruction(instruction, reg, ram);
-
-	// int instCode = getInstructionCodeInt();
-	// vector<bool> value = getValue();
-	// // If it's logic operation.
-	// if (instCode == LOGIC_INST_ID) {
-	// 	int valueCode = Util::getInt(value);
-	// 	switch (valueCode) {
-	// 		case 6:
-	// 		case 7:
-	// 			return Util::getSecondNibble(reg);
-	// 			break;
-	// 		default:
-	// 			return Util::getFirstAddress();
-	// 	}
-	// }
-	// // If instruction has only 3 bits for address.
-	// else if (INST_WITH_3_BIT_ADDRESS.count(instCode) == 1) {
-	// 	vector<bool> value = getValue();
-	// 	return { false, value.at(1), value.at(2), value.at(3) };
-	// // If instruction address is a pointer to another address.
-	// } else if (instCode == 8 || instCode == 9) {
-	// 	return Util::getSecondNibble(ram.get(DATA, value));
-	// } else { 
-	// 	return Util::getSecondNibble(ram.get(CODE, pc));
-	// } // TODO *
 }
 
 /*
@@ -392,22 +361,6 @@ void Cpu::bitwiseNot() {
 	increasePc();
 }
 
-// NOT USED ANYMORE (use xor instead)
-/*
- * Checks if value of the register and value at the first address
- * are the same, and if so sets value of the register to 'max',
- * otherwise to the 'min'.
- */
-// void Cpu::equals() {
-// 	vector<bool> ramValue = ram.get(DATA, Util::getFirstAddress());
-// 	if (ramValue == reg) {
-// 		reg = vector<bool>(WORD_SIZE, true); 
-// 	} else {
-// 		reg = vector<bool>(WORD_SIZE, false);
-// 	}
-// 	increasePc();
-// }
-
 void Cpu::bitwiseXor(int intAdr) {
 	vector<bool> adr = Util::getBoolNibb(intAdr);
 	vector<bool> ramValue = ram.get(DATA, adr);
@@ -476,21 +429,6 @@ int Cpu::getValueCodeOfInstruction(vector<bool> instruction) {
 	return Util::getInt(valueCodeBool);
 }
 
-// bool Cpu::doesInstructionHaveAddress(vector<bool> instruction) {
-// 	int instCode = getInstructionCodeOfInstruction(instruction);
-// 	int valueCode = getValueCodeOfInstruction(instruction);
-// 	bool hasCodeAddress = INST_WITH_ADDRESS.at(CODE).count(instCode) == 1;
-// 	bool isLogicOpWithCodeCodeAddress = (instCode == LOGIC_INST_ID) &&
-// 			(LOGIC_INST_WITH_ADDRESS.at(CODE).count(valueCode) == 1);
-// 	bool hasDataAddress = INST_WITH_ADDRESS.at(DATA).count(instCode) == 1;
-// 	bool isLogicOpWithDataAddress = (instCode == LOGIC_INST_ID) &&
-// 			(LOGIC_INST_WITH_ADDRESS.at(DATA).count(valueCode) == 1);
-// 	return hasCodeAddress 
-// 			|| isLogicOpWithCodeCodeAddress
-// 			|| hasDataAddress 
-// 			|| isLogicOpWithDataAddress;
-// }
-
 AddrSpace Cpu::getAddressSpaceOfInstruction(vector<bool> instruction) {
 	int instCode = getInstructionCodeOfInstruction(instruction);
 	int valueCode = getValueCodeOfInstruction(instruction);
@@ -527,7 +465,6 @@ vector<bool> Cpu::getAddressOfInstruction(vector<bool> instruction, vector<bool>
 	// If it's logic operation.
 	if (instCode == LOGIC_INST_ID) {
 		return getAddressOfLogicInstruction(value, regIn);
-		// return Util::getFirstAddress();
 	}
 	// If instruction has only 3 bits for address.
 	else if (INST_WITH_3_BIT_ADDRESS.count(instCode) == 1) {
