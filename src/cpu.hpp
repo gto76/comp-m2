@@ -64,6 +64,7 @@ class Cpu {
 		void equals();
 		void jumpReg();
 		void readReg();
+		void initializeFirstAddress();
 		void incOrDec(vector<bool> adr, bool isInc);
 		bool getRegBit(int index);
 

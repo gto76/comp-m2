@@ -16,7 +16,7 @@ const map<AddrSpace, set<int>> Cpu::INST_WITH_ADDRESS = {
 	{ CODE, { 4, 5, 6, 13, 14 } }
 };
 const map<AddrSpace, set<int>> Cpu::LOGIC_INST_WITH_ADDRESS = { 
-	{ DATA, { 2, 3, 6, 8, 9, 10, 11, 12, 13, 14, 15 } },
+	{ DATA, { 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 } },
 	{ CODE, { 5 } }
 };
 const int Cpu::LOGIC_INST_ID = 7;
@@ -261,6 +261,7 @@ void Cpu::logic(vector<bool> value) {
 			readReg();
 			break;
 		case 7:
+			initializeFirstAddress();
 			break;
 		case 8:
 		case 9:
@@ -425,8 +426,14 @@ void Cpu::jumpReg() {
  * to the register.
  */
 void Cpu::readReg() {
-	vector<bool> adr =Util::getSecondNibble(reg);
+	vector<bool> adr = Util::getSecondNibble(reg);
 	reg = ram.get(DATA, adr);
+	increasePc();
+}
+
+void Cpu::initializeFirstAddress() {
+	vector<bool> value = ram.get(DATA, { true, false, false, false });
+	ram.set(DATA, Util::getFirstAddress(), value);
 	increasePc();
 }
 
