@@ -317,4 +317,8 @@ vector<bool> Util::getLastAddress() {
 	return vector<bool> (ADDR_SIZE, true);
 }
 
+vector<bool> Util::getEmptyWord() {
+	return { false, false, false, false, false, false, false, false };
+}
+
 

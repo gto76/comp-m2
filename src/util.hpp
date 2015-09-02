@@ -43,6 +43,7 @@ class Util {
 		static vector<bool> bitwiseNot(vector<bool> val);
 		static vector<bool> getFirstAddress();
 		static vector<bool> getLastAddress();
+		static vector<bool> getEmptyWord();
 
 	private:
 		static vector<bool> getBool(int num, int length);

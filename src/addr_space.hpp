@@ -1,6 +1,6 @@
 #ifndef ADDR_SPACE_H
 #define ADDR_SPACE_H
 
-enum AddrSpace { CODE, DATA };
+enum AddrSpace { CODE, DATA, NONE };
 
 #endif

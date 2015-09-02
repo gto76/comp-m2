@@ -17,7 +17,8 @@ const map<AddrSpace, set<int>> Cpu::INST_WITH_ADDRESS = {
 };
 const map<AddrSpace, set<int>> Cpu::LOGIC_INST_WITH_ADDRESS = { 
 	{ DATA, { 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 } },
-	{ CODE, { 5 } }
+	{ CODE, { 5 } },
+	{ NONE, { 0, 1, 4 } }
 };
 const int Cpu::LOGIC_INST_ID = 7;
 const set<int> Cpu::INST_WITH_3_BIT_ADDRESS = { 10 };
@@ -475,7 +476,22 @@ int Cpu::getValueCodeOfInstruction(vector<bool> instruction) {
 	return Util::getInt(valueCodeBool);
 }
 
-bool Cpu::doesInstructionHaveAddress(vector<bool> instruction) {
+// bool Cpu::doesInstructionHaveAddress(vector<bool> instruction) {
+// 	int instCode = getInstructionCodeOfInstruction(instruction);
+// 	int valueCode = getValueCodeOfInstruction(instruction);
+// 	bool hasCodeAddress = INST_WITH_ADDRESS.at(CODE).count(instCode) == 1;
+// 	bool isLogicOpWithCodeCodeAddress = (instCode == LOGIC_INST_ID) &&
+// 			(LOGIC_INST_WITH_ADDRESS.at(CODE).count(valueCode) == 1);
+// 	bool hasDataAddress = INST_WITH_ADDRESS.at(DATA).count(instCode) == 1;
+// 	bool isLogicOpWithDataAddress = (instCode == LOGIC_INST_ID) &&
+// 			(LOGIC_INST_WITH_ADDRESS.at(DATA).count(valueCode) == 1);
+// 	return hasCodeAddress 
+// 			|| isLogicOpWithCodeCodeAddress
+// 			|| hasDataAddress 
+// 			|| isLogicOpWithDataAddress;
+// }
+
+AddrSpace Cpu::getAddressSpaceOfInstruction(vector<bool> instruction) {
 	int instCode = getInstructionCodeOfInstruction(instruction);
 	int valueCode = getValueCodeOfInstruction(instruction);
 	bool hasCodeAddress = INST_WITH_ADDRESS.at(CODE).count(instCode) == 1;
@@ -484,23 +500,13 @@ bool Cpu::doesInstructionHaveAddress(vector<bool> instruction) {
 	bool hasDataAddress = INST_WITH_ADDRESS.at(DATA).count(instCode) == 1;
 	bool isLogicOpWithDataAddress = (instCode == LOGIC_INST_ID) &&
 			(LOGIC_INST_WITH_ADDRESS.at(DATA).count(valueCode) == 1);
-	return hasCodeAddress 
-			|| isLogicOpWithCodeCodeAddress
-			|| hasDataAddress 
-			|| isLogicOpWithDataAddress;
-}
-
-AddrSpace Cpu::getAddressSpaceOfInstruction(vector<bool> instruction) {
-	int instCode = getInstructionCodeOfInstruction(instruction);
-	int valueCode = getValueCodeOfInstruction(instruction);
-	bool hasCodeAddress = INST_WITH_ADDRESS.at(CODE).count(instCode) == 1;
-	bool isLogicOpWithCodeCodeAddress = (instCode == LOGIC_INST_ID) &&
-			(LOGIC_INST_WITH_ADDRESS.at(CODE).count(valueCode) == 1);
 
 	if (hasCodeAddress || isLogicOpWithCodeCodeAddress) {
 		return CODE;
-	} else {
+	} else if (hasDataAddress || isLogicOpWithDataAddress) {
 		return DATA;
+	} else {
+		return NONE;
 	}
 }
 

@@ -108,15 +108,17 @@ bool Renderer::pointingToAddress(AddrSpace addrSpace, int adr) {
 			return false;
 		}
 		vector<bool> instruction = cursor.getWord();
-		bool instructionHasAddress = Cpu::doesInstructionHaveAddress(instruction);
-		if (!instructionHasAddress) {
-			return false;
-		}
+		// bool instructionHasAddress = Cpu::doesInstructionHaveAddress(instruction);
+		// if (!instructionHasAddress) {
+		// 	return false;
+		// }
 		AddrSpace instructionsAddrSpace = Cpu::getAddressSpaceOfInstruction(instruction);
 		if (instructionsAddrSpace != addrSpace) {
 			return false;
 		}
-		vector<bool> instructionsAddress = Cpu::getAddressOfInstruction(instruction, Util::getFirstAddress(), ram);
+		vector<bool> instructionsAddress = Cpu::getAddressOfInstruction(instruction, Util::getEmptyWord(), ram);
+		// fprintf(stderr, "Address: %d\n", adr); //Util::getInt(instructionsAddress));
+		//fprintf(stderr, "Instructions address: %d\n\n", Util::getInt(instructionsAddress));
 		bool instructionIsPointingToCurrentAddress = Util::getInt(instructionsAddress) == adr;
 		return instructionIsPointingToCurrentAddress;
 	}
