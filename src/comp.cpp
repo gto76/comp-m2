@@ -202,25 +202,25 @@ void userInput() {
 		highlightCursor(false);
 
 		switch (c) {
-			case 65:  // up
+			case 65:  // A, part of escape seqence of up arrow
 				cursor.decreaseY();
 				break;
-			case 66:  // down
+			case 66:  // B, part of escape seqence of down arrow
 				cursor.increaseY();
 				break;
-			case 67:  // right
+			case 67:  // C, part of escape seqence of rigth arrow
 				cursor.increaseX();
 				break;
-			case 68:  // left
+			case 68:  // D, part of escape seqence of left arrow
 				cursor.decreaseX();
 				break;
 			case 107:  // k
+			case 53:  // 5, part of escape seqence of page up
 				cursor.moveByteUp();
-				// redrawScreen();
 				break;
 			case 106:  // j
+			case 54:  // 6, part of escape seqence of page down
 				cursor.moveByteDown();
-				// redrawScreen();
 				break;
 			case 115:  // s
 				saveRamToFile();
@@ -230,11 +230,11 @@ void userInput() {
 				switchBitUnderCursor();
 				break;
 			case 100:  // d
+			case 51:  // 3, part of escape seqence of delete key
 				eraseByteUnderCursor();
 				break;
 			case 9:  // tab
 				cursor.switchAddressSpace();
-				// redrawScreen();
 				break;
 			case 10:  // enter
 				run();

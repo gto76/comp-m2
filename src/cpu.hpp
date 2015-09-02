@@ -27,7 +27,7 @@ class Cpu {
 
 		static bool doesInstructionHaveAddress(vector<bool> instruction);
 		static AddrSpace getAddressSpaceOfInstruction(vector<bool> instruction);
-		static vector<bool> getAddressOfInstruction(vector<bool> instruction, Ram ram);
+		static vector<bool> getAddressOfInstruction(vector<bool> instruction, vector<bool> regIn, Ram ram);
 
 	private:
 		// STATIC FIELDS
@@ -67,7 +67,7 @@ class Cpu {
 		void incOrDec(vector<bool> adr, bool isInc);
 		bool getRegBit(int index);
 
-		static vector<bool> getAddressOfLogicInstruction(vector<bool> value);
+		static vector<bool> getAddressOfLogicInstruction(vector<bool> value, vector<bool> regIn);
 		static int getInstructionCodeOfInstruction(vector<bool> instruction);
 		static int getValueCodeOfInstruction(vector<bool> instruction);
 };

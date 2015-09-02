@@ -76,30 +76,33 @@ bool Cpu::hasAddress(AddrSpace addrSpace) {
  * Not for use by 'cpu' class.
  */
 vector<bool> Cpu::getAddress() {
-	int instCode = getInstructionCodeInt();
-	vector<bool> value = getValue();
-	// If it's logic operation.
-	if (instCode == LOGIC_INST_ID) {
-		int valueCode = Util::getInt(value);
-		switch (valueCode) {
-			case 6:
-			case 7:
-				return Util::getSecondNibble(reg);
-				break;
-			default:
-				return Util::getFirstAddress();
-		}
-	}
-	// If instruction has only 3 bits for address.
-	else if (INST_WITH_3_BIT_ADDRESS.count(instCode) == 1) {
-		vector<bool> value = getValue();
-		return { false, value.at(1), value.at(2), value.at(3) };
-	// If instruction address is a pointer to another address.
-	} else if (instCode == 8 || instCode == 9) {
-		return Util::getSecondNibble(ram.get(DATA, value));
-	} else { 
-		return Util::getSecondNibble(ram.get(CODE, pc));
-	} // TODO *
+	vector<bool> instruction = ram.get(CODE, pc);
+	return getAddressOfInstruction(instruction, reg, ram);
+
+	// int instCode = getInstructionCodeInt();
+	// vector<bool> value = getValue();
+	// // If it's logic operation.
+	// if (instCode == LOGIC_INST_ID) {
+	// 	int valueCode = Util::getInt(value);
+	// 	switch (valueCode) {
+	// 		case 6:
+	// 		case 7:
+	// 			return Util::getSecondNibble(reg);
+	// 			break;
+	// 		default:
+	// 			return Util::getFirstAddress();
+	// 	}
+	// }
+	// // If instruction has only 3 bits for address.
+	// else if (INST_WITH_3_BIT_ADDRESS.count(instCode) == 1) {
+	// 	vector<bool> value = getValue();
+	// 	return { false, value.at(1), value.at(2), value.at(3) };
+	// // If instruction address is a pointer to another address.
+	// } else if (instCode == 8 || instCode == 9) {
+	// 	return Util::getSecondNibble(ram.get(DATA, value));
+	// } else { 
+	// 	return Util::getSecondNibble(ram.get(CODE, pc));
+	// } // TODO *
 }
 
 /*
@@ -494,21 +497,23 @@ AddrSpace Cpu::getAddressSpaceOfInstruction(vector<bool> instruction) {
 	}
 }
 
-vector<bool> Cpu::getAddressOfLogicInstruction(vector<bool> value) {
+vector<bool> Cpu::getAddressOfLogicInstruction(vector<bool> value, vector<bool> regIn) {
 	int instCode = Util::getInt(value);
 	if (instCode >= 8 && instCode <= 15) {
 		return Util::getBoolNibb(instCode-8);
+	} else if (instCode == 5 || instCode == 6) {
+		return Util::getSecondNibble(regIn);
 	} else {
 		return Util::getFirstAddress();
 	}
 }
 
-vector<bool> Cpu::getAddressOfInstruction(vector<bool> instruction, Ram ram) {
+vector<bool> Cpu::getAddressOfInstruction(vector<bool> instruction, vector<bool> regIn, Ram ram) {
 	int instCode = getInstructionCodeOfInstruction(instruction);
 	vector<bool> value = Util::getSecondNibble(instruction);
 	// If it's logic operation.
 	if (instCode == LOGIC_INST_ID) {
-		return getAddressOfLogicInstruction(value);
+		return getAddressOfLogicInstruction(value, regIn);
 		// return Util::getFirstAddress();
 	}
 	// If instruction has only 3 bits for address.
@@ -521,4 +526,5 @@ vector<bool> Cpu::getAddressOfInstruction(vector<bool> instruction, Ram ram) {
 		return value;
 	}
 }
+
 
