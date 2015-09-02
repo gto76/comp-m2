@@ -348,7 +348,13 @@ void Cpu::shift(int delta) {
  * value at first address and writes the result to register.
  */
 void Cpu::andOrOr(bool isAnd) {
-	vector<bool> ramValue = ram.get(DATA, Util::getFirstAddress());
+	vector<bool> adr = Util::getFirstAddress();
+	if (isAnd) {
+		adr = { false, false, false, true };
+	} else {
+		adr = { false, false, true, false };
+	}
+	vector<bool> ramValue = ram.get(DATA, adr);
 	reg = Util::bitwiseAndOrOr(reg, ramValue, isAnd);
 	increasePc();
 }
@@ -454,6 +460,10 @@ vector<bool> Cpu::getAddressOfLogicInstruction(vector<bool> value, vector<bool> 
 		return Util::getBoolNibb(instCode-8);
 	} else if (instCode == 5 || instCode == 6) {
 		return Util::getSecondNibble(regIn);
+	} else if (instCode == 2) {
+		return Util::getBoolNibb(1);
+	} else if (instCode == 3) {
+		return Util::getBoolNibb(2);
 	} else {
 		return Util::getFirstAddress();
 	}
