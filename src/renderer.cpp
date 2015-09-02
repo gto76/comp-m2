@@ -108,6 +108,10 @@ bool Renderer::pointingToAddress(AddrSpace addrSpace, int adr) {
 			return false;
 		}
 		vector<bool> instruction = cursor.getWord();
+		bool instructionHasAddress = Cpu::doesInstructionHaveAddress(instruction);
+		if (!instructionHasAddress) {
+			return false;
+		}
 		AddrSpace instructionsAddrSpace = Cpu::getAddressSpaceOfInstruction(instruction);
 		if (instructionsAddrSpace != addrSpace) {
 			return false;

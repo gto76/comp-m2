@@ -25,6 +25,7 @@ class Cpu {
 		vector<bool> getAddress();
 		int getCycle();
 
+		static bool doesInstructionHaveAddress(vector<bool> instruction);
 		static AddrSpace getAddressSpaceOfInstruction(vector<bool> instruction);
 		static vector<bool> getAddressOfInstruction(vector<bool> instruction, Ram ram);
 
@@ -58,6 +59,7 @@ class Cpu {
 		void addOrSubtract(vector<bool> adr, bool add);
 		void shift(int delta);
 		void andOrOr(bool isAnd);
+		void bitwiseXor(int intAdr);
 		void bitwiseNot();
 		void equals();
 		void jumpReg();
@@ -65,6 +67,7 @@ class Cpu {
 		void incOrDec(vector<bool> adr, bool isInc);
 		bool getRegBit(int index);
 
+		static vector<bool> getAddressOfLogicInstruction(vector<bool> value);
 		static int getInstructionCodeOfInstruction(vector<bool> instruction);
 		static int getValueCodeOfInstruction(vector<bool> instruction);
 };

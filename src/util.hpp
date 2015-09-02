@@ -35,8 +35,11 @@ class Util {
 		static bool startsWithDigit(string line);
 		static int extractInteger(string line);
 		static int getSignedIntFromNibble(vector<bool> value);
+		static void assertEqualLength(vector<bool> value1, vector<bool> value2, int errNumber);
 		static vector<bool> bitwiseAndOrOr(vector<bool> value1, 
 										   vector<bool> value2, bool isAnd);
+		static vector<bool> bitwiseXor(vector<bool> value1, 
+										   vector<bool> value2);
 		static vector<bool> bitwiseNot(vector<bool> val);
 		static vector<bool> getFirstAddress();
 		static vector<bool> getLastAddress();

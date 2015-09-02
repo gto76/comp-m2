@@ -271,13 +271,17 @@ int Util::getSignedIntFromNibble(vector<bool> nibble) {
 	return value;
 }
 
+void Util::assertEqualLength(vector<bool> value1, vector<bool> value2, int errNumber) {
+	if (value1.size() != value2.size()) {
+		fprintf(stderr, "Invalid parameters at Util::assertEqualLength. "
+				"Vectors not of same size.");
+		exit(errNumber);
+	}
+}
+
 vector<bool> Util::bitwiseAndOrOr(vector<bool> value1, vector<bool> value2,
 								  bool isAnd) {
-	if (value1.size() != value2.size()) {
-		fprintf(stderr, "Invalid parameters at Util::bitwiseAnd. "
-				"Vectors not of same size.");
-		exit(6);
-	}
+	assertEqualLength(value1, value2, 6);
 	vector<bool> out(value1.size());
 	for (size_t i = 0; i < value1.size(); i++) {
 		if (isAnd) {
@@ -285,6 +289,15 @@ vector<bool> Util::bitwiseAndOrOr(vector<bool> value1, vector<bool> value2,
 		} else {
 			out.at(i) = value1.at(i) || value2.at(i);
 		}
+	}
+	return out;
+}
+
+vector<bool> Util::bitwiseXor(vector<bool> value1, vector<bool> value2) {
+	assertEqualLength(value1, value2, 7);
+	vector<bool> out(value1.size());
+	for (size_t i = 0; i < value1.size(); i++) {
+		out.at(i) = value1.at(i) != value2.at(i);
 	}
 	return out;
 }
