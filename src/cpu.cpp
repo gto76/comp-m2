@@ -16,9 +16,9 @@ const map<AddrSpace, set<int>> Cpu::INST_WITH_ADDRESS = {
 	{ CODE, { 4, 5, 6, 13, 14 } }
 };
 const map<AddrSpace, set<int>> Cpu::LOGIC_INST_WITH_ADDRESS = { 
-	{ DATA, { 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 } },
-	{ CODE, { 5 } },
-	{ NONE, { 0, 1, 4 } }
+	{ DATA, { 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 } },
+	{ CODE, { 0 } },
+	{ NONE, { 3, 4, 5 } }
 };
 const int Cpu::LOGIC_INST_ID = 7;
 const set<int> Cpu::INST_WITH_3_BIT_ADDRESS = { 10 };
@@ -210,28 +210,28 @@ void Cpu::logic(vector<bool> value) {
 	int intValue = Util::getInt(value);
 	switch (intValue) {
 		case 0:
-			shift(1);
-			break;
-		case 1:
-			shift(-1);
-			break;
-		case 2:
-			andOrOr(true); 
-			break;
-		case 3:
-			andOrOr(false);
-			break;
-		case 4:
-			bitwiseNot();
-			break;
-		case 5:
 			jumpReg();
 			break;
-		case 6:
+		case 1:
 			readReg();
 			break;
-		case 7:
+		case 2:
 			initializeFirstAddress();
+			break;
+		case 3:
+			bitwiseNot();
+			break;
+		case 4:
+			shift(1);
+			break;
+		case 5:
+			shift(-1);
+			break;
+		case 6:
+			andOrOr(true); 
+			break;
+		case 7:
+			andOrOr(false);
 			break;
 		case 8:
 		case 9:
@@ -458,11 +458,11 @@ vector<bool> Cpu::getAddressOfLogicInstruction(vector<bool> value, vector<bool> 
 	int instCode = Util::getInt(value);
 	if (instCode >= 8 && instCode <= 15) {
 		return Util::getBoolNibb(instCode-8);
-	} else if (instCode == 5 || instCode == 6) {
+	} else if (instCode == 0 || instCode == 1) {
 		return Util::getSecondNibble(regIn);
-	} else if (instCode == 2) {
+	} else if (instCode == 6) {
 		return Util::getBoolNibb(1);
-	} else if (instCode == 3) {
+	} else if (instCode == 7) {
 		return Util::getBoolNibb(2);
 	} else {
 		return Util::getFirstAddress();
