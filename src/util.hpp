@@ -44,6 +44,8 @@ class Util {
 		static vector<bool> getFirstAddress();
 		static vector<bool> getLastAddress();
 		static vector<bool> getEmptyWord();
+		static vector<bool> getFullWord();
+		static int getMaxValue();
 
 	private:
 		static vector<bool> getBool(int num, int length);

@@ -26,6 +26,10 @@ vector<bool> Ram::get(AddrSpace addrSpace, vector<bool> adr) {
 	return state[addrSpace][address];
 }
 
+vector<bool> Ram::get(Address adr) {
+	return get(adr.space, adr.val);
+}
+
 vector<bool> Ram::getLastAddress(AddrSpace addrSpace) {
 	if (addrSpace == CODE) {
 		fprintf(stderr, "Error in function Ram::getInstruction, "
@@ -63,6 +67,10 @@ void Ram::set(AddrSpace addrSpace, vector<bool> adr, vector<bool> wordIn) {
 	} else {
 		assignToLastAddress(addrSpace, wordIn);
 	}
+}
+
+void Ram::set(Address adr, vector<bool> wordIn) {
+	set(adr.space, adr.val, wordIn);
 }
 
 void Ram::saveWord(AddrSpace addrSpace, int address, vector<bool> wordIn) {

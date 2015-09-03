@@ -5,6 +5,7 @@
 #include <map>
 
 #include "addr_space.hpp"
+#include "address.hpp"
 
 using namespace std;
 
@@ -13,7 +14,9 @@ class Ram {
 		Ram();
 		map<AddrSpace, vector<vector<bool>>> state;
 		vector<bool> get(AddrSpace addrSpace, vector<bool> adr);
+		vector<bool> get(Address adr);
 		void set(AddrSpace addrSpace, vector<bool> adr, vector<bool> wordIn);
+		void set(Address adr, vector<bool> wordIn);
 		string getString();
 
 	private:
