@@ -309,16 +309,5 @@ vector<bool> Util::bitwiseNot(vector<bool> val) {
 	return val;
 }
 
-vector<bool> Util::getFirstAddress() {
-	return vector<bool> (ADDR_SIZE, false);
-}
-
-vector<bool> Util::getLastAddress() {
-	return vector<bool> (ADDR_SIZE, true);
-}
-
-vector<bool> Util::getEmptyWord() {
-	return { false, false, false, false, false, false, false, false };
-}
 
 
