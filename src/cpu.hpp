@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "addr_space.hpp"
+#include "address.hpp"
 #include "const.hpp"
 #include "ram.hpp"
 
@@ -68,7 +69,7 @@ class Cpu {
 		void incOrDec(vector<bool> adr, bool isInc);
 		bool getRegBit(int index);
 
-		static vector<bool> getAddressOfLogicInstruction(vector<bool> value, vector<bool> regIn);
+		static Address getAddressOfLogicInstruction(vector<bool> value, vector<bool> regIn);
 		static int getInstructionCodeOfInstruction(vector<bool> instruction);
 		static int getValueCodeOfInstruction(vector<bool> instruction);
 };

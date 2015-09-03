@@ -5,7 +5,9 @@
 #include <vector>
 #include <set>
 
+#include "address.hpp"
 #include "comp.hpp"
+#include "instruction.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -85,55 +87,59 @@ bool Cpu::step() {
 		return false;
 	}
 
-	int instCode = getInstructionCodeInt();
-	vector<bool> value = getValue();
+	// NEW - test
+	Instruction inst = Instruction(ram.get(CODE, pc), &reg, &ram);
+	inst.exec(&pc);
 
-	switch (instCode) {
-		case 0:
-			read(value);
-			break;
-		case 1:
-			write(value);
-			break;
-		case 2:
-			add(value); 
-			break;
-		case 3:
-			sub(value);
-			break;
-		case 4:
-			jump(value);
-			break;
-		case 5:
-			ifMax(value);
-			break;
-		case 6:
-			ifMin(value);
-			break;
-		case 7:
-			logic(value);
-			break;
-		case 8:
-			readPointer(value);
-			break;
-		case 9:
-			writePointer(value);
-			break;
-		case 10:
-			incDec(value);
-			break;
-		case 11:
-			print(value);
-			break;
-		case 13:
-			ifNotMax(value);
-			break;
-		case 14:
-			ifNotMin(value);
-			break;
-		default:
-			read(value);
-	}
+	// int instCode = getInstructionCodeInt();
+	// vector<bool> value = getValue();
+
+	// switch (instCode) {
+	// 	case 0:
+	// 		read(value);
+	// 		break;
+	// 	case 1:
+	// 		write(value);
+	// 		break;
+	// 	case 2:
+	// 		add(value); 
+	// 		break;
+	// 	case 3:
+	// 		sub(value);
+	// 		break;
+	// 	case 4:
+	// 		jump(value);
+	// 		break;
+	// 	case 5:
+	// 		ifMax(value);
+	// 		break;
+	// 	case 6:
+	// 		ifMin(value);
+	// 		break;
+	// 	case 7:
+	// 		logic(value);
+	// 		break;
+	// 	case 8:
+	// 		readPointer(value);
+	// 		break;
+	// 	case 9:
+	// 		writePointer(value);
+	// 		break;
+	// 	case 10:
+	// 		incDec(value);
+	// 		break;
+	// 	case 11:
+	// 		print(value);
+	// 		break;
+	// 	case 13:
+	// 		ifNotMax(value);
+	// 		break;
+	// 	case 14:
+	// 		ifNotMin(value);
+	// 		break;
+	// 	default:
+	// 		read(value);
+	// }
 
 	return true;
 }
@@ -454,18 +460,18 @@ AddrSpace Cpu::getAddressSpaceOfInstruction(vector<bool> instruction) {
 	}
 }
 
-vector<bool> Cpu::getAddressOfLogicInstruction(vector<bool> value, vector<bool> regIn) {
+Address Cpu::getAddressOfLogicInstruction(vector<bool> value, vector<bool> regIn) {
 	int instCode = Util::getInt(value);
 	if (instCode >= 8 && instCode <= 15) {
-		return Util::getBoolNibb(instCode-8);
+		return Address(CODE, Util::getBoolNibb(instCode-8));
 	} else if (instCode == 0 || instCode == 1) {
-		return Util::getSecondNibble(regIn);
+		return Address(CODE, Util::getSecondNibble(regIn));
 	} else if (instCode == 6) {
-		return Util::getBoolNibb(1);
+		return Address(CODE, Util::getBoolNibb(1));
 	} else if (instCode == 7) {
-		return Util::getBoolNibb(2);
+		return Address(CODE, Util::getBoolNibb(2));
 	} else {
-		return Util::getFirstAddress();
+		return Address(CODE, Util::getFirstAddress());
 	}
 }
 
@@ -474,7 +480,8 @@ vector<bool> Cpu::getAddressOfInstruction(vector<bool> instruction, vector<bool>
 	vector<bool> value = Util::getSecondNibble(instruction);
 	// If it's logic operation.
 	if (instCode == LOGIC_INST_ID) {
-		return getAddressOfLogicInstruction(value, regIn);
+		Address adr = getAddressOfLogicInstruction(value, regIn);
+		return adr.val;
 	}
 	// If instruction has only 3 bits for address.
 	else if (INST_WITH_3_BIT_ADDRESS.count(instCode) == 1) {
@@ -486,5 +493,7 @@ vector<bool> Cpu::getAddressOfInstruction(vector<bool> instruction, vector<bool>
 		return value;
 	}
 }
+
+
 
 
