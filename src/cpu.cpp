@@ -148,172 +148,172 @@ bool Cpu::step() {
 /////// INSTRUCTION SET ///////
 ///////////////////////////////
 
-/*
- * Copies value at the passed address to the register.
- */
-void Cpu::read(vector<bool> adr) {
-	reg = ram.get(DATA, adr);
-	increasePc();
-}
+// /*
+//  * Copies value at the passed address to the register.
+//  */
+// void Cpu::read(vector<bool> adr) {
+// 	reg = ram.get(DATA, adr);
+// 	increasePc();
+// }
 
-/*
- * Copies value of the register to the passed address.
- */
-void Cpu::write(vector<bool> adr) {
-	ram.set(DATA, adr, reg);
-	increasePc();
-}
+// /*
+//  * Copies value of the register to the passed address.
+//  */
+// void Cpu::write(vector<bool> adr) {
+// 	ram.set(DATA, adr, reg);
+// 	increasePc();
+// }
 
-/*
- * Adds value at the passed address to the register, and
- * stores result in the register.
- */
-void Cpu::add(vector<bool> adr) {
-	addOrSubtract(adr, true);
-	increasePc();
-}
+// /*
+//  * Adds value at the passed address to the register, and
+//  * stores result in the register.
+//  */
+// void Cpu::add(vector<bool> adr) {
+// 	addOrSubtract(adr, true);
+// 	increasePc();
+// }
 
-/*
- * Subtracts value at the passed address from the register, and
- * stores result in the register.
- */
-void Cpu::sub(vector<bool> adr) {
-	addOrSubtract(adr, false);
-	increasePc();
-}
+// /*
+//  * Subtracts value at the passed address from the register, and
+//  * stores result in the register.
+//  */
+// void Cpu::sub(vector<bool> adr) {
+// 	addOrSubtract(adr, false);
+// 	increasePc();
+// }
 
-/*
- * Jumps to the passed address.
- */
-void Cpu::jump(vector<bool> adr) {
-	pc = adr;
-}
+// /*
+//  * Jumps to the passed address.
+//  */
+// void Cpu::jump(vector<bool> adr) {
+// 	pc = adr;
+// }
 
-/*
- * Jumps to passed address if value of the register is 'max'.
- */
-void Cpu::ifMax(vector<bool> adr) {
-	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
-		pc = adr;
-	} else {
-		increasePc();
-	}
-}
+// /*
+//  * Jumps to passed address if value of the register is 'max'.
+//  */
+// void Cpu::ifMax(vector<bool> adr) {
+// 	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
+// 		pc = adr;
+// 	} else {
+// 		increasePc();
+// 	}
+// }
 
-/*
- * Jumps to passed address if value of the register is 'min'.
- */
-void Cpu::ifMin(vector<bool> adr) {
-	if (Util::getInt(reg) <= 0) {
-		pc = adr;
-	} else {
-		increasePc();
-	}
-}
+// /*
+//  * Jumps to passed address if value of the register is 'min'.
+//  */
+// void Cpu::ifMin(vector<bool> adr) {
+// 	if (Util::getInt(reg) <= 0) {
+// 		pc = adr;
+// 	} else {
+// 		increasePc();
+// 	}
+// }
 
-// << >> & | ^ == JUMP_REG READ_REG
-void Cpu::logic(vector<bool> value) {
-	int intValue = Util::getInt(value);
-	switch (intValue) {
-		case 0:
-			jumpReg();
-			break;
-		case 1:
-			readReg();
-			break;
-		case 2:
-			initializeFirstAddress();
-			break;
-		case 3:
-			bitwiseNot();
-			break;
-		case 4:
-			shift(1);
-			break;
-		case 5:
-			shift(-1);
-			break;
-		case 6:
-			andOrOr(true); 
-			break;
-		case 7:
-			andOrOr(false);
-			break;
-		case 8:
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-		case 13:
-		case 14:
-		case 15: 
-			bitwiseXor(intValue - 8);
-			break;
-		default:
-			break;
-	}
-}
+// // << >> & | ^ == JUMP_REG READ_REG
+// void Cpu::logic(vector<bool> value) {
+// 	int intValue = Util::getInt(value);
+// 	switch (intValue) {
+// 		case 0:
+// 			jumpReg();
+// 			break;
+// 		case 1:
+// 			readReg();
+// 			break;
+// 		case 2:
+// 			initializeFirstAddress();
+// 			break;
+// 		case 3:
+// 			bitwiseNot();
+// 			break;
+// 		case 4:
+// 			shift(1);
+// 			break;
+// 		case 5:
+// 			shift(-1);
+// 			break;
+// 		case 6:
+// 			andOrOr(true); 
+// 			break;
+// 		case 7:
+// 			andOrOr(false);
+// 			break;
+// 		case 8:
+// 		case 9:
+// 		case 10:
+// 		case 11:
+// 		case 12:
+// 		case 13:
+// 		case 14:
+// 		case 15: 
+// 			bitwiseXor(intValue - 8);
+// 			break;
+// 		default:
+// 			break;
+// 	}
+// }
 
-/*
- * Reads from the address that is stored at passed address.
- */
-void Cpu::readPointer(vector<bool> adr) {
-	vector<bool> pointer = ram.get(DATA, adr);
-	reg = ram.get(DATA, pointer);
-	increasePc();
-}
+// /*
+//  * Reads from the address that is stored at passed address.
+//  */
+// void Cpu::readPointer(vector<bool> adr) {
+// 	vector<bool> pointer = ram.get(DATA, adr);
+// 	reg = ram.get(DATA, pointer);
+// 	increasePc();
+// }
 
-/*
- * Writes 'reg' to the address that is stored at passed address.
- */
-void Cpu::writePointer(vector<bool> adr) {
-	vector<bool> pointer = ram.get(DATA, adr);
-	ram.set(DATA, pointer, reg);
-	increasePc();
-}
+// /*
+//  * Writes 'reg' to the address that is stored at passed address.
+//  */
+// void Cpu::writePointer(vector<bool> adr) {
+// 	vector<bool> pointer = ram.get(DATA, adr);
+// 	ram.set(DATA, pointer, reg);
+// 	increasePc();
+// }
 
-/*
- * Increases or decreases value at the passed address, and copies
- * it to the register.
- */
-void Cpu::incDec(vector<bool> value) {
-	bool isInc = !value.at(0);
-	vector<bool> adr = { false, value.at(1), value.at(2), value.at(3) };
-	incOrDec(adr, isInc);
-	increasePc();
-}
+// /*
+//  * Increases or decreases value at the passed address, and copies
+//  * it to the register.
+//  */
+// void Cpu::incDec(vector<bool> value) {
+// 	bool isInc = !value.at(0);
+// 	vector<bool> adr = { false, value.at(1), value.at(2), value.at(3) };
+// 	incOrDec(adr, isInc);
+// 	increasePc();
+// }
 
-/*
- * Copies value at the passed address to the last address and thus
- * sends it to the printer.
- */
-void Cpu::print(vector<bool> adr) {
-	vector<bool> val = ram.get(DATA, adr);
-	ram.set(DATA, Util::getLastAddress(), val);
-	increasePc();
-}
+// /*
+//  * Copies value at the passed address to the last address and thus
+//  * sends it to the printer.
+//  */
+// void Cpu::print(vector<bool> adr) {
+// 	vector<bool> val = ram.get(DATA, adr);
+// 	ram.set(DATA, Util::getLastAddress(), val);
+// 	increasePc();
+// }
 
-/*
- * Jumps to passed address if value of the register is not 'max'.
- */
-void Cpu::ifNotMax(vector<bool> adr) {
-	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
-		increasePc();
-	} else {
-		pc = adr;
-	}
-}
+// /*
+//  * Jumps to passed address if value of the register is not 'max'.
+//  */
+// void Cpu::ifNotMax(vector<bool> adr) {
+// 	if (Util::getInt(reg) >= pow(2, WORD_SIZE)-1) {
+// 		increasePc();
+// 	} else {
+// 		pc = adr;
+// 	}
+// }
 
-/*
- * Jumps to passed address if value of the register is not 'min'.
- */
-void Cpu::ifNotMin(vector<bool> adr) {
-	if (Util::getInt(reg) <= 0) {
-		increasePc();
-	} else {
-		pc = adr;
-	}
-}
+// /*
+//  * Jumps to passed address if value of the register is not 'min'.
+//  */
+// void Cpu::ifNotMin(vector<bool> adr) {
+// 	if (Util::getInt(reg) <= 0) {
+// 		increasePc();
+// 	} else {
+// 		pc = adr;
+// 	}
+// }
 
 ///////////////////
 ////// UTIL ///////

@@ -112,7 +112,7 @@ bool Renderer::pointingToAddress(AddrSpace addrSpace, int adr) {
 		if (instructionsAddrSpace != addrSpace) {
 			return false;
 		}
-		vector<bool> instructionsAddress = Cpu::getAddressOfInstruction(instruction, Util::getEmptyWord(), ram);
+		vector<bool> instructionsAddress = Cpu::getAddressOfInstruction(instruction, EMPTY_WORD, ram);
 		bool instructionIsPointingToCurrentAddress = Util::getInt(instructionsAddress) == adr;
 		return instructionIsPointingToCurrentAddress;
 	}

@@ -41,11 +41,6 @@ class Util {
 		static vector<bool> bitwiseXor(vector<bool> value1, 
 										   vector<bool> value2);
 		static vector<bool> bitwiseNot(vector<bool> val);
-		static vector<bool> getFirstAddress();
-		static vector<bool> getLastAddress();
-		static vector<bool> getEmptyWord();
-		static vector<bool> getFullWord();
-		static int getMaxValue();
 
 	private:
 		static vector<bool> getBool(int num, int length);

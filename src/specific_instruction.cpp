@@ -176,7 +176,7 @@ void Not::exec(Address adr, vector<bool>* pc, vector<bool>* reg, Ram* ram) {
 }
 
 Address Not::getAddress(vector<bool> val, vector<bool>* reg, Ram* ram) {
-  return Address(NONE, Util::getFirstAddress());
+  return Address(NONE, FIRST_ADDRESS);
 }
 
 // SHIFT LEFT
@@ -190,7 +190,7 @@ void ShiftLeft::exec(Address adr, vector<bool>* pc, vector<bool>* reg, Ram* ram)
 
 
 Address ShiftLeft::getAddress(vector<bool> val, vector<bool>* reg, Ram* ram) {
-  return Address(NONE, Util::getFirstAddress());
+  return Address(NONE, FIRST_ADDRESS);
 }
 
 // SHIFT RIGHT
@@ -203,7 +203,7 @@ void ShiftRight::exec(Address adr, vector<bool>* pc, vector<bool>* reg, Ram* ram
 }
 
 Address ShiftRight::getAddress(vector<bool> val, vector<bool>* reg, Ram* ram) {
-  return Address(NONE, Util::getFirstAddress());
+  return Address(NONE, FIRST_ADDRESS);
 }
 
 // AND
@@ -438,8 +438,3 @@ void incOrDec(Address adr, vector<bool>* pc, vector<bool>* reg, Ram* ram, bool i
   *reg = Util::getBoolByte(intValue);
   increasePc(pc);
 }
-
-
-
-
-
