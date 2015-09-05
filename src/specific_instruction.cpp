@@ -156,7 +156,7 @@ Address ReadReg::getAddress(vector<bool> val, const vector<bool> &reg, const Ram
  * Copies value at the ningth address to the first address.
  */
 void InitializeFirstAddress::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
-  vector<bool> value = ram.get(DATA, { true, false, false, false });
+  vector<bool> value = ram.get(Address(DATA, { true, false, false, false }));
   ram.set(adr, value);
   increasePc(pc);
 }
@@ -262,7 +262,7 @@ void ReadPointer::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ra
 }
 
 Address ReadPointer::getAddress(vector<bool> val, const vector<bool> &reg, const Ram &ram) {
-  vector<bool> pointer = ram.get(DATA, Util::getSecondNibble(val));
+  vector<bool> pointer = ram.get(Address(DATA, Util::getSecondNibble(val)));
   return Address(DATA, Util::getSecondNibble(pointer));
 }
 
@@ -278,7 +278,7 @@ void WritePointer::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &r
 }
 
 Address WritePointer::getAddress(vector<bool> val, const vector<bool> &reg, const Ram &ram) {
-  vector<bool> pointer = ram.get(DATA, Util::getSecondNibble(val));
+  vector<bool> pointer = ram.get(Address(DATA, Util::getSecondNibble(val)));
   return Address(DATA, Util::getSecondNibble(pointer));
 }
 

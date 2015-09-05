@@ -13,9 +13,9 @@ class Ram {
 	public:
 		Ram();
 		map<AddrSpace, vector<vector<bool>>> state;
-		vector<bool> get(AddrSpace addrSpace, vector<bool> adr) const;
+		//vector<bool> get(AddrSpace addrSpace, vector<bool> adr) const;
 		vector<bool> get(Address adr) const;
-		void set(AddrSpace addrSpace, vector<bool> adr, vector<bool> wordIn);
+		//void set(AddrSpace addrSpace, vector<bool> adr, vector<bool> wordIn);
 		void set(Address adr, vector<bool> wordIn);
 		string getString() const;
 

@@ -97,11 +97,13 @@ void Cursor::setBit(bool bit) {
 }
 
 vector<bool> Cursor::getWord() {
-	return ram.get(addrSpace, Util::getBoolNibb(getAddr()));
+	Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
+	return ram.get(adr);
 }
 
 void Cursor::setWord(vector<bool> word) {
-	ram.set(addrSpace, Util::getBoolNibb(getAddr()), word);
+	Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
+	ram.set(adr, word);
 }
 
 void Cursor::moveByteUp() {
