@@ -108,25 +108,11 @@ bool Renderer::instructionPointingToAddress(Address adr) {
 		if (cursorOnData) {
 			return false;
 		}
-		//vector<bool> instruction = cursor.getWord();
-
 		Instruction inst = getCursorsInstruction();
 		return inst.adr == adr;
-
-		// AddrSpace instructionsAddrSpace = Cpu::getAddressSpaceOfInstruction(instruction);
-		// if (instructionsAddrSpace != addrSpace) {
-		// 	return false;
-		// }
-		// vector<bool> instructionsAddress = Cpu::getAddressOfInstruction(instruction, EMPTY_WORD, ram);
-		// bool instructionIsPointingToCurrentAddress = Util::getInt(instructionsAddress) == adr;
-		// return instructionIsPointingToCurrentAddress;
 	}
 	Instruction inst = cpu.getInstruction();
 	return inst.adr == adr;
-	// if (!cpu.hasAddress(addrSpace)) {
-	// 	return false;
-	// }
-	// return cpu.getAddress() == Util::getBoolNibb(adr);
 }
 
 Instruction& Renderer::getCursorsInstruction() {
@@ -139,16 +125,12 @@ Instruction& Renderer::getCursorsInstruction() {
 
 bool Renderer::instructionHasId(int id) {
 	if (machineNotActive()) {
-		// Instruction * inst = getCursorsInstruction();
-		// return inst->
-
 		int cursorOnData = cursor.getAddressSpace() == DATA;
 		if (cursorOnData) {
 			return false;
 		}
-		vector<bool> instruction = Util::getFirstNibble(cursor.getWord());
-		int instructionCode = Util::getInt(instruction);
-		return instructionCode == id;
+		Instruction inst = getCursorsInstruction();
+		return inst.index == id;
 	}
 	return cpu.getInstructionCodeInt() == id;
 }

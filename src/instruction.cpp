@@ -8,8 +8,6 @@
 
 using namespace std;
 
-SpecificInstruction * getLogicInstruction(vector<bool> val);
-
 Address Instruction::getAddress(vector<bool> val, const vector<bool> &reg, const Ram &ram) {
   return inst->getAddress(val, reg, ram);
 }
@@ -18,9 +16,8 @@ void Instruction::exec(vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   inst->exec(adr, pc, reg, ram);
 }
 
-SpecificInstruction * Instruction::getInstruction(vector<bool> val) {
-  int instCode = Util::getInt(Util::getFirstNibble(val));
-  switch (instCode) {
+SpecificInstruction * Instruction::getInstruction() {
+  switch (index) {
     case 0:
       return new Read;
     case 1:
@@ -36,7 +33,7 @@ SpecificInstruction * Instruction::getInstruction(vector<bool> val) {
     case 6:
       return new IfMin;
     case 7:
-      return getLogicInstruction(val);
+      return getLogicInstruction();
     case 8:
       return new ReadPointer;
     case 9:
@@ -60,9 +57,8 @@ SpecificInstruction * Instruction::getInstruction(vector<bool> val) {
   }
 }
 
-SpecificInstruction * getLogicInstruction(vector<bool> val) {
-  int instCode = Util::getInt(Util::getSecondNibble(val));
-  switch (instCode) {
+SpecificInstruction * Instruction::getLogicInstruction() {
+  switch (logicIndex) {
     case 0:
       return new JumpReg;
     case 1:

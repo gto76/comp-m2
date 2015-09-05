@@ -16,16 +16,6 @@ Ram::Ram() {
 
 ////// GET //////
 
-// vector<bool> Ram::get(AddrSpace addrSpace, vector<bool> adr) const {
-// 	// Only look at last 4 bits of passed address.   
-// 	vector<bool> adrShaved(adr.end() - ADDR_SIZE, adr.end());
-// 	int address = Util::getInt(adrShaved);
-// 	if (address == RAM_SIZE) {
-// 		return Ram::getLastAddress(addrSpace);
-// 	}
-// 	return state.at(addrSpace).at(address);
-// }
-
 vector<bool> Ram::get(Address adr) const {
   AddrSpace space = adr.space;
   vector<bool> value = adr.val;
@@ -61,21 +51,6 @@ vector<bool> Ram::getInput() const {
 }
 
 ////// SET //////
-
-// void Ram::set(AddrSpace addrSpace, vector<bool> adr, vector<bool> wordIn) {
-// 	if (wordIn.size() != WORD_SIZE) {
-// 		fprintf(stderr, "Error in function Ram::set, invalid length of word");
-// 		exit(6);
-// 	}
-// 	// Only look at last 4 bits of passed address.   
-// 	vector<bool> adrShaved(adr.end() - ADDR_SIZE, adr.end());
-// 	int address = Util::getInt(adrShaved);
-// 	if (address < RAM_SIZE) {
-// 		saveWord(addrSpace, address, wordIn);
-// 	} else {
-// 		assignToLastAddress(addrSpace, wordIn);
-// 	}
-// }
 
 void Ram::set(Address adr, vector<bool> wordIn) {
   AddrSpace space = adr.space;

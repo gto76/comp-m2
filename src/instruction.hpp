@@ -6,23 +6,28 @@
 #include "address.hpp"
 #include "ram.hpp"
 #include "specific_instruction.hpp"
+#include "util.hpp"
 
 using namespace std;
 
 class Instruction {
   public:
     vector<bool> const val;
-    Instruction(vector<bool> valIn, const vector<bool> &regIn, const Ram &ramIn) : val(valIn), inst(getInstruction(valIn)), adr(getAddress(valIn, regIn, ramIn)) { }
+    int const index;
+    int const logicIndex;
+    SpecificInstruction * const inst;
+    Address const adr;
+    Instruction(vector<bool> valIn, const vector<bool> &regIn, const Ram &ramIn)
+        : val(valIn),
+          index(Util::getInt(Util::getFirstNibble(valIn))),
+          logicIndex(Util::getInt(Util::getSecondNibble(valIn))),
+          inst(getInstruction()),
+          adr(getAddress(valIn, regIn, ramIn)) { }
     void exec(vector<bool> &pc, vector<bool> &reg, Ram &ram);
   private:
-    // vector<bool>* const reg;
-    // Ram* const ram;
-    SpecificInstruction * const inst;
-  public:
-    Address const adr;
-  private:
     Address getAddress(vector<bool> val, const vector<bool> &reg, const Ram &ram);
-    static SpecificInstruction * getInstruction(vector<bool> val);
+    SpecificInstruction * getInstruction();
+    SpecificInstruction * getLogicInstruction();
 };
 
 #endif
