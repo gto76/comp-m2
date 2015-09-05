@@ -22,7 +22,8 @@ using namespace std;
  * Only public method. Also static. It creates new object every time 
  * it gets called.
  */
-string Renderer::renderState(Printer printerIn, Ram ramIn, Cpu cpuIn, Cursor cursorIn) {
+string Renderer::renderState(const Printer &printerIn, const Ram &ramIn, 
+														 const Cpu &cpuIn, const Cursor &cursorIn) {
 	Renderer instance(printerIn, ramIn, cpuIn, cursorIn);
 	string out;
 	for (string line : Util::splitString(drawing)) {
@@ -35,13 +36,13 @@ string Renderer::renderState(Printer printerIn, Ram ramIn, Cpu cpuIn, Cursor cur
 /*
  * Private constructor.
  */
-Renderer::Renderer(Printer printerIn, Ram ramIn, Cpu cpuIn, Cursor cursorIn) {
-	Renderer::printer = printerIn;
-	Renderer::ram = ramIn;
-	Renderer::cpu = cpuIn;
-	Renderer::cursor = cursorIn;
-	switchIndex.clear();
-}
+// Renderer::Renderer(Printer printerIn, Ram ramIn, Cpu cpuIn, Cursor cursorIn) {
+// 	Renderer::printer = printerIn;
+// 	Renderer::ram = ramIn;
+// 	Renderer::cpu = cpuIn;
+// 	Renderer::cursor = cursorIn;
+// 	switchIndex.clear(); // I DON'T THINK THATS NECESARY SO I LEFT IT OUT / TODO
+// }
 
 string Renderer::insertActualValues(string lineIn) {
 	string lineOut;
