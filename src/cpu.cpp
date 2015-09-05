@@ -17,45 +17,45 @@ using namespace std;
 /////////////////////////
 
 int Cpu::getCycle() {
-	return cycle;
+  return cycle;
 }
 
 vector<bool> Cpu::getRegister() {
-	return reg;
+  return reg;
 }
 
 vector<bool> Cpu::getPc() {
-	return pc;
+  return pc;
 }
 
 vector<bool> Cpu::getInstructionWord() {
-	Address adr = Address(CODE, pc);
-	return ram.get(adr);
+  Address adr = Address(CODE, pc);
+  return ram.get(adr);
 }
 
 vector<bool> Cpu::getInstructionCode() {
-	return Util::getFirstNibble(getInstructionWord());
+  return Util::getFirstNibble(getInstructionWord());
 }
 
 int Cpu::getInstructionCodeInt() {
-	vector<bool> instructionCodeBool = getInstructionCode();
-	return Util::getInt(instructionCodeBool);
+  vector<bool> instructionCodeBool = getInstructionCode();
+  return Util::getInt(instructionCodeBool);
 }
 
 Instruction Cpu::getInstruction() {
-	return Instruction(getInstructionWord(), reg, ram);
+  return Instruction(getInstructionWord(), reg, ram);
 }
 
 /*
  * Returns 'false' when last address is reached.
  */
 bool Cpu::step() {
-	cycle++;
-	bool reachedLastAddress = Util::getInt(pc) >= RAM_SIZE;
-	if (reachedLastAddress) {
-		return false;
-	}
-	Instruction inst = Instruction(getInstructionWord(), reg, ram);
-	inst.exec(pc, reg, ram);
-	return true;
+  cycle++;
+  bool reachedLastAddress = Util::getInt(pc) >= RAM_SIZE;
+  if (reachedLastAddress) {
+    return false;
+  }
+  Instruction inst = Instruction(getInstructionWord(), reg, ram);
+  inst.exec(pc, reg, ram);
+  return true;
 }

@@ -14,48 +14,48 @@
 using namespace std;
 
 class Cursor {
-	public:
-		void switchAddressSpace();
-		AddrSpace getAddressSpace();
+  public:
+    void switchAddressSpace();
+    AddrSpace getAddressSpace();
 
-		//////// COORDINATES API /////////
+    //////// COORDINATES API /////////
 
-		int getX();
-		int getY();
-		void increaseX();
-		void increaseY();
-		void decreaseX();
-		void decreaseY();
+    int getX();
+    int getY();
+    void increaseX();
+    void increaseY();
+    void decreaseX();
+    void decreaseY();
 
-		/////////// RAM API ////////////
+    /////////// RAM API ////////////
 
-		bool getBit();
-		void setBit(bool bit);
-		vector<bool> getWord();
-		void setWord(vector<bool> word);
-		void moveByteUp();
-		void moveByteDown();
+    bool getBit();
+    void setBit(bool bit);
+    vector<bool> getWord();
+    void setWord(vector<bool> word);
+    void moveByteUp();
+    void moveByteDown();
 
-	private:
-		// Selected address space.
-		AddrSpace addrSpace = CODE;
-		// Coordinates of first ram lightbulb in the ascii drawing.
-		map<AddrSpace, map<Axis, int>> ramPosition;
-		// Selected bit with the cursor.
-		map<AddrSpace, map<Axis, int>> cursorPosition;
+  private:
+    // Selected address space.
+    AddrSpace addrSpace = CODE;
+    // Coordinates of first ram lightbulb in the ascii drawing.
+    map<AddrSpace, map<Axis, int>> ramPosition;
+    // Selected bit with the cursor.
+    map<AddrSpace, map<Axis, int>> cursorPosition;
 
-		bool notInitialized = true;
-		void initCheck();
-		void initialize();
+    bool notInitialized = true;
+    void initCheck();
+    void initialize();
 
-		int getRamPositionX();
-		int getRamPositionY();
-		int getBitIndex();
-		int getAddr();
-		void setBitIndex(int bitIndex);
-		void setAddr(int addr);
-		void moveByteFor(int delta);
-		bool switchWordsInRam(int addr1, int addr2);
+    int getRamPositionX();
+    int getRamPositionY();
+    int getBitIndex();
+    int getAddr();
+    void setBitIndex(int bitIndex);
+    void setAddr(int addr);
+    void moveByteFor(int delta);
+    bool switchWordsInRam(int addr1, int addr2);
 };
 
 #endif

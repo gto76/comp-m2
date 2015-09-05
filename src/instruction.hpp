@@ -25,7 +25,8 @@ class Instruction {
           adr(getAddress(valIn, regIn, ramIn)) { }
     void exec(vector<bool> &pc, vector<bool> &reg, Ram &ram);
   private:
-    Address getAddress(vector<bool> val, const vector<bool> &reg, const Ram &ram);
+    Address getAddress(vector<bool> val, const vector<bool> &reg,
+                       const Ram &ram);
     SpecificInstruction * getInstruction();
     SpecificInstruction * getLogicInstruction();
 };

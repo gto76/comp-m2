@@ -8,7 +8,8 @@
 
 using namespace std;
 
-Address Instruction::getAddress(vector<bool> val, const vector<bool> &reg, const Ram &ram) {
+Address Instruction::getAddress(vector<bool> val, const vector<bool> &reg,
+                                const Ram &ram) {
   return inst->getAddress(val, reg, ram);
 }
 
@@ -38,14 +39,13 @@ SpecificInstruction * Instruction::getInstruction() {
       return new ReadPointer;
     case 9:
       return new WritePointer;
-    case 10:
-      {
-        if (val[4] == false) {
-          return new Increase;
-        } else {
-          return new Decrease;
-        }
+    case 10: {
+      if (val[4] == false) {
+        return new Increase;
+      } else {
+        return new Decrease;
       }
+    }
     case 11:
       return new Print;
     case 13:
