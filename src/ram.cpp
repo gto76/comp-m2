@@ -16,21 +16,21 @@ Ram::Ram() {
 
 ////// GET //////
 
-vector<bool> Ram::get(AddrSpace addrSpace, vector<bool> adr) {
+vector<bool> Ram::get(AddrSpace addrSpace, vector<bool> adr) const {
 	// Only look at last 4 bits of passed address.   
 	vector<bool> adrShaved(adr.end() - ADDR_SIZE, adr.end());
 	int address = Util::getInt(adrShaved);
 	if (address == RAM_SIZE) {
 		return Ram::getLastAddress(addrSpace);
 	}
-	return state[addrSpace][address];
+	return state.at(addrSpace).at(address);
 }
 
-vector<bool> Ram::get(Address adr) {
+vector<bool> Ram::get(Address adr) const {
 	return get(adr.space, adr.val);
 }
 
-vector<bool> Ram::getLastAddress(AddrSpace addrSpace) {
+vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
 	if (addrSpace == CODE) {
 		fprintf(stderr, "Error in function Ram::getInstruction, "
 			"invalid address");
@@ -44,7 +44,7 @@ vector<bool> Ram::getLastAddress(AddrSpace addrSpace) {
  * Returns random value if last address is passed (reserved for output),
  * or reads from pipe if also input is piped in.
  */
-vector<bool> Ram::getInput() {
+vector<bool> Ram::getInput() const {
 	if (interactivieMode) {
 		return Util::getRandomWord();  
 	} else {
@@ -89,7 +89,7 @@ void Ram::assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn) {
 
 //// GET STRING ////
 
-string Ram::getString() {
+string Ram::getString() const {
 	string out;
 	out += "# Code:\n";
 	out += getString(CODE);
@@ -98,9 +98,9 @@ string Ram::getString() {
 	return out;
 }
 
-string Ram::getString(AddrSpace addrSpace) {
+string Ram::getString(AddrSpace addrSpace) const {
 	string out;
-	for (vector<bool> word : state[addrSpace]) {
+	for (vector<bool> word : state.at(addrSpace)) {
 		out += Util::getString(word) + '\n';
 	}
 	return out;

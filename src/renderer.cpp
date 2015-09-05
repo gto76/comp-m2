@@ -110,8 +110,8 @@ bool Renderer::instructionPointingToAddress(Address adr) {
 		}
 		//vector<bool> instruction = cursor.getWord();
 
-		Instruction * inst = getCursorsInstruction();
-		return inst->adr == adr;
+		Instruction inst = getCursorsInstruction();
+		return inst.adr == adr;
 
 		// AddrSpace instructionsAddrSpace = Cpu::getAddressSpaceOfInstruction(instruction);
 		// if (instructionsAddrSpace != addrSpace) {
@@ -129,12 +129,12 @@ bool Renderer::instructionPointingToAddress(Address adr) {
 	// return cpu.getAddress() == Util::getBoolNibb(adr);
 }
 
-Instruction* Renderer::getCursorsInstruction() {
-	if (!cursorsInstruction) {
+Instruction& Renderer::getCursorsInstruction() {
+	if (cursorsInstruction.size() == 0) {
 		static vector<bool> phonyReg = vector<bool>(EMPTY_WORD);
-		cursorsInstruction = &Instruction(cursor.getWord(), &phonyReg,	&ram);
+		cursorsInstruction.push_back(Instruction(cursor.getWord(), phonyReg, ram));
 	}
-	return cursorsInstruction;
+	return cursorsInstruction[0];
 }
 
 bool Renderer::instructionHasId(int id) {

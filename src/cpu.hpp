@@ -29,15 +29,15 @@ class Cpu {
 		Instruction getInstruction();
 
 		static bool doesInstructionHaveAddress(vector<bool> instruction);
-		static AddrSpace getAddressSpaceOfInstruction(vector<bool> instruction);
-		static vector<bool> getAddressOfInstruction(vector<bool> instruction, vector<bool> regIn, Ram ram);
+		//static AddrSpace getAddressSpaceOfInstruction(vector<bool> instruction);
+		// static vector<bool> getAddressOfInstruction(vector<bool> instruction, vector<bool> regIn, Ram ram);
 
 	private:
 		// STATIC FIELDS
-		static const map<AddrSpace, set<int>> INST_WITH_ADDRESS;
-		static const map<AddrSpace, set<int>> LOGIC_INST_WITH_ADDRESS;
-		static const int LOGIC_INST_ID;
-		static const set<int> INST_WITH_3_BIT_ADDRESS;
+		// static const map<AddrSpace, set<int>> INST_WITH_ADDRESS;
+		// static const map<AddrSpace, set<int>> LOGIC_INST_WITH_ADDRESS;
+		// static const int LOGIC_INST_ID;
+		// static const set<int> INST_WITH_3_BIT_ADDRESS;
 		// STATE
 		vector<bool> reg = vector<bool>(WORD_SIZE);
 		vector<bool> pc = vector<bool>(ADDR_SIZE);

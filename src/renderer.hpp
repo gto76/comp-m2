@@ -24,7 +24,8 @@ class Renderer {
 		Ram ram;
 		Cpu cpu;
 		Cursor cursor;
-		Instruction * cursorsInstruction = NULL;
+		vector<Instruction> cursorsInstruction; // Just a way to leave instruction uninitialized at
+		// Renderers creation, and optionaly create it later (intended to hold only zero or one instruction).
 		// Counts occurances of a char in a drawing.
 		map<char, int> switchIndex;
 		string insertActualValues(string lineIn);
@@ -36,7 +37,7 @@ class Renderer {
 		char getCodeBit(int i);
 		char getDataBit(int i);
 		bool machineNotActive();
-		Instruction* getCursorsInstruction();
+		Instruction& getCursorsInstruction();
 };
 
 #endif

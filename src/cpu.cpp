@@ -72,13 +72,13 @@ vector<bool> Cpu::getValue() {
  * Used by renderer, for indication of where does instructin point to.
  * Not for use by 'cpu' class.
  */
-vector<bool> Cpu::getAddress() {
-	vector<bool> instruction = ram.get(CODE, pc);
-	return getAddressOfInstruction(instruction, reg, ram);
-}
+// vector<bool> Cpu::getAddress() {
+// 	vector<bool> instruction = ram.get(CODE, pc);
+// 	return getAddressOfInstruction(instruction, reg, ram);
+// }
 
 Instruction Cpu::getInstruction() {
-	return Instruction(ram.get(CODE, pc), &reg, &ram);
+	return Instruction(ram.get(CODE, pc), reg, ram);
 }
 
 /*
@@ -92,8 +92,8 @@ bool Cpu::step() {
 	}
 
 	// NEW - test
-	Instruction inst = Instruction(ram.get(CODE, pc), &reg, &ram);
-	inst.exec(&pc);
+	Instruction inst = Instruction(ram.get(CODE, pc), reg, ram);
+	inst.exec(pc, reg, ram);
 
 	// int instCode = getInstructionCodeInt();
 	// vector<bool> value = getValue();
