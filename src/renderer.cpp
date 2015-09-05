@@ -6,13 +6,15 @@
 #include <vector>
 
 #include "addr_space.hpp"
+#include "address.hpp"
 #include "const.hpp"
 #include "cpu.hpp"
+#include "cursor.hpp"
 #include "drawing.hpp"
+#include "instruction.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
 #include "util.hpp"
-#include "cursor.hpp"
 
 using namespace std;
 
@@ -66,11 +68,17 @@ char Renderer::getLightbulb(char cIn) {
 		case 'b':
 			return getDataBit(i);
 		case 'p':
-			return Util::getChar(pcIsPointingToAddress(i));
+			return Util::getChar(pcPointingToAddress(i));
 		case 'd':
-			return Util::getChar(pointingToAddress(CODE, i));
+			{
+				Address adr = Address(CODE, Util::getBoolNibb(i));
+				return Util::getChar(instructionPointingToAddress(adr));
+			}
 		case 's':
-			return Util::getChar(pointingToAddress(DATA, i));
+			{
+				Address adr = Address(DATA, Util::getBoolNibb(i));
+				return Util::getChar(instructionPointingToAddress(adr));
+			}
 		case 'r':
 			return  Util::getChar(cpu.getRegister().at(i));
 		case 'i':
@@ -83,7 +91,7 @@ char Renderer::getLightbulb(char cIn) {
 	return ' ';
 }
 
-bool Renderer::pcIsPointingToAddress(int adr) {
+bool Renderer::pcPointingToAddress(int adr) {
 	bool executionHasntStarted = cpu.getCycle() == 0;
 	if (executionHasntStarted) {
 		return false;
@@ -91,39 +99,49 @@ bool Renderer::pcIsPointingToAddress(int adr) {
 	return Util::getInt(cpu.getPc()) == adr;
 }
 
-bool Renderer::machineNotActive() {
-	bool executionHasntStarted = cpu.getCycle() == 0;
-	bool executionEnded = Util::getInt(cpu.getPc()) == RAM_SIZE;
-	return executionHasntStarted || executionEnded;
-}
-
 /*
  * Is instruction pointing to passed address in passed address space.
  */
-bool Renderer::pointingToAddress(AddrSpace addrSpace, int adr) {
+bool Renderer::instructionPointingToAddress(Address adr) {
 	if (machineNotActive()) {
-		// TODO
 		int cursorOnData = cursor.getAddressSpace() == DATA;
 		if (cursorOnData) {
 			return false;
 		}
-		vector<bool> instruction = cursor.getWord();
-		AddrSpace instructionsAddrSpace = Cpu::getAddressSpaceOfInstruction(instruction);
-		if (instructionsAddrSpace != addrSpace) {
-			return false;
-		}
-		vector<bool> instructionsAddress = Cpu::getAddressOfInstruction(instruction, EMPTY_WORD, ram);
-		bool instructionIsPointingToCurrentAddress = Util::getInt(instructionsAddress) == adr;
-		return instructionIsPointingToCurrentAddress;
+		//vector<bool> instruction = cursor.getWord();
+
+		Instruction * inst = getCursorsInstruction();
+		return inst->adr == adr;
+
+		// AddrSpace instructionsAddrSpace = Cpu::getAddressSpaceOfInstruction(instruction);
+		// if (instructionsAddrSpace != addrSpace) {
+		// 	return false;
+		// }
+		// vector<bool> instructionsAddress = Cpu::getAddressOfInstruction(instruction, EMPTY_WORD, ram);
+		// bool instructionIsPointingToCurrentAddress = Util::getInt(instructionsAddress) == adr;
+		// return instructionIsPointingToCurrentAddress;
 	}
-	if (!cpu.hasAddress(addrSpace)) {
-		return false;
+	Instruction inst = cpu.getInstruction();
+	return inst.adr == adr;
+	// if (!cpu.hasAddress(addrSpace)) {
+	// 	return false;
+	// }
+	// return cpu.getAddress() == Util::getBoolNibb(adr);
+}
+
+Instruction* Renderer::getCursorsInstruction() {
+	if (!cursorsInstruction) {
+		static vector<bool> phonyReg = vector<bool>(EMPTY_WORD);
+		cursorsInstruction = &Instruction(cursor.getWord(), &phonyReg,	&ram);
 	}
-	return cpu.getAddress() == Util::getBoolNibb(adr);
+	return cursorsInstruction;
 }
 
 bool Renderer::instructionHasId(int id) {
 	if (machineNotActive()) {
+		// Instruction * inst = getCursorsInstruction();
+		// return inst->
+
 		int cursorOnData = cursor.getAddressSpace() == DATA;
 		if (cursorOnData) {
 			return false;
@@ -155,4 +173,10 @@ char Renderer::getCodeBit(int i) {
 
 char Renderer::getDataBit(int i) {
 	return getCharAt(i, &ram.state[DATA]);
+}
+
+bool Renderer::machineNotActive() {
+	bool executionHasntStarted = cpu.getCycle() == 0;
+	bool executionEnded = Util::getInt(cpu.getPc()) == RAM_SIZE;
+	return executionHasntStarted || executionEnded;
 }

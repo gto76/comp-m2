@@ -12,9 +12,16 @@ using namespace std;
 class Instruction {
   public:
     vector<bool> const val;
-    Instruction(vector<bool> valIn, vector<bool>* regIn, Ram* ramIn) : val(valIn), reg(regIn), ram(ramIn), inst(getInstruction(valIn)), adr(getAddress(valIn)) { }
+
+    void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
+    
+    Address getAddress(vector<bool> val, const vector<bool> &reg, const Ram &ram);
+
+    Instruction(vector<bool> valIn, vector<bool> &regIn, Ram &ramIn) : val(valIn), reg(regIn), ram(ramIn), inst(getInstruction(valIn)), adr(getAddress(valIn)) { }
+
     void exec(vector<bool>* pc);
   private:
+
     vector<bool>* const reg;
     Ram* const ram;
     SpecificInstruction * const inst;

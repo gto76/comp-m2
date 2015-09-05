@@ -12,6 +12,9 @@ class Address {
     AddrSpace const space;
     vector<bool> const val;
     Address(AddrSpace spaceIn, vector<bool> valIn) : space(spaceIn), val(valIn) { }
+    bool operator == (const Address& a) const {
+      return space == a.space && val == a.val;
+    }
 };
 
 #endif

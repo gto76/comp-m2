@@ -9,6 +9,7 @@
 #include "addr_space.hpp"
 #include "address.hpp"
 #include "const.hpp"
+#include "instruction.hpp"
 #include "ram.hpp"
 
 using namespace std;
@@ -25,6 +26,7 @@ class Cpu {
 		bool hasAddress(AddrSpace addrSpace);
 		vector<bool> getAddress();
 		int getCycle();
+		Instruction getInstruction();
 
 		static bool doesInstructionHaveAddress(vector<bool> instruction);
 		static AddrSpace getAddressSpaceOfInstruction(vector<bool> instruction);
