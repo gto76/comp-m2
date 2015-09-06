@@ -153,7 +153,6 @@ void refreshScreen() {
   fflush(stdout);
 }
 
-
 void redrawScreen() {
   if (screenResized == 1) {
     refreshScreen();

@@ -37,7 +37,6 @@ string Renderer::insertActualValues(string lineIn) {
   string lineOut;
   bool lineContainsLogicOps = lineIn.find(LOGIC_OPS_INDICATOR) != string::npos;
   for (char cIn : lineIn) {
-    //char cOut; 
     string sOut = "";
     // Regex: [0-9a-z]
     bool charIsALightbulb = (cIn >= 'a' && cIn <= 'z') || 
@@ -78,7 +77,6 @@ string Renderer::getBoldIndicator(char cIn, Instruction inst,
       (unsigned)inst.logicIndex == positionOfCharInLogicLabel) {
     string sOut = "\033[1m";
     sOut += string(1, cIn);
-    //sOut += "\033[0m";
     sOut += "\033[0;37m";
     return sOut;
   }
@@ -114,28 +112,6 @@ char Renderer::getLightbulb(char cIn) {
   return ' ';
 }
 
-// bool Renderer::getRegisterAt(int i) {
-//   if (machineActive()) {
-//     return cpu.getRegister().at(i);
-//   }
-//   // If machine not active use register indicator for indicating logic and
-//   // INC/DEC instructions.
-//   Instruction inst = getCursorsInstruction();
-//   bool logicInstruction = inst.index == LOGIC_OPS_INDICATOR;
-//   if (logicInstruction) {
-//     return inst.logicIndex == i;
-//   }
-//   bool incDecInstruction = inst.index == 10;
-//   if (incDecInstruction) {
-//     bool isIncrease = inst.logicIndex < 8;
-//     if (isIncrease) {
-//       return i == 0 || i == 1 || i == 2;
-//     } else {
-//       return i == 4 || i == 5 || i == 6;
-//     }
-//   }
-//   return false;
-// }
 
 bool Renderer::pcPointingToAddress(int adr) {
   bool executionHasntStarted = cpu.getCycle() == 0;
