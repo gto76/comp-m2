@@ -15,6 +15,7 @@ void setOutput(callback_function drawScreen, int width, int height);
 // API
 void printCharXY(char c, int x, int y);
 void printString(const char s[], int x, int y);
+void replaceLine(char const s[], int y);
 void redrawScreen();
 void printCharImediately(char c, int x, int y);
 void clearScreen(void);

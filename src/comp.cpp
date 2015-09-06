@@ -61,7 +61,7 @@ void drawScreen() {
   buffer = Util::splitString(out);
   int i = 0;
   for (string line : buffer) {
-    printString(line.c_str(), 0, i++);
+    replaceLine(line.c_str(), i++);
   }
 }
 

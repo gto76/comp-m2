@@ -1,5 +1,9 @@
 #include "output.hpp"
 
+// tmp:
+#include <fstream>
+#include <iostream>
+
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -18,6 +22,9 @@ void registerSigWinChCatcher(void);
 void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
 void copyArray(char dest[], const char src[], int width);
+int getLengthOfString(char const s[]);
+void setLine(string line, int y);
+void replaceLine(char const s[], int y);
 
 ////////////////////////////
 
@@ -87,9 +94,10 @@ void printCharImediately(char c, int x, int y) {
 }
 
 void printString(char const s[], int x, int y) {
-  if (coordinatesOutOfBounds(x, y))
+  if (coordinatesOutOfBounds(x, y)) {
     return;
-  int itDoesntFitTheScreen = strlen(s) + (unsigned) x > (unsigned) columns;
+  }
+  int itDoesntFitTheScreen = getLengthOfString(s) + (unsigned) x > (unsigned) columns;
   if (itDoesntFitTheScreen) {
     int distanceToTheRightEdge = columns - x - 1;
     char subArray[distanceToTheRightEdge+2];
@@ -99,6 +107,56 @@ void printString(char const s[], int x, int y) {
   } else {
     setBuffer(s, x, y);
   }
+}
+
+// NEW:
+void setLine(string line, int y) {
+  int size = screenBuffer.size();
+  if (size <= y) {
+    for (int i = size; i <= y+1; i++) {
+      screenBuffer.push_back("");
+    }
+  }
+  screenBuffer.at(y) = line;
+}
+
+// NEW:
+void replaceLine(char const s[], int y) {
+  int x = 0;
+  if (coordinatesOutOfBounds(x, y)) {
+    return;
+  }
+  int itDoesntFitTheScreen = getLengthOfString(s) + (unsigned) x > (unsigned) columns;
+  if (itDoesntFitTheScreen) {
+    int distanceToTheRightEdge = columns - x - 1;
+    char subArray[distanceToTheRightEdge+2];
+    copyArray(subArray, s, distanceToTheRightEdge+2);
+    s = subArray;
+    setLine(subArray, y);
+  } else {
+    setLine(s, y);
+  }
+}
+
+int getLengthOfString(char const s[]) {
+  int counter = 0;
+  bool insideEscapeSeqence = false;
+  // for every char:
+  for (size_t i = 0; i < strlen(s); i++) {
+    // if escape sequence -> dont count
+    if (s[i] == '\033') {
+      insideEscapeSeqence = true;
+      continue;
+    }
+    if (insideEscapeSeqence && s[i] == 'm') {
+      insideEscapeSeqence = false;
+      continue;
+    }
+    if (!insideEscapeSeqence) {
+      counter++;
+    }
+  }
+  return counter;
 }
 
 int getAbsoluteX(int x) {
