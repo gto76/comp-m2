@@ -30,7 +30,7 @@ vector<bool> Cpu::getPc() {
 
 vector<bool> Cpu::getInstructionWord() {
   Address adr = Address(CODE, pc);
-  return ram.get(adr);
+  return ram->get(adr);
 }
 
 vector<bool> Cpu::getInstructionCode() {
@@ -43,7 +43,7 @@ int Cpu::getInstructionCodeInt() {
 }
 
 Instruction Cpu::getInstruction() {
-  return Instruction(getInstructionWord(), reg, ram);
+  return Instruction(getInstructionWord(), reg, *ram);
 }
 
 /*
@@ -55,7 +55,7 @@ bool Cpu::step() {
   if (reachedLastAddress) {
     return false;
   }
-  Instruction inst = Instruction(getInstructionWord(), reg, ram);
-  inst.exec(pc, reg, ram);
+  Instruction inst = Instruction(getInstructionWord(), reg, *ram);
+  inst.exec(pc, reg, *ram);
   return true;
 }

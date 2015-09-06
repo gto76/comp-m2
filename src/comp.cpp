@@ -38,8 +38,8 @@ bool interactivieMode;
 bool executionCanceled = false;
 
 Printer printer;
-Ram ram;
-Cpu cpu;
+Ram ram = Ram(printer);
+Cpu cpu = Cpu(&ram);
 
 // Graphic representation of the computer state.
 vector<string> buffer;
@@ -50,7 +50,7 @@ int executionCounter = 0;
 map<AddrSpace, vector<vector<bool>>> savedRamState;
 
 // Class for keeping track of and moving around cursor.
-Cursor cursor;
+Cursor cursor = Cursor(ram);
 
 //////////////////////////
 /////// FUNCTIONS ////////
@@ -173,9 +173,8 @@ void run() {
   } else {
     readStdin(false);
   }
-  ram = Ram();
   ram.state = savedRamState;
-  cpu = Cpu();
+  cpu = Cpu(&ram);
   redrawScreen();
   executionCounter++;
 }

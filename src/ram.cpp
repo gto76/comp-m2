@@ -8,11 +8,11 @@
 
 using namespace std;
 
-Ram::Ram() {
-  // Initializes the state, one per address space.
-  state[CODE] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
-  state[DATA] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
-}
+// Ram::Ram() {
+//   // Initializes the state, one per address space.
+//   state[CODE] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
+//   state[DATA] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
+// }
 
 ////// GET //////
 

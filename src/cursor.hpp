@@ -15,6 +15,8 @@ using namespace std;
 
 class Cursor {
   public:
+    Cursor(Ram &ramIn) : ram(ramIn) { }
+
     void switchAddressSpace();
     AddrSpace getAddressSpace();
 
@@ -37,6 +39,7 @@ class Cursor {
     void moveByteDown();
 
   private:
+    Ram &ram;
     // Selected address space.
     AddrSpace addrSpace = CODE;
     // Coordinates of first ram lightbulb in the ascii drawing.

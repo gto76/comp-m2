@@ -6,18 +6,25 @@
 
 #include "addr_space.hpp"
 #include "address.hpp"
+#include "const.hpp"
+#include "printer.hpp"
 
 using namespace std;
 
 class Ram {
   public:
-    Ram();
+    Ram(Printer &printerIn) : printer(printerIn) {
+      // Initializes the state, one per address space.
+      state[CODE] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
+      state[DATA] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE)); 
+    }
     map<AddrSpace, vector<vector<bool>>> state;
     vector<bool> get(Address adr) const;
     void set(Address adr, vector<bool> wordIn);
     string getString() const;
 
   private:
+    Printer &printer;
     vector<bool> getLastAddress(AddrSpace addrSpace) const;
     vector<bool> getInput() const;
     void saveWord(AddrSpace addrSpace, int address, vector<bool> wordIn);

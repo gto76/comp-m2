@@ -93,7 +93,7 @@ AddrSpace Cursor::getAddressSpace() {
 /////////// RAM API ////////////
 
 bool Cursor::getBit() {
-  return ram.state[addrSpace].at(getAddr()).at(getBitIndex());
+  return ram.state.at(addrSpace).at(getAddr()).at(getBitIndex());
 }
 
 void Cursor::setBit(bool bit) {
