@@ -16,12 +16,15 @@ const vector<bool> FIRST_ADDRESS = { false, false, false, false };
 const vector<bool> LAST_ADDRESS = { true, true, true, true };
 const int MAX_VALUE = 255;
 
+const string LOGIC_OPS_INDICATOR = "JRI~<>&VX";
+const int LOGIC_OPS_INDEX = 7;
+
+const string  INC_DEC_OPS_INDICATOR = "INC/DEC";
+const int INC_DEC_OPS_INDEX = 10;
+
 // Miliseconds between cycles (when run in interactive mode).
 const int FQ = 333;
 
 const string SAVE_FILE_NAME = "saved-ram-";
-
-const string LOGIC_OPS_INDICATOR = "JRI~<>&VX";
-const int LOGIC_OPS_INDEX = 7;
 
 #endif

@@ -50,6 +50,8 @@ class Renderer {
     char getDataBit(int i);
     bool machineActive();
     Instruction& getCursorsInstruction();
+    string setCharToBoldIfIncDecOp(char cIn);
+    string highlightIncOrDec(char cIn, Instruction inst);
 };
 
 #endif
