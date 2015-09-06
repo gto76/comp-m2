@@ -21,4 +21,7 @@ const int FQ = 333;
 
 const string SAVE_FILE_NAME = "saved-ram-";
 
+const string LOGIC_OPS_INDICATOR = "JRI~<>&VX";
+const int LOGIC_OPS_INDEX = 7;
+
 #endif

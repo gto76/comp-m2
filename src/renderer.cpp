@@ -35,19 +35,54 @@ string Renderer::renderState(const Printer &printerIn, const Ram &ramIn,
 
 string Renderer::insertActualValues(string lineIn) {
   string lineOut;
+  bool lineContainsLogicOps = lineIn.find(LOGIC_OPS_INDICATOR) != string::npos;
   for (char cIn : lineIn) {
-    char cOut;
+    //char cOut; 
+    string sOut = "";
     // Regex: [0-9a-z]
     bool charIsALightbulb = (cIn >= 'a' && cIn <= 'z') || 
                             (cIn >= '0' && cIn <= '9');
     if (charIsALightbulb) {
-      cOut = getLightbulb(cIn);
+      sOut.push_back(getLightbulb(cIn));
+    } else if (lineContainsLogicOps) {
+      sOut += setCharToBoldIfLogicOp(cIn);
     } else {
-      cOut = cIn;
+      sOut.push_back(cIn);
     }
-    lineOut += cOut;
+    lineOut += sOut;
   }
   return lineOut;
+}
+
+string Renderer::setCharToBoldIfLogicOp(char cIn) {
+  size_t positionOfCharInLogicLabel = LOGIC_OPS_INDICATOR.find(cIn);
+  bool charIsNotALogicOp = positionOfCharInLogicLabel == string::npos;
+  if (charIsNotALogicOp) {
+    return string(1, cIn);
+  }
+  if (machineActive()) {
+    Instruction inst = cpu.getInstruction();
+    return getBoldIndicator(cIn, inst, positionOfCharInLogicLabel);
+  }
+  int cursorOnData = cursor.getAddressSpace() == DATA;
+  if (cursorOnData) {
+    return string(1, cIn);
+  }
+  Instruction inst = getCursorsInstruction();
+  return getBoldIndicator(cIn, inst, positionOfCharInLogicLabel);
+}
+
+string Renderer::getBoldIndicator(char cIn, Instruction inst, 
+                                  size_t positionOfCharInLogicLabel) {
+  if (inst.index == LOGIC_OPS_INDEX && 
+      (unsigned)inst.logicIndex == positionOfCharInLogicLabel) {
+    string sOut = "\033[1m";
+    sOut += string(1, cIn);
+    //sOut += "\033[0m";
+    sOut += "\033[0;37m";
+    return sOut;
+  }
+  return string(1, cIn);
 }
 
 char Renderer::getLightbulb(char cIn) {
@@ -78,6 +113,29 @@ char Renderer::getLightbulb(char cIn) {
           " Problem with char %c. Will ignore it.", cIn);
   return ' ';
 }
+
+// bool Renderer::getRegisterAt(int i) {
+//   if (machineActive()) {
+//     return cpu.getRegister().at(i);
+//   }
+//   // If machine not active use register indicator for indicating logic and
+//   // INC/DEC instructions.
+//   Instruction inst = getCursorsInstruction();
+//   bool logicInstruction = inst.index == LOGIC_OPS_INDICATOR;
+//   if (logicInstruction) {
+//     return inst.logicIndex == i;
+//   }
+//   bool incDecInstruction = inst.index == 10;
+//   if (incDecInstruction) {
+//     bool isIncrease = inst.logicIndex < 8;
+//     if (isIncrease) {
+//       return i == 0 || i == 1 || i == 2;
+//     } else {
+//       return i == 4 || i == 5 || i == 6;
+//     }
+//   }
+//   return false;
+// }
 
 bool Renderer::pcPointingToAddress(int adr) {
   bool executionHasntStarted = cpu.getCycle() == 0;

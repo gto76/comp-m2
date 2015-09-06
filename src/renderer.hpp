@@ -37,7 +37,11 @@ class Renderer {
     // Counts occurances of a char in a drawing.
     map<char, int> switchIndex;
     string insertActualValues(string lineIn);
+    string setCharToBoldIfLogicOp(char cIn);
+    string getBoldIndicator(char cIn, Instruction inst,
+                            size_t positionOfCharInLogicLabel);
     char getLightbulb(char cIn);
+    bool getRegisterAt(int i);
     bool pcPointingToAddress(int adr);
     bool instructionPointingToAddress(Address adr);
     bool instructionHasId(int id);
