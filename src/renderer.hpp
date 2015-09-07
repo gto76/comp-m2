@@ -56,6 +56,11 @@ class Renderer {
     string insertBoldEscSeqences(string lineWithoutEscapeSeqences,
                                  vector<bool> characterBoldOrNot);
     vector<bool> getBoldLocations(string lineIn);
+    vector<bool> enboldenOperators(vector<bool> boldLocations, string lineIn,
+                                   Instruction *inst);
+    vector<bool> enboldenWords(vector<bool> boldLocations, string lineIn,
+                               Instruction *inst, char indicator,
+                               AddrSpace addrSpace);
 };
 
 #endif

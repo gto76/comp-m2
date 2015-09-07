@@ -57,6 +57,14 @@ vector<bool> Renderer::getBoldLocations(string lineIn) {
   if (inst == NULL) {
     return boldLocations;
   }
+  boldLocations = enboldenOperators(boldLocations, lineIn, inst);
+  boldLocations = enboldenWords(boldLocations, lineIn, inst, 'a', CODE);
+  boldLocations = enboldenWords(boldLocations, lineIn, inst, 'b', DATA);
+  return boldLocations;
+}
+
+vector<bool> Renderer::enboldenOperators(vector<bool> boldLocations,
+                                         string lineIn, Instruction *inst) {
   string label = inst->label;
   size_t labelPosition = lineIn.find(label);
   if (labelPosition == string::npos) {
@@ -68,6 +76,21 @@ vector<bool> Renderer::getBoldLocations(string lineIn) {
   } else {
     for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
       boldLocations[i] = true;
+    }
+  }
+  return boldLocations;
+}
+
+vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
+                                     string lineIn, Instruction *inst,
+                                     char indicator, AddrSpace addrSpace) {
+  for (size_t i = 0; i < lineIn.length(); i++) {
+    if (lineIn[i] == indicator) {
+      int addressValue = switchIndex[indicator] / WORD_SIZE;
+      Address adr = Address(addrSpace, Util::getBoolNibb(addressValue));
+      if (instructionPointingToAddress(adr)) {
+        boldLocations[i] = true;
+      }
     }
   }
   return boldLocations;
