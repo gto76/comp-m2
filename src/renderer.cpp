@@ -33,33 +33,19 @@ string Renderer::renderState(const Printer &printerIn, const Ram &ramIn,
   return out;
 }
 
-// enum Operator {
-//   READ,
-//   WRITE
-//}
-
-// string lineOutWithoutEscapeSeqences
-// vector<bool> characterBoldOrNot
-
-// line
-  // check if contains inst.op
-    // set characterBoldOrNot[location..location+inst.op.size] to true
-  //...
-
-// string Renderer::insertBoldEscSeqences(string lineOutWithoutEscapeSeqences, vector<bool> characterBoldOrNot) {
-// string lineOut
-// for c in characterBoldOrNot
-//   if first bold
-//     line out = bold start escape sequence
-//   if first nonbold / last char
-//     line out = bold end
-//   lineOut += c
-// }
-
 string Renderer::insertActualValues(string lineIn) {
+//  string lineOutWithoutEscapeSeqences = "";
+  vector<bool> characterBoldOrNot = getBoldLocations(lineIn);
+
+  // line
+  //   check if contains inst.op
+  //     set characterBoldOrNot[location..location+inst.op.size] to true
+  //   ...
+
   string lineOut;
-  bool lineContainsLogicOps = lineIn.find(LOGIC_OPS_INDICATOR) != string::npos;
-  bool lineContainsIncDecOps = lineIn.find(INC_DEC_OPS_INDICATOR) != string::npos;
+  // bool lineContainsLogicOps = lineIn.find(LOGIC_OPS_INDICATOR) != string::npos;
+  // bool lineContainsIncDecOps = lineIn.find(INC_DEC_OPS_INDICATOR) != 
+  //                              string::npos;
   for (char cIn : lineIn) {
     string sOut = "";
     // Regex: [0-9a-z]
@@ -67,14 +53,57 @@ string Renderer::insertActualValues(string lineIn) {
                             (cIn >= '0' && cIn <= '9');
     if (charIsALightbulb) {
       sOut.push_back(getLightbulb(cIn));
-    } else if (lineContainsLogicOps) {
-      sOut += setCharToBoldIfLogicOp(cIn);
-    } else if (lineContainsIncDecOps) {
-      sOut += setCharToBoldIfIncDecOp(cIn);
+    // } else if (lineContainsLogicOps) {
+    //   sOut += setCharToBoldIfLogicOp(cIn);
+    // } else if (lineContainsIncDecOps) {
+    //   sOut += setCharToBoldIfIncDecOp(cIn);
     } else {
       sOut.push_back(cIn);
     }
     lineOut += sOut;
+  }
+  //return lineOut;
+  return insertBoldEscSeqences(lineOut, characterBoldOrNot);
+}
+
+vector<bool> Renderer::getBoldLocations(string lineIn) {
+  vector<bool> boldLocations (lineIn.length(), false);
+  Instruction *inst = getInstruction();
+  if (inst == NULL) {
+    return boldLocations;
+  }
+  string label = inst->label;
+  size_t labelPosition = lineIn.find(label);
+  if (labelPosition == string::npos) {
+    return boldLocations;
+  }
+  if (inst->isLogic()) {
+    int positionOffset = min(inst->logicIndex, 8);
+    boldLocations[labelPosition + positionOffset] = true;
+  } else {
+    for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
+      boldLocations[i] = true;
+    }
+  }
+  return boldLocations;
+}
+
+string Renderer::insertBoldEscSeqences(string lineWithoutEscapeSeqences,
+                                       vector<bool> characterBoldOrNot) {
+  string lineOut = "";
+  bool insideBoldBlock = false;
+  for (size_t i = 0; i < lineWithoutEscapeSeqences.length(); i++) {
+    bool firstBoldCharOfBlock = characterBoldOrNot[i] && !insideBoldBlock;
+    if (firstBoldCharOfBlock) {
+      lineOut += BOLD_ESC;
+      insideBoldBlock = true;
+    }
+    bool firstNonBoldCharOfBlock = !characterBoldOrNot[i] && insideBoldBlock;
+    if (firstNonBoldCharOfBlock) {
+      lineOut += BOLD_END_ESC;
+      insideBoldBlock = false;
+    }
+    lineOut += lineWithoutEscapeSeqences[i];
   }
   return lineOut;
 }
@@ -90,23 +119,11 @@ string Renderer::setCharToBoldIfLogicOp(char cIn) {
     return string(1, cIn);
   }
   return highlightLogicIndicator(cIn, *inst, positionOfCharInLogicLabel);
-
-  // if (machineActive()) {
-  //   Instruction inst = cpu.getInstruction();
-  //   return highlightLogicIndicator(cIn, inst, positionOfCharInLogicLabel);
-  // }
-  // int cursorOnData = cursor.getAddressSpace() == DATA;
-  // if (cursorOnData) {
-  //   return string(1, cIn);
-  // }
-  // Instruction inst = getCursorsInstruction();
-  // return highlightLogicIndicator(cIn, inst, positionOfCharInLogicLabel);
 }
 
 string Renderer::highlightLogicIndicator(char cIn, Instruction inst, 
                                   size_t positionOfCharInLogicLabel) {
-  bool isLogicOp = inst.index == LOGIC_OPS_INDEX;
-  if (isLogicOp) {
+  if (inst.isLogic()) {
     bool indicatingInstruction =
         ((unsigned)inst.logicIndex == positionOfCharInLogicLabel ||
         (inst.logicIndex > 7 && positionOfCharInLogicLabel == 8));
@@ -128,16 +145,6 @@ string Renderer::setCharToBoldIfIncDecOp(char cIn) {
     return string(1, cIn);
   }
   return highlightIncOrDec(cIn, *inst);
-
-  // if (machineActive()) {
-  //   return highlightIncOrDec(cIn, cpu.getInstruction());
-  // } else {
-  //   int cursorOnData = cursor.getAddressSpace() == DATA;
-  //   if (cursorOnData) {
-  //     return string(1, cIn);
-  //   }
-  //   return highlightIncOrDec(cIn, getCursorsInstruction());
-  // }
 }
 
 string Renderer::highlightIncOrDec(char cIn, Instruction inst) {
@@ -208,17 +215,6 @@ bool Renderer::instructionPointingToAddress(Address adr) {
     return false;
   }
   return inst->adr == adr;
-
-  // // if (machineActive()) {
-  // //   Instruction inst = cpu.getInstruction();
-  // //   return inst.adr == adr;
-  // // }
-  // // int cursorOnData = cursor.getAddressSpace() == DATA;
-  // // if (cursorOnData) {
-  // //   return false;
-  // // }
-  // // Instruction inst = getCursorsInstruction();
-  // return inst.adr == adr;
 }
 
 Instruction* Renderer::getInstruction() {
@@ -241,29 +237,12 @@ Instruction Renderer::initializeInstruction() {
   }
 }
 
-// Instruction& Renderer::getCursorsInstruction() {
-//   if (cursorsInstruction.size() == 0) {
-//     cursorsInstruction.push_back(Instruction(cursor.getWord(), EMPTY_WORD, ram));
-//   }
-//   return cursorsInstruction[0];
-// }
-
 bool Renderer::instructionHasId(int id) {
   Instruction *inst = getInstruction();
   if (inst == NULL) {
     return false;
   }
   return inst->index == id;
-
-  // if (machineActive()) {
-  //   return cpu.getInstructionCodeInt() == id;
-  // }
-  // int cursorOnData = cursor.getAddressSpace() == DATA;
-  // if (cursorOnData) {
-  //   return false;
-  // }
-  // Instruction inst = getCursorsInstruction();
-  // return inst.index == id;
 }
 
 char Renderer::getFormattedOutput(int i) {

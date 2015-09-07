@@ -35,7 +35,7 @@ Address Read::getAddress(vector<bool> val, const vector<bool> &reg,
 }
 
 string Read::getLabel() {
-  return "READ";
+  return "READ  ";
 }
 
 // WRITE
@@ -54,7 +54,7 @@ Address Write::getAddress(vector<bool> val, const vector<bool> &reg,
 }
 
 string Write::getLabel() {
-  return "WRITE";
+  return "WRITE  ";
 }
 
 // ADD

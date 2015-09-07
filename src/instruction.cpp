@@ -17,6 +17,10 @@ void Instruction::exec(vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   inst->exec(adr, pc, reg, ram);
 }
 
+bool Instruction::isLogic() {
+  return index == LOGIC_OPS_INDEX;
+}
+
 SpecificInstruction * Instruction::getInstruction() {
   switch (index) {
     case 0:
