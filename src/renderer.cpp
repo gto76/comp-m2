@@ -57,44 +57,86 @@ vector<bool> Renderer::getBoldLocations(string lineIn) {
   if (inst == NULL) {
     return boldLocations;
   }
-  boldLocations = enboldenOperators(boldLocations, lineIn, inst);
-  boldLocations = enboldenWords(boldLocations, lineIn, inst, 'a', CODE);
-  boldLocations = enboldenWords(boldLocations, lineIn, inst, 'b', DATA);
+  // boldLocations = enboldenOperators(boldLocations, lineIn, inst);
+  // if (inst->adr.space == CODE) {
+  //   boldLocations = enboldenCodeWord(boldLocations, lineIn, inst);
+  // } else if (inst->adr.space == DATA) {
+  //   boldLocations = enboldenDataWord(boldLocations, lineIn, inst);
+  // }
   return boldLocations;
 }
 
-vector<bool> Renderer::enboldenOperators(vector<bool> boldLocations,
-                                         string lineIn, Instruction *inst) {
-  string label = inst->label;
-  size_t labelPosition = lineIn.find(label);
-  if (labelPosition == string::npos) {
-    return boldLocations;
-  }
-  if (inst->isLogic()) {
-    int positionOffset = min(inst->logicIndex, 8);
-    boldLocations[labelPosition + positionOffset] = true;
-  } else {
-    for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
-      boldLocations[i] = true;
-    }
-  }
-  return boldLocations;
-}
+// vector<bool> Renderer::enboldenOperators(vector<bool> boldLocations,
+//                                          string lineIn, Instruction *inst) {
+//   int positionOffset = -1;
+//   if (inst->isLogic()) {
+//     positionOffset = min(inst->logicIndex, 8);
+//   }
+//   return enboldenLabel(boldLocations, lineIn, inst->label, positionOffset);
+  
+//   // string label = inst->label;
+//   // size_t labelPosition = lineIn.find(label);
+//   // if (labelPosition == string::npos) {
+//   //   return boldLocations;
+//   // }
+//   // if (inst->isLogic()) {
+//   //   int positionOffset = min(inst->logicIndex, 8);
+//   //   boldLocations[labelPosition + positionOffset] = true;
+//   // } else {
+//   //   for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
+//   //     boldLocations[i] = true;
+//   //   }
+//   // }
+//   // return boldLocations;
+// }
 
-vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
-                                     string lineIn, Instruction *inst,
-                                     char indicator, AddrSpace addrSpace) {
-  for (size_t i = 0; i < lineIn.length(); i++) {
-    if (lineIn[i] == indicator) {
-      int addressValue = switchIndex[indicator] / WORD_SIZE;
-      Address adr = Address(addrSpace, Util::getBoolNibb(addressValue));
-      if (instructionPointingToAddress(adr)) {
-        boldLocations[i] = true;
-      }
-    }
-  }
-  return boldLocations;
-}
+// vector<bool> Renderer::enboldenLabel(vector<bool> boldLocations,
+//                                      string lineIn, string label,
+//                                      int onlyCharAtThisIndexIfNotNegative) {
+//   size_t labelPosition = lineIn.find(label);
+//   if (labelPosition == string::npos) {
+//     return boldLocations;
+//   }
+//   if (onlyCharAtThisIndexIfNotNegative >= 0) {
+//     boldLocations[labelPosition + onlyCharAtThisIndexIfNotNegative] = true;
+//     return boldLocations;
+//   }
+//   for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
+//     boldLocations[i] = true;
+//   }
+//   return boldLocations;
+// }
+
+// vector<bool> Renderer::enboldenCodeWord(vector<bool> boldLocations,
+//                                         string lineIn, Instruction *inst) {
+//   if (inst->adr.val == LAST_ADDRESS) {
+//     return enboldenLabel(boldLocations, lineIn, LAST_CODE_ADDR_LABEL);
+//   }
+//   return enboldenWords(boldLocations, lineIn, inst, 'a', CODE);
+// }
+
+// vector<bool> Renderer::enboldenDataWord(vector<bool> boldLocations,
+//                                         string lineIn, Instruction *inst) {
+//   if (inst->adr.val == LAST_ADDRESS) {
+//     return enboldenLabel(boldLocations, lineIn, LAST_DATA_ADDR_LABEL);
+//   }
+//   return enboldenWords(boldLocations, lineIn, inst, 'b', DATA);
+// }
+
+// vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
+//                                      string lineIn, Instruction *inst,
+//                                      char indicator, AddrSpace addrSpace) {
+//   for (size_t i = 0; i < lineIn.length(); i++) {
+//     if (lineIn[i] == indicator) {
+//       int addressValue = switchIndex[indicator] / WORD_SIZE;
+//       Address adr = Address(addrSpace, Util::getBoolNibb(addressValue));
+//       if (instructionPointingToAddress(adr)) {
+//         boldLocations[i] = true;
+//       }
+//     }
+//   }
+//   return boldLocations;
+// }
 
 string Renderer::insertBoldEscSeqences(string lineWithoutEscapeSeqences,
                                        vector<bool> characterBoldOrNot) {
