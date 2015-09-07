@@ -38,8 +38,10 @@ class Renderer {
     map<char, int> switchIndex;
     string insertActualValues(string lineIn);
     string setCharToBoldIfLogicOp(char cIn);
-    string getBoldIndicator(char cIn, Instruction inst,
-                            size_t positionOfCharInLogicLabel);
+    string highlightLogicIndicator(char cIn, Instruction inst,
+                                   size_t positionOfCharInLogicLabel);
+    string setCharToBoldIfIncDecOp(char cIn);
+    string highlightIncOrDec(char cIn, Instruction inst);
     char getLightbulb(char cIn);
     bool getRegisterAt(int i);
     bool pcPointingToAddress(int adr);
@@ -50,8 +52,6 @@ class Renderer {
     char getDataBit(int i);
     bool machineActive();
     Instruction& getCursorsInstruction();
-    string setCharToBoldIfIncDecOp(char cIn);
-    string highlightIncOrDec(char cIn, Instruction inst);
 };
 
 #endif

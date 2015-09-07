@@ -64,24 +64,26 @@ string Renderer::setCharToBoldIfLogicOp(char cIn) {
   }
   if (machineActive()) {
     Instruction inst = cpu.getInstruction();
-    return getBoldIndicator(cIn, inst, positionOfCharInLogicLabel);
+    return highlightLogicIndicator(cIn, inst, positionOfCharInLogicLabel);
   }
   int cursorOnData = cursor.getAddressSpace() == DATA;
   if (cursorOnData) {
     return string(1, cIn);
   }
   Instruction inst = getCursorsInstruction();
-  return getBoldIndicator(cIn, inst, positionOfCharInLogicLabel);
+  return highlightLogicIndicator(cIn, inst, positionOfCharInLogicLabel);
 }
 
-string Renderer::getBoldIndicator(char cIn, Instruction inst, 
+string Renderer::highlightLogicIndicator(char cIn, Instruction inst, 
                                   size_t positionOfCharInLogicLabel) {
-  if (inst.index == LOGIC_OPS_INDEX && 
-      (unsigned)inst.logicIndex == positionOfCharInLogicLabel) {
-    string sOut = "\033[1m";
-    sOut += string(1, cIn);
-    sOut += "\033[0;37m";
-    return sOut;
+  bool isLogicOp = inst.index == LOGIC_OPS_INDEX;
+  if (isLogicOp) {
+    bool indicatingInstruction =
+        ((unsigned)inst.logicIndex == positionOfCharInLogicLabel ||
+        (inst.logicIndex > 7 && positionOfCharInLogicLabel == 8));
+    if (indicatingInstruction) {
+      return "\033[1m" + string(1, cIn) + "\033[0;37m";
+    }
   }
   return string(1, cIn);
 }
