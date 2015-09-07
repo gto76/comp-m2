@@ -34,6 +34,10 @@ Address Read::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(DATA, Util::getSecondNibble(val));
 }
 
+string Read::getLabel() {
+  return "READ";
+}
+
 // WRITE
 
 /*
@@ -47,6 +51,10 @@ void Write::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 Address Write::getAddress(vector<bool> val, const vector<bool> &reg, 
                           const Ram &ram) {
   return Address(DATA, Util::getSecondNibble(val));;
+}
+
+string Write::getLabel() {
+  return "WRITE";
 }
 
 // ADD
@@ -65,6 +73,10 @@ Address Add::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(DATA, Util::getSecondNibble(val));
 }
 
+string Add::getLabel() {
+  return "ADD";
+}
+
 // SUB
 
 /*
@@ -81,6 +93,10 @@ Address Sub::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(DATA, Util::getSecondNibble(val));
 }
 
+string Sub::getLabel() {
+  return "SUB";
+}
+
 // JUMP
 
 /*
@@ -93,6 +109,10 @@ void Jump::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 Address Jump::getAddress(vector<bool> val, const vector<bool> &reg, 
                          const Ram &ram) {
   return Address(CODE, Util::getSecondNibble(val));
+}
+
+string Jump::getLabel() {
+  return "JUMP";
 }
 
 // IF MAX
@@ -113,6 +133,10 @@ Address IfMax::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(CODE, Util::getSecondNibble(val));
 }
 
+string IfMax::getLabel() {
+  return "IF MAX";
+}
+
 // IF MIN
 
 /*
@@ -131,6 +155,10 @@ Address IfMin::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(CODE, Util::getSecondNibble(val));
 }
 
+string IfMin::getLabel() {
+  return "IF MIN";
+}
+
 // JUMP REG
 
 /*
@@ -143,6 +171,10 @@ void JumpReg::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 Address JumpReg::getAddress(vector<bool> val, const vector<bool> &reg,
                             const Ram &ram) {
   return Address(CODE, Util::getSecondNibble(reg));
+}
+
+string JumpReg::getLabel() {
+  return LOGIC_OPS_INDICATOR;
 }
 
 // READ REG
@@ -159,6 +191,10 @@ void ReadReg::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 Address ReadReg::getAddress(vector<bool> val, const vector<bool> &reg,
                             const Ram &ram) {
   return Address(DATA, Util::getSecondNibble(reg));
+}
+
+string ReadReg::getLabel() {
+  return LOGIC_OPS_INDICATOR;
 }
 
 // INITIALIZE FIRST ADDRESS
@@ -178,6 +214,10 @@ Address InitializeFirstAddress::getAddress(vector<bool> val,
   return Address(DATA, FIRST_ADDRESS);
 }
 
+string InitializeFirstAddress::getLabel() {
+  return LOGIC_OPS_INDICATOR;
+}
+
 // NOT
 
 /*
@@ -191,6 +231,10 @@ void Not::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 Address Not::getAddress(vector<bool> val, const vector<bool> &reg,
                         const Ram &ram) {
   return Address(NONE, FIRST_ADDRESS);
+}
+
+string Not::getLabel() {
+  return LOGIC_OPS_INDICATOR;
 }
 
 // SHIFT LEFT
@@ -208,6 +252,10 @@ Address ShiftLeft::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(NONE, FIRST_ADDRESS);
 }
 
+string ShiftLeft::getLabel() {
+  return LOGIC_OPS_INDICATOR;
+}
+
 // SHIFT RIGHT
 
 /*
@@ -221,6 +269,10 @@ void ShiftRight::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
 Address ShiftRight::getAddress(vector<bool> val, const vector<bool> &reg,
                                const Ram &ram) {
   return Address(NONE, FIRST_ADDRESS);
+}
+
+string ShiftRight::getLabel() {
+  return LOGIC_OPS_INDICATOR;
 }
 
 // AND
@@ -238,6 +290,10 @@ Address And::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(DATA, Util::getBoolNibb(6));
 }
 
+string And::getLabel() {
+  return LOGIC_OPS_INDICATOR;
+}
+
 // OR
 
 /*
@@ -251,6 +307,10 @@ void Or::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 Address Or::getAddress(vector<bool> val, const vector<bool> &reg,
                        const Ram &ram) {
   return Address(DATA, Util::getBoolNibb(7));
+}
+
+string Or::getLabel() {
+  return LOGIC_OPS_INDICATOR;
 }
 
 // XOR
@@ -268,6 +328,10 @@ void Xor::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 Address Xor::getAddress(vector<bool> val, const vector<bool> &reg,
                         const Ram &ram) {
   return getThreeBitAddress(val);
+}
+
+string Xor::getLabel() {
+  return LOGIC_OPS_INDICATOR;
 }
 
 // READ POINTER
@@ -288,6 +352,10 @@ Address ReadPointer::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(DATA, Util::getSecondNibble(pointer));
 }
 
+string ReadPointer::getLabel() {
+  return "READ *";
+}
+
 // WRITE POINTER
 
 /*
@@ -306,6 +374,10 @@ Address WritePointer::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(DATA, Util::getSecondNibble(pointer));
 }
 
+string WritePointer::getLabel() {
+  return "WRITE *";
+}
+
 // INCREASE
 
 /*
@@ -320,6 +392,10 @@ void Increase::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
 Address Increase::getAddress(vector<bool> val, const vector<bool> &reg,
                              const Ram &ram) {
   return getThreeBitAddress(val);
+}
+
+string Increase::getLabel() {
+  return "INC";
 }
 
 // DECREASE
@@ -338,6 +414,10 @@ Address Decrease::getAddress(vector<bool> val, const vector<bool> &reg,
   return getThreeBitAddress(val);
 }
 
+string Decrease::getLabel() {
+  return "DEC";
+}
+
 // PRINT
 
 /*
@@ -353,6 +433,10 @@ void Print::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 Address Print::getAddress(vector<bool> val, const vector<bool> &reg,
                           const Ram &ram) {
   return Address(DATA, Util::getSecondNibble(val));
+}
+
+string Print::getLabel() {
+  return "PRINT";
 }
 
 // IF NOT MAX
@@ -374,6 +458,10 @@ Address IfNotMax::getAddress(vector<bool> val, const vector<bool> &reg,
   return Address(CODE, Util::getSecondNibble(val));
 }
 
+string IfNotMax::getLabel() {
+  return "IF NOT MAX";
+}
+
 // IF NOT MIN
 
 /*
@@ -391,6 +479,10 @@ void IfNotMin::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
 Address IfNotMin::getAddress(vector<bool> val, const vector<bool> &reg,
                              const Ram &ram) {
   return Address(CODE, Util::getSecondNibble(val));
+}
+
+string IfNotMin::getLabel() {
+  return "IF NOT MIN";
 }
 
 //////////

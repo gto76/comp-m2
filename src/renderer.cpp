@@ -33,6 +33,29 @@ string Renderer::renderState(const Printer &printerIn, const Ram &ramIn,
   return out;
 }
 
+// enum Operator {
+//   READ,
+//   WRITE
+//}
+
+// string lineOutWithoutEscapeSeqences
+// vector<bool> characterBoldOrNot
+
+// line
+  // check if contains inst.op
+    // set characterBoldOrNot[location..location+inst.op.size] to true
+  //...
+
+// string Renderer::insertBoldEscSeqences(string lineOutWithoutEscapeSeqences, vector<bool> characterBoldOrNot) {
+// string lineOut
+// for c in characterBoldOrNot
+//   if first bold
+//     line out = bold start escape sequence
+//   if first nonbold / last char
+//     line out = bold end
+//   lineOut += c
+// }
+
 string Renderer::insertActualValues(string lineIn) {
   string lineOut;
   bool lineContainsLogicOps = lineIn.find(LOGIC_OPS_INDICATOR) != string::npos;
@@ -62,16 +85,22 @@ string Renderer::setCharToBoldIfLogicOp(char cIn) {
   if (charIsNotALogicOp) {
     return string(1, cIn);
   }
-  if (machineActive()) {
-    Instruction inst = cpu.getInstruction();
-    return highlightLogicIndicator(cIn, inst, positionOfCharInLogicLabel);
-  }
-  int cursorOnData = cursor.getAddressSpace() == DATA;
-  if (cursorOnData) {
+  Instruction *inst = getInstruction();
+  if (inst == NULL) {
     return string(1, cIn);
   }
-  Instruction inst = getCursorsInstruction();
-  return highlightLogicIndicator(cIn, inst, positionOfCharInLogicLabel);
+  return highlightLogicIndicator(cIn, *inst, positionOfCharInLogicLabel);
+
+  // if (machineActive()) {
+  //   Instruction inst = cpu.getInstruction();
+  //   return highlightLogicIndicator(cIn, inst, positionOfCharInLogicLabel);
+  // }
+  // int cursorOnData = cursor.getAddressSpace() == DATA;
+  // if (cursorOnData) {
+  //   return string(1, cIn);
+  // }
+  // Instruction inst = getCursorsInstruction();
+  // return highlightLogicIndicator(cIn, inst, positionOfCharInLogicLabel);
 }
 
 string Renderer::highlightLogicIndicator(char cIn, Instruction inst, 
@@ -94,15 +123,21 @@ string Renderer::setCharToBoldIfIncDecOp(char cIn) {
   if (charIsNotALogicOp) {
     return string(1, cIn);
   }
-  if (machineActive()) {
-    return highlightIncOrDec(cIn, cpu.getInstruction());
-  } else {
-    int cursorOnData = cursor.getAddressSpace() == DATA;
-    if (cursorOnData) {
-      return string(1, cIn);
-    }
-    return highlightIncOrDec(cIn, getCursorsInstruction());
+  Instruction *inst = getInstruction();
+  if (inst == NULL) {
+    return string(1, cIn);
   }
+  return highlightIncOrDec(cIn, *inst);
+
+  // if (machineActive()) {
+  //   return highlightIncOrDec(cIn, cpu.getInstruction());
+  // } else {
+  //   int cursorOnData = cursor.getAddressSpace() == DATA;
+  //   if (cursorOnData) {
+  //     return string(1, cIn);
+  //   }
+  //   return highlightIncOrDec(cIn, getCursorsInstruction());
+  // }
 }
 
 string Renderer::highlightIncOrDec(char cIn, Instruction inst) {
@@ -168,36 +203,67 @@ bool Renderer::pcPointingToAddress(int adr) {
  * Is instruction pointing to passed address in passed address space.
  */
 bool Renderer::instructionPointingToAddress(Address adr) {
-  if (machineActive()) {
-    Instruction inst = cpu.getInstruction();
-    return inst.adr == adr;
-  }
-  int cursorOnData = cursor.getAddressSpace() == DATA;
-  if (cursorOnData) {
+  Instruction *inst = getInstruction();
+  if (inst == NULL) {
     return false;
   }
-  Instruction inst = getCursorsInstruction();
-  return inst.adr == adr;
+  return inst->adr == adr;
+
+  // // if (machineActive()) {
+  // //   Instruction inst = cpu.getInstruction();
+  // //   return inst.adr == adr;
+  // // }
+  // // int cursorOnData = cursor.getAddressSpace() == DATA;
+  // // if (cursorOnData) {
+  // //   return false;
+  // // }
+  // // Instruction inst = getCursorsInstruction();
+  // return inst.adr == adr;
 }
 
-Instruction& Renderer::getCursorsInstruction() {
-  if (cursorsInstruction.size() == 0) {
-    static vector<bool> phonyReg = vector<bool>(EMPTY_WORD);
-    cursorsInstruction.push_back(Instruction(cursor.getWord(), phonyReg, ram));
+Instruction* Renderer::getInstruction() {
+  bool noActiveInstruction = !machineActive() &&
+                             cursor.getAddressSpace() == DATA;
+  if (noActiveInstruction) {
+    return NULL;
   }
-  return cursorsInstruction[0];
+  if (instruction.size() == 0) {
+    instruction.push_back(initializeInstruction());
+  }
+  return &instruction[0];
 }
+
+Instruction Renderer::initializeInstruction() {
+  if (machineActive()) {
+    return cpu.getInstruction();
+  } else {
+    return Instruction(cursor.getWord(), EMPTY_WORD, ram);
+  }
+}
+
+// Instruction& Renderer::getCursorsInstruction() {
+//   if (cursorsInstruction.size() == 0) {
+//     cursorsInstruction.push_back(Instruction(cursor.getWord(), EMPTY_WORD, ram));
+//   }
+//   return cursorsInstruction[0];
+// }
 
 bool Renderer::instructionHasId(int id) {
-  if (machineActive()) {
-    return cpu.getInstructionCodeInt() == id;
-  }
-  int cursorOnData = cursor.getAddressSpace() == DATA;
-  if (cursorOnData) {
+  Instruction *inst = getInstruction();
+  if (inst == NULL) {
     return false;
   }
-  Instruction inst = getCursorsInstruction();
-  return inst.index == id;
+  return inst->index == id;
+
+  // if (machineActive()) {
+  //   return cpu.getInstructionCodeInt() == id;
+  // }
+  // int cursorOnData = cursor.getAddressSpace() == DATA;
+  // if (cursorOnData) {
+  //   return false;
+  // }
+  // Instruction inst = getCursorsInstruction();
+  // return inst.index == id;
 }
 
 char Renderer::getFormattedOutput(int i) {

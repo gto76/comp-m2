@@ -33,7 +33,8 @@ class Renderer {
     // Just a way to leave instruction uninitialized at Renderers creation, and
     // optionaly create it later (intended to hold only zero or one 
     // instruction).
-    vector<Instruction> cursorsInstruction;
+    // vector<Instruction> cursorsInstruction;
+    vector<Instruction> instruction;
     // Counts occurances of a char in a drawing.
     map<char, int> switchIndex;
     string insertActualValues(string lineIn);
@@ -51,7 +52,9 @@ class Renderer {
     char getCodeBit(int i);
     char getDataBit(int i);
     bool machineActive();
-    Instruction& getCursorsInstruction();
+    // Instruction& getCursorsInstruction();
+    Instruction* getInstruction();
+    Instruction initializeInstruction();
 };
 
 #endif
