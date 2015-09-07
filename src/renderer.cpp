@@ -34,18 +34,8 @@ string Renderer::renderState(const Printer &printerIn, const Ram &ramIn,
 }
 
 string Renderer::insertActualValues(string lineIn) {
-//  string lineOutWithoutEscapeSeqences = "";
   vector<bool> characterBoldOrNot = getBoldLocations(lineIn);
-
-  // line
-  //   check if contains inst.op
-  //     set characterBoldOrNot[location..location+inst.op.size] to true
-  //   ...
-
   string lineOut;
-  // bool lineContainsLogicOps = lineIn.find(LOGIC_OPS_INDICATOR) != string::npos;
-  // bool lineContainsIncDecOps = lineIn.find(INC_DEC_OPS_INDICATOR) != 
-  //                              string::npos;
   for (char cIn : lineIn) {
     string sOut = "";
     // Regex: [0-9a-z]
@@ -53,16 +43,11 @@ string Renderer::insertActualValues(string lineIn) {
                             (cIn >= '0' && cIn <= '9');
     if (charIsALightbulb) {
       sOut.push_back(getLightbulb(cIn));
-    // } else if (lineContainsLogicOps) {
-    //   sOut += setCharToBoldIfLogicOp(cIn);
-    // } else if (lineContainsIncDecOps) {
-    //   sOut += setCharToBoldIfIncDecOp(cIn);
     } else {
       sOut.push_back(cIn);
     }
     lineOut += sOut;
   }
-  //return lineOut;
   return insertBoldEscSeqences(lineOut, characterBoldOrNot);
 }
 
@@ -108,66 +93,6 @@ string Renderer::insertBoldEscSeqences(string lineWithoutEscapeSeqences,
   return lineOut;
 }
 
-string Renderer::setCharToBoldIfLogicOp(char cIn) {
-  size_t positionOfCharInLogicLabel = LOGIC_OPS_INDICATOR.find(cIn);
-  bool charIsNotALogicOp = positionOfCharInLogicLabel == string::npos;
-  if (charIsNotALogicOp) {
-    return string(1, cIn);
-  }
-  Instruction *inst = getInstruction();
-  if (inst == NULL) {
-    return string(1, cIn);
-  }
-  return highlightLogicIndicator(cIn, *inst, positionOfCharInLogicLabel);
-}
-
-string Renderer::highlightLogicIndicator(char cIn, Instruction inst, 
-                                  size_t positionOfCharInLogicLabel) {
-  if (inst.isLogic()) {
-    bool indicatingInstruction =
-        ((unsigned)inst.logicIndex == positionOfCharInLogicLabel ||
-        (inst.logicIndex > 7 && positionOfCharInLogicLabel == 8));
-    if (indicatingInstruction) {
-      return "\033[1m" + string(1, cIn) + "\033[0;37m";
-    }
-  }
-  return string(1, cIn);
-}
-
-string Renderer::setCharToBoldIfIncDecOp(char cIn) {
-  size_t positionOfCharInIncDecLabel = INC_DEC_OPS_INDICATOR.find(cIn);
-  bool charIsNotALogicOp = positionOfCharInIncDecLabel == string::npos;
-  if (charIsNotALogicOp) {
-    return string(1, cIn);
-  }
-  Instruction *inst = getInstruction();
-  if (inst == NULL) {
-    return string(1, cIn);
-  }
-  return highlightIncOrDec(cIn, *inst);
-}
-
-string Renderer::highlightIncOrDec(char cIn, Instruction inst) {
-  bool notAnIncDecInstruction = inst.index != INC_DEC_OPS_INDEX;
-  if (notAnIncDecInstruction) {
-    return string(1, cIn);
-  }
-  bool isInc = inst.logicIndex <= 7;
-  if (isInc) {
-    if (cIn == 'I') {
-      return "\033[1m" + string(1, cIn);
-    }
-  } else {
-    if (cIn == 'D') {
-      return "\033[1m" + string(1, cIn);
-    }
-  }
-  if (cIn == 'C') {
-    return string(1, cIn) + "\033[0;37m";
-  }
-  return string(1, cIn);
-}
-
 char Renderer::getLightbulb(char cIn) {
   int i = switchIndex[cIn]++;
   switch (cIn) {
@@ -196,7 +121,6 @@ char Renderer::getLightbulb(char cIn) {
           " Problem with char %c. Will ignore it.", cIn);
   return ' ';
 }
-
 
 bool Renderer::pcPointingToAddress(int adr) {
   bool executionHasntStarted = cpu.getCycle() == 0;
