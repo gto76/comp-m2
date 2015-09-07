@@ -22,8 +22,8 @@ const int LOGIC_OPS_INDEX = 7;
 const string  INC_DEC_OPS_INDICATOR = "INC/DEC";
 const int INC_DEC_OPS_INDEX = 10;
 
-// const string LAST_CODE_ADDR_LABEL = "STOP";
-// const string LAST_DATA_ADDR_LABEL = "IN/OUT";
+const string LAST_CODE_ADDR_LABEL = "STOP";
+const string LAST_DATA_ADDR_LABEL = "IN/OUT";
 
 // Miliseconds between cycles (when run in interactive mode).
 const int FQ = 333;

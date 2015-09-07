@@ -56,17 +56,18 @@ class Renderer {
     string insertBoldEscSeqences(string lineWithoutEscapeSeqences,
                                  vector<bool> characterBoldOrNot);
     vector<bool> getBoldLocations(string lineIn);
-    // vector<bool> enboldenOperators(vector<bool> boldLocations, string lineIn,
-    //                                Instruction *inst);
-    // vector<bool> enboldenWords(vector<bool> boldLocations, string lineIn,
-    //                            Instruction *inst, char indicator,
-    //                            AddrSpace addrSpace);
-    // vector<bool> enboldenLabel(vector<bool> boldLocations, string lineIn,
-    //                            string label, 
-    //                            int onlyCharAtThisIndexIfNotNegative);
-    // vector<bool> enboldenCodeWord(vector<bool> boldLocations, string lineIn,
-    //                               Instruction *inst);
-    // vector<bool> enboldenDataWord(vector<bool> boldLocations, string lineIn,
-    //                               Instruction *inst);
+    vector<bool> enboldenOperators(vector<bool> boldLocations, string lineIn,
+                                   Instruction *inst);
+    vector<bool> enboldenWords(vector<bool> boldLocations, string lineIn,
+                               Instruction *inst, char indicator,
+                               AddrSpace addrSpace);
+    vector<bool> enboldenLabel(vector<bool> boldLocations, string lineIn,
+                               string label, 
+                               int onlyCharAtThisIndexIfNotNegative);
+    vector<bool> enboldenCodeWord(vector<bool> boldLocations, string lineIn,
+                                  Instruction *inst);
+    vector<bool> enboldenDataWord(vector<bool> boldLocations, string lineIn,
+                                  Instruction *inst);
+};
 
 #endif
