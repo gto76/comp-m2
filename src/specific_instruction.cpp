@@ -395,7 +395,7 @@ Address Increase::getAddress(vector<bool> val, const vector<bool> &reg,
 }
 
 string Increase::getLabel() {
-  return "INC";
+  return "INC/DEC";
 }
 
 // DECREASE
@@ -415,7 +415,7 @@ Address Decrease::getAddress(vector<bool> val, const vector<bool> &reg,
 }
 
 string Decrease::getLabel() {
-  return "DEC";
+  return "INC/DEC";
 }
 
 // PRINT

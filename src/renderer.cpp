@@ -68,28 +68,48 @@ vector<bool> Renderer::getBoldLocations(string lineIn) {
 
 vector<bool> Renderer::enboldenOperators(vector<bool> boldLocations,
                                          string lineIn, Instruction *inst) {
-  int positionOffset = -1;
+  // int positionOffset = -1;
+  // if (inst->isLogic()) {
+  //   positionOffset = min(inst->logicIndex, 8);
+  // }  
+  string exclude = "";
   if (inst->isLogic()) {
-    positionOffset = min(inst->logicIndex, 8);
+    exclude = LOGIC_OPS_INDICATOR[min(inst->logicIndex, 8)];
   }
-  string label = inst->label;
-  label.append(10 - inst->label.length(), ' ');  
-  return enboldenLabel(boldLocations, lineIn, label, positionOffset);
+  if (inst->index == INC_DEC_OPS_INDEX) {
+    if (inst->logicIndex <= 7) {
+      exclude = "INC";
+    } else {
+      exclude = "DEC";
+    }
+  }
+  string label = " " + inst->label;
+  label.append(11 - inst->label.length(), ' ');  
+  return enboldenLabel(boldLocations, lineIn, label, exclude);
 }
 
 vector<bool> Renderer::enboldenLabel(vector<bool> boldLocations,
                                      string lineIn, string label,
-                                     int onlyCharAtThisIndexIfNotNegative) {
+                                     string exclude) {
   size_t labelPosition = lineIn.find(label);
   if (labelPosition == string::npos) {
     return boldLocations;
   }
-  if (onlyCharAtThisIndexIfNotNegative >= 0) {
-    boldLocations[labelPosition + onlyCharAtThisIndexIfNotNegative] = true;
-    return boldLocations;
+  // if (onlyCharAtThisIndexIfNotNegative >= 0) {
+  //   boldLocations[labelPosition + onlyCharAtThisIndexIfNotNegative] = true;
+  //   return boldLocations;
+  // }
+  size_t excludePosition = numeric_limits<size_t>::max();
+  if (exclude != "") {
+    excludePosition = label.find(exclude);
   }
   for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
-    boldLocations[i] = true;
+    bool highlight = (labelPosition != string::npos) &&
+                     (i < labelPosition + excludePosition ||
+                     i >= labelPosition + excludePosition + exclude.length());
+    if (highlight) {
+      boldLocations[i] = true;
+    }
   }
   return boldLocations;
 }
@@ -97,7 +117,7 @@ vector<bool> Renderer::enboldenLabel(vector<bool> boldLocations,
 vector<bool> Renderer::enboldenCodeWord(vector<bool> boldLocations,
                                         string lineIn, Instruction *inst) {
   if (inst->adr.val == LAST_ADDRESS) {
-    return enboldenLabel(boldLocations, lineIn, LAST_CODE_ADDR_LABEL, -1);
+    return enboldenLabel(boldLocations, lineIn, LAST_CODE_ADDR_LABEL, "");
   }
   return enboldenWords(boldLocations, lineIn, inst, 'a', CODE);
 }
@@ -105,7 +125,7 @@ vector<bool> Renderer::enboldenCodeWord(vector<bool> boldLocations,
 vector<bool> Renderer::enboldenDataWord(vector<bool> boldLocations,
                                         string lineIn, Instruction *inst) {
   if (inst->adr.val == LAST_ADDRESS) {
-    return enboldenLabel(boldLocations, lineIn, LAST_DATA_ADDR_LABEL, -1);
+    return enboldenLabel(boldLocations, lineIn, LAST_DATA_ADDR_LABEL, "");
   }
   return enboldenWords(boldLocations, lineIn, inst, 'b', DATA);
 }
@@ -133,13 +153,13 @@ string Renderer::insertBoldEscSeqences(string lineWithoutEscapeSeqences,
     bool firstBoldCharOfBlock = characterBoldOrNot[i] && !insideBoldBlock;
     if (firstBoldCharOfBlock) {
       // lineOut += BOLD_ESC;
-      lineOut += "\e[30m\e[47m";
+      lineOut += HIGHLIGHT_ESC;
       insideBoldBlock = true;
     }
     bool firstNonBoldCharOfBlock = !characterBoldOrNot[i] && insideBoldBlock;
     if (firstNonBoldCharOfBlock) {
       // lineOut += BOLD_END_ESC;
-      lineOut += "\e[37m\e[40m";
+      lineOut += HIGHLIGHT_END_ESC;
       insideBoldBlock = false;
     }
     lineOut += lineWithoutEscapeSeqences[i];

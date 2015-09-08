@@ -62,8 +62,7 @@ class Renderer {
                                Instruction *inst, char indicator,
                                AddrSpace addrSpace);
     vector<bool> enboldenLabel(vector<bool> boldLocations, string lineIn,
-                               string label, 
-                               int onlyCharAtThisIndexIfNotNegative);
+                               string label, string exclude);
     vector<bool> enboldenCodeWord(vector<bool> boldLocations, string lineIn,
                                   Instruction *inst);
     vector<bool> enboldenDataWord(vector<bool> boldLocations, string lineIn,
