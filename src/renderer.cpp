@@ -230,6 +230,8 @@ char Renderer::getLightbulb(char cIn) {
       return  Util::getChar(cpu.getRegister().at(i));
     case 'i':
       return Util::getChar(instructionHasId(i));
+    case 'v':
+      return ram.variableNames[i];
     case 'o':
       return getFormattedOutput(i);
   }

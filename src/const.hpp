@@ -25,6 +25,8 @@ const int INC_DEC_OPS_INDEX = 10;
 const string LAST_CODE_ADDR_LABEL = "  STOP  ";
 const string LAST_DATA_ADDR_LABEL = " IN/OUT ";
 
+const char DEFAULT_VAR_NAME = '-';
+
 // Miliseconds between cycles (when run in interactive mode).
 const int FQ = 333;
 

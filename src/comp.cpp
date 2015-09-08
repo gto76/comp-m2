@@ -197,40 +197,62 @@ void userInput() {
     char c = readStdin(true);
     highlightCursor(false);
     switch (c) {
+      // UP
+      case 107: // k
       case 65:  // A, part of escape seqence of up arrow
         cursor.decreaseY();
         break;
+      // DOWN
+      case 106: // j
       case 66:  // B, part of escape seqence of down arrow
         cursor.increaseY();
         break;
+      // RIGHT
+      case 108: // l
       case 67:  // C, part of escape seqence of rigth arrow
         cursor.increaseX();
         break;
+      // LEFT
+      case 104: // h
       case 68:  // D, part of escape seqence of left arrow
         cursor.decreaseX();
         break;
-      case 107:  // k
+      // SWAP UP
+      case 115:  // s
+      // case 100: // d
       case 53:  // 5, part of escape seqence of page up
         cursor.moveByteUp();
         break;
-      case 106:  // j
+      // SWAP DOWN
+      // case 102:  // f
+      case 103:  // g
       case 54:  // 6, part of escape seqence of page down
         cursor.moveByteDown();
         break;
-      case 115:  // s
+      // SAVE
+      // case 115:  // s
+      case 119:  // w
         saveRamToFile();
         break;
+      // FLIP
       case 32:  // space
       case 102:  // f
         switchBitUnderCursor();
         break;
+      // DELETE
+      // case 97:  // a
       case 100:  // d
       case 51:  // 3, part of escape seqence of delete key
         eraseByteUnderCursor();
         break;
+      // SWITCH ADR SPACE
+      case 97:  // a
+      //case 115:  // s
+      //case 103:  // g
       case 9:  // tab
         cursor.switchAddressSpace();
         break;
+      // RUN
       case 10:  // enter
         run();
         break;

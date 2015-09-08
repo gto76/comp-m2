@@ -19,6 +19,7 @@ class Ram {
       state[DATA] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE)); 
     }
     map<AddrSpace, vector<vector<bool>>> state;
+    vector<char> variableNames = vector<char>(16, DEFAULT_VAR_NAME);
     vector<bool> get(Address adr) const;
     void set(Address adr, vector<bool> wordIn);
     string getString() const;
