@@ -19,6 +19,7 @@ class Cursor {
 
     void switchAddressSpace();
     AddrSpace getAddressSpace();
+    Address getAddress();
 
     //////// COORDINATES API /////////
 

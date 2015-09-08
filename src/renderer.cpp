@@ -55,7 +55,8 @@ vector<bool> Renderer::getBoldLocations(string lineIn) {
   vector<bool> boldLocations (lineIn.length(), false);
   Instruction *inst = getInstruction();
   if (inst == NULL) {
-    return boldLocations;
+    return enboldenPointingInstructions(boldLocations, lineIn);
+    //return boldLocations;
   }
   boldLocations = enboldenOperators(boldLocations, lineIn, inst);
   if (inst->adr.space == CODE) {
@@ -66,12 +67,57 @@ vector<bool> Renderer::getBoldLocations(string lineIn) {
   return boldLocations;
 }
 
+vector<bool> Renderer::enboldenPointingInstructions(vector<bool> boldLocations,
+                                                    string lineIn) {
+  set<int> pointingInstructions = getIndexesOfPointingInstructions();
+  for (size_t i = 0; i < lineIn.length(); i++) {
+    if (lineIn[i] == 'a') {
+      int addressValue = switchIndex['a'] / WORD_SIZE;
+      if (pointingInstructions.count(addressValue)) {
+        boldLocations[i] = true;
+      }
+    }
+  }
+  return boldLocations;
+}
+
+set<int> Renderer::getIndexesOfPointingInstructions() {
+  if (pointingInstructions.empty()) {
+    set<int> temp = generatePointingInstructions();
+    if (!temp.empty()) {
+      pointingInstructions = temp;
+    } else {
+      pointingInstructions.insert(-1);
+    }
+  }
+  return pointingInstructions;
+}
+
+set<int> Renderer::generatePointingInstructions() {
+  vector<Instruction> allInstructions = getAllInstructions();
+  set<int> out;
+  int i = 0;
+  for (Instruction inst : allInstructions) {
+    if (inst.adr == cursor.getAddress()) {
+      out.insert(i);
+    }
+    i++;
+  }
+  return out;
+}
+
+vector<Instruction> Renderer::getAllInstructions() {
+  vector<Instruction> instructions;
+  for (vector<bool> word : ram.state.at(CODE)) {
+    Instruction inst = Instruction(word, cpu.getRegister(), ram); // TODO:
+    // Suspition that some register values might not be right...
+    instructions.push_back(inst);
+  }
+  return instructions;
+}
+
 vector<bool> Renderer::enboldenOperators(vector<bool> boldLocations,
                                          string lineIn, Instruction *inst) {
-  // int positionOffset = -1;
-  // if (inst->isLogic()) {
-  //   positionOffset = min(inst->logicIndex, 8);
-  // }  
   string exclude = "";
   if (inst->isLogic()) {
     exclude = LOGIC_OPS_INDICATOR[min(inst->logicIndex, 8)];
@@ -95,10 +141,6 @@ vector<bool> Renderer::enboldenLabel(vector<bool> boldLocations,
   if (labelPosition == string::npos) {
     return boldLocations;
   }
-  // if (onlyCharAtThisIndexIfNotNegative >= 0) {
-  //   boldLocations[labelPosition + onlyCharAtThisIndexIfNotNegative] = true;
-  //   return boldLocations;
-  // }
   size_t excludePosition = numeric_limits<size_t>::max();
   if (exclude != "") {
     excludePosition = label.find(exclude);
@@ -119,7 +161,7 @@ vector<bool> Renderer::enboldenCodeWord(vector<bool> boldLocations,
   if (inst->adr.val == LAST_ADDRESS) {
     return enboldenLabel(boldLocations, lineIn, LAST_CODE_ADDR_LABEL, "");
   }
-  return enboldenWords(boldLocations, lineIn, inst, 'a', CODE);
+  return enboldenWords(boldLocations, lineIn, 'a', CODE);
 }
 
 vector<bool> Renderer::enboldenDataWord(vector<bool> boldLocations,
@@ -127,12 +169,12 @@ vector<bool> Renderer::enboldenDataWord(vector<bool> boldLocations,
   if (inst->adr.val == LAST_ADDRESS) {
     return enboldenLabel(boldLocations, lineIn, LAST_DATA_ADDR_LABEL, "");
   }
-  return enboldenWords(boldLocations, lineIn, inst, 'b', DATA);
+  return enboldenWords(boldLocations, lineIn, 'b', DATA);
 }
 
 vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
-                                     string lineIn, Instruction *inst,
-                                     char indicator, AddrSpace addrSpace) {
+                                     string lineIn, char indicator,
+                                     AddrSpace addrSpace) {
   for (size_t i = 0; i < lineIn.length(); i++) {
     if (lineIn[i] == indicator) {
       int addressValue = switchIndex[indicator] / WORD_SIZE;

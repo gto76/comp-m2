@@ -90,6 +90,11 @@ AddrSpace Cursor::getAddressSpace() {
   return addrSpace;
 }
 
+Address Cursor::getAddress() {
+  vector<bool> adrVal = Util::getBoolNibb(cursorPosition.at(addrSpace).at(Y));
+  return Address(addrSpace, adrVal);
+}
+
 /////////// RAM API ////////////
 
 bool Cursor::getBit() {

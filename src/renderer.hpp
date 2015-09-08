@@ -34,6 +34,7 @@ class Renderer {
     // optionaly create it later (intended to hold only zero or one 
     // instruction).
     vector<Instruction> instruction;
+    set<int> pointingInstructions;
     // Counts occurances of a char in a drawing.
     map<char, int> switchIndex;
     string insertActualValues(string lineIn);
@@ -59,14 +60,18 @@ class Renderer {
     vector<bool> enboldenOperators(vector<bool> boldLocations, string lineIn,
                                    Instruction *inst);
     vector<bool> enboldenWords(vector<bool> boldLocations, string lineIn,
-                               Instruction *inst, char indicator,
-                               AddrSpace addrSpace);
+                               char indicator, AddrSpace addrSpace);
     vector<bool> enboldenLabel(vector<bool> boldLocations, string lineIn,
                                string label, string exclude);
     vector<bool> enboldenCodeWord(vector<bool> boldLocations, string lineIn,
                                   Instruction *inst);
     vector<bool> enboldenDataWord(vector<bool> boldLocations, string lineIn,
                                   Instruction *inst);
+    vector<bool> enboldenPointingInstructions(vector<bool> boldLocations,
+                                              string lineIn);
+    set<int> getIndexesOfPointingInstructions();
+    set<int> generatePointingInstructions();
+    vector<Instruction> getAllInstructions();
 };
 
 #endif
