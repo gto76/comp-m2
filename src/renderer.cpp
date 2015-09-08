@@ -72,22 +72,9 @@ vector<bool> Renderer::enboldenOperators(vector<bool> boldLocations,
   if (inst->isLogic()) {
     positionOffset = min(inst->logicIndex, 8);
   }
-  return enboldenLabel(boldLocations, lineIn, inst->label, positionOffset);
-  
-  // string label = inst->label;
-  // size_t labelPosition = lineIn.find(label);
-  // if (labelPosition == string::npos) {
-  //   return boldLocations;
-  // }
-  // if (inst->isLogic()) {
-  //   int positionOffset = min(inst->logicIndex, 8);
-  //   boldLocations[labelPosition + positionOffset] = true;
-  // } else {
-  //   for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
-  //     boldLocations[i] = true;
-  //   }
-  // }
-  // return boldLocations;
+  string label = inst->label;
+  label.append(10 - inst->label.length(), ' ');  
+  return enboldenLabel(boldLocations, lineIn, label, positionOffset);
 }
 
 vector<bool> Renderer::enboldenLabel(vector<bool> boldLocations,
@@ -145,12 +132,14 @@ string Renderer::insertBoldEscSeqences(string lineWithoutEscapeSeqences,
   for (size_t i = 0; i < lineWithoutEscapeSeqences.length(); i++) {
     bool firstBoldCharOfBlock = characterBoldOrNot[i] && !insideBoldBlock;
     if (firstBoldCharOfBlock) {
-      lineOut += BOLD_ESC;
+      // lineOut += BOLD_ESC;
+      lineOut += "\e[30m\e[47m";
       insideBoldBlock = true;
     }
     bool firstNonBoldCharOfBlock = !characterBoldOrNot[i] && insideBoldBlock;
     if (firstNonBoldCharOfBlock) {
-      lineOut += BOLD_END_ESC;
+      // lineOut += BOLD_END_ESC;
+      lineOut += "\e[37m\e[40m";
       insideBoldBlock = false;
     }
     lineOut += lineWithoutEscapeSeqences[i];

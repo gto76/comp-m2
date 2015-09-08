@@ -1,23 +1,23 @@
-                          CPU            
-                     ______________  
-                    |              | 
-PC AD  CODE         |  [rrrrrrrr]  |         DATA   AD
- _ _ ________       |______________|       ________ _   
-|p|d|aaaaaaaa| ---- |i| READ       | ---- |bbbbbbbb|s|  
-|p|d|aaaaaaaa| ---* |i| WRITE      | ---* |bbbbbbbb|s|  
-|p|d|aaaaaaaa| --*- |i| ADD        | --*- |bbbbbbbb|s|  
-|p|d|aaaaaaaa| --** |i| SUB        | --** |bbbbbbbb|s|            PRINTER  
-|p|d|aaaaaaaa| -*-- |i| JUMP       | -*-- |bbbbbbbb|s|    ________________________ 
-|p|d|aaaaaaaa| -*-* |i| IF MAX     | -*-* |bbbbbbbb|s|   |                        |
-|p|d|aaaaaaaa| -**- |i| IF MIN     | -**- |bbbbbbbb|s|  (|   |=============[]=|   |)
-|p|d|aaaaaaaa| -*** |i| JRI~<>&VX  | -*** |bbbbbbbb|s|   |__ _ ______________ _ __|
-|p|d|aaaaaaaa| *--- |i| READ *     | *--- |bbbbbbbb|s|    | oooooooooooooooooooo | 
-|p|d|aaaaaaaa| *--* |i| WRITE *    | *--* |bbbbbbbb|s|    | oooooooooooooooooooo |
-|p|d|aaaaaaaa| *-*- |i| INC/DEC    | *-*- |bbbbbbbb|s|    | oooooooooooooooooooo | 
-|p|d|aaaaaaaa| *-** |i| PRINT      | *-** |bbbbbbbb|s|    | oooooooooooooooooooo |
-|p|d|aaaaaaaa| **-- |i|            | **-- |bbbbbbbb|s|    | oooooooooooooooooooo |
-|p|d|aaaaaaaa| **-* |i| IF NOT MAX | **-* |bbbbbbbb|s|    | oooooooooooooooooooo |
-|p|d|aaaaaaaa| ***- |i| IF NOT MIN | ***- |bbbbbbbb|s|    | oooooooooooooooooooo |
-|p|d|  STOP  | **** |i|            | **** | IN/OUT |s|    | oooooooooooooooooooo |
- ############        ##############        ##########      ###################### 
-  []      [] \______/ []        [] \______/ []    [] \____/ []                [] 
+                      CPU            
+                   ____________  
+                  |            | 
+PC   CODE         | [rrrrrrrr] |         DATA   AD
+ _ ________       |____________|       ________ _   
+|p|aaaaaaaa| ---- | READ       | ---- |bbbbbbbb|-|  
+|p|aaaaaaaa| ---* | WRITE      | ---* |bbbbbbbb|-|  
+|p|aaaaaaaa| --*- | ADD        | --*- |bbbbbbbb|-|  
+|p|aaaaaaaa| --** | SUB        | --** |bbbbbbbb|-|            PRINTER  
+|p|aaaaaaaa| -*-- | JUMP       | -*-- |bbbbbbbb|-|    ________________________ 
+|p|aaaaaaaa| -*-* | IF MAX     | -*-* |bbbbbbbb|-|   |                        |
+|p|aaaaaaaa| -**- | IF MIN     | -**- |bbbbbbbb|-|  (|   |=============[]=|   |)
+|p|aaaaaaaa| -*** | JRI~<>&VX  | -*** |bbbbbbbb|-|   |__ _ ______________ _ __|
+|p|aaaaaaaa| *--- | READ *     | *--- |bbbbbbbb|-|    | oooooooooooooooooooo | 
+|p|aaaaaaaa| *--* | WRITE *    | *--* |bbbbbbbb|-|    | oooooooooooooooooooo |
+|p|aaaaaaaa| *-*- | INC/DEC    | *-*- |bbbbbbbb|-|    | oooooooooooooooooooo | 
+|p|aaaaaaaa| *-** | PRINT      | *-** |bbbbbbbb|-|    | oooooooooooooooooooo |
+|p|aaaaaaaa| **-- |            | **-- |bbbbbbbb|-|    | oooooooooooooooooooo |
+|p|aaaaaaaa| **-* | IF NOT MAX | **-* |bbbbbbbb|-|    | oooooooooooooooooooo |
+|p|aaaaaaaa| ***- | IF NOT MIN | ***- |bbbbbbbb|-|    | oooooooooooooooooooo |
+|p|  STOP  | **** |            | **** | IN/OUT |-|    | oooooooooooooooooooo |
+ ##########        ############        ##########      ###################### 
+  []    [] \______/ []      [] \______/ []    [] \____/ []                [] 
