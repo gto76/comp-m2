@@ -38,11 +38,11 @@ class Renderer {
     // Counts occurances of a char in a drawing.
     map<char, int> switchIndex;
     string insertActualValues(string lineIn);
-    string setCharToBoldIfLogicOp(char cIn);
-    string highlightLogicIndicator(char cIn, Instruction inst,
-                                   size_t positionOfCharInLogicLabel);
-    string setCharToBoldIfIncDecOp(char cIn);
-    string highlightIncOrDec(char cIn, Instruction inst);
+    // string setCharToBoldIfLogicOp(char cIn);
+    // string highlightLogicIndicator(char cIn, Instruction inst,
+    //                               size_t positionOfCharInLogicLabel);
+    // string setCharToBoldIfIncDecOp(char cIn);
+    // string highlightIncOrDec(char cIn, Instruction inst);
     char getLightbulb(char cIn);
     bool getRegisterAt(int i);
     bool pcPointingToAddress(int adr);
@@ -54,20 +54,21 @@ class Renderer {
     bool machineActive();
     Instruction* getInstruction();
     Instruction initializeInstruction();
-    string insertBoldEscSeqences(string lineWithoutEscapeSeqences,
-                                 vector<bool> characterBoldOrNot);
-    vector<bool> getBoldLocations(string lineIn);
-    vector<bool> enboldenOperators(vector<bool> boldLocations, string lineIn,
+    string insertEscSeqences(string lineWithoutEscapeSeqences,
+                             vector<bool> characterInsideSqence,
+                             string seqenceStart, string seqenceStop);
+    vector<bool> getHighlightedLocations(string lineIn);
+    vector<bool> highlightOperators(vector<bool> highlightedLocations, string lineIn,
                                    Instruction *inst);
-    vector<bool> enboldenWords(vector<bool> boldLocations, string lineIn,
+    vector<bool> highlightWords(vector<bool> highlightedLocations, string lineIn,
                                char indicator, AddrSpace addrSpace);
-    vector<bool> enboldenLabel(vector<bool> boldLocations, string lineIn,
+    vector<bool> highlightLabel(vector<bool> highlightedLocations, string lineIn,
                                string label, string exclude);
-    vector<bool> enboldenCodeWord(vector<bool> boldLocations, string lineIn,
+    vector<bool> highlightCodeWord(vector<bool> highlightedLocations, string lineIn,
                                   Instruction *inst);
-    vector<bool> enboldenDataWord(vector<bool> boldLocations, string lineIn,
+    vector<bool> highlightDataWord(vector<bool> highlightedLocations, string lineIn,
                                   Instruction *inst);
-    vector<bool> enboldenPointingInstructions(vector<bool> boldLocations,
+    vector<bool> highlightPointingInstructions(vector<bool> highlightedLocations,
                                               string lineIn);
     set<int> getIndexesOfPointingInstructions();
     set<int> generatePointingInstructions();

@@ -34,7 +34,7 @@ string Renderer::renderState(const Printer &printerIn, const Ram &ramIn,
 }
 
 string Renderer::insertActualValues(string lineIn) {
-  vector<bool> characterBoldOrNot = getBoldLocations(lineIn);
+  vector<bool> characterHighlightedOrNot = getHighlightedLocations(lineIn);
   string lineOut;
   for (char cIn : lineIn) {
     string sOut = "";
@@ -48,37 +48,37 @@ string Renderer::insertActualValues(string lineIn) {
     }
     lineOut += sOut;
   }
-  return insertBoldEscSeqences(lineOut, characterBoldOrNot);
+  return insertEscSeqences(lineOut, characterHighlightedOrNot, HIGHLIGHT_ESC,
+                           HIGHLIGHT_END_ESC);
 }
 
-vector<bool> Renderer::getBoldLocations(string lineIn) {
-  vector<bool> boldLocations (lineIn.length(), false);
+vector<bool> Renderer::getHighlightedLocations(string lineIn) {
+  vector<bool> highlightedLocations (lineIn.length(), false);
   Instruction *inst = getInstruction();
   if (inst == NULL) {
-    return enboldenPointingInstructions(boldLocations, lineIn);
-    //return boldLocations;
+    return highlightPointingInstructions(highlightedLocations, lineIn);
   }
-  boldLocations = enboldenOperators(boldLocations, lineIn, inst);
+  highlightedLocations = highlightOperators(highlightedLocations, lineIn, inst);
   if (inst->adr.space == CODE) {
-    boldLocations = enboldenCodeWord(boldLocations, lineIn, inst);
+    highlightedLocations = highlightCodeWord(highlightedLocations, lineIn, inst);
   } else if (inst->adr.space == DATA) {
-    boldLocations = enboldenDataWord(boldLocations, lineIn, inst);
+    highlightedLocations = highlightDataWord(highlightedLocations, lineIn, inst);
   }
-  return boldLocations;
+  return highlightedLocations;
 }
 
-vector<bool> Renderer::enboldenPointingInstructions(vector<bool> boldLocations,
+vector<bool> Renderer::highlightPointingInstructions(vector<bool> highlightedLocations,
                                                     string lineIn) {
   set<int> pointingInstructions = getIndexesOfPointingInstructions();
   for (size_t i = 0; i < lineIn.length(); i++) {
     if (lineIn[i] == 'a') {
       int addressValue = switchIndex['a'] / WORD_SIZE;
       if (pointingInstructions.count(addressValue)) {
-        boldLocations[i] = true;
+        highlightedLocations[i] = true;
       }
     }
   }
-  return boldLocations;
+  return highlightedLocations;
 }
 
 set<int> Renderer::getIndexesOfPointingInstructions() {
@@ -116,7 +116,7 @@ vector<Instruction> Renderer::getAllInstructions() {
   return instructions;
 }
 
-vector<bool> Renderer::enboldenOperators(vector<bool> boldLocations,
+vector<bool> Renderer::highlightOperators(vector<bool> highlightedLocations,
                                          string lineIn, Instruction *inst) {
   string exclude = "";
   if (inst->isLogic()) {
@@ -131,15 +131,15 @@ vector<bool> Renderer::enboldenOperators(vector<bool> boldLocations,
   }
   string label = " " + inst->label;
   label.append(11 - inst->label.length(), ' ');  
-  return enboldenLabel(boldLocations, lineIn, label, exclude);
+  return highlightLabel(highlightedLocations, lineIn, label, exclude);
 }
 
-vector<bool> Renderer::enboldenLabel(vector<bool> boldLocations,
+vector<bool> Renderer::highlightLabel(vector<bool> highlightedLocations,
                                      string lineIn, string label,
                                      string exclude) {
   size_t labelPosition = lineIn.find(label);
   if (labelPosition == string::npos) {
-    return boldLocations;
+    return highlightedLocations;
   }
   size_t excludePosition = numeric_limits<size_t>::max();
   if (exclude != "") {
@@ -150,29 +150,29 @@ vector<bool> Renderer::enboldenLabel(vector<bool> boldLocations,
                      (i < labelPosition + excludePosition ||
                      i >= labelPosition + excludePosition + exclude.length());
     if (highlight) {
-      boldLocations[i] = true;
+      highlightedLocations[i] = true;
     }
   }
-  return boldLocations;
+  return highlightedLocations;
 }
 
-vector<bool> Renderer::enboldenCodeWord(vector<bool> boldLocations,
+vector<bool> Renderer::highlightCodeWord(vector<bool> highlightedLocations,
                                         string lineIn, Instruction *inst) {
   if (inst->adr.val == LAST_ADDRESS) {
-    return enboldenLabel(boldLocations, lineIn, LAST_CODE_ADDR_LABEL, "");
+    return highlightLabel(highlightedLocations, lineIn, LAST_CODE_ADDR_LABEL, "");
   }
-  return enboldenWords(boldLocations, lineIn, 'a', CODE);
+  return highlightWords(highlightedLocations, lineIn, 'a', CODE);
 }
 
-vector<bool> Renderer::enboldenDataWord(vector<bool> boldLocations,
+vector<bool> Renderer::highlightDataWord(vector<bool> highlightedLocations,
                                         string lineIn, Instruction *inst) {
   if (inst->adr.val == LAST_ADDRESS) {
-    return enboldenLabel(boldLocations, lineIn, LAST_DATA_ADDR_LABEL, "");
+    return highlightLabel(highlightedLocations, lineIn, LAST_DATA_ADDR_LABEL, "");
   }
-  return enboldenWords(boldLocations, lineIn, 'b', DATA);
+  return highlightWords(highlightedLocations, lineIn, 'b', DATA);
 }
 
-vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
+vector<bool> Renderer::highlightWords(vector<bool> highlightedLocations,
                                      string lineIn, char indicator,
                                      AddrSpace addrSpace) {
   for (size_t i = 0; i < lineIn.length(); i++) {
@@ -180,29 +180,28 @@ vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
       int addressValue = switchIndex[indicator] / WORD_SIZE;
       Address adr = Address(addrSpace, Util::getBoolNibb(addressValue));
       if (instructionPointingToAddress(adr)) {
-        boldLocations[i] = true;
+        highlightedLocations[i] = true;
       }
     }
   }
-  return boldLocations;
+  return highlightedLocations;
 }
 
-string Renderer::insertBoldEscSeqences(string lineWithoutEscapeSeqences,
-                                       vector<bool> characterBoldOrNot) {
+string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
+                                   vector<bool> characterInsideSqence,
+                                   string seqenceStart, string seqenceStop) {
   string lineOut = "";
-  bool insideBoldBlock = false;
+  bool insideBlock = false;
   for (size_t i = 0; i < lineWithoutEscapeSeqences.length(); i++) {
-    bool firstBoldCharOfBlock = characterBoldOrNot[i] && !insideBoldBlock;
-    if (firstBoldCharOfBlock) {
-      // lineOut += BOLD_ESC;
-      lineOut += HIGHLIGHT_ESC;
-      insideBoldBlock = true;
+    bool firstCharInsideBlock = characterInsideSqence[i] && !insideBlock;
+    if (firstCharInsideBlock) {
+      lineOut += seqenceStart;
+      insideBlock = true;
     }
-    bool firstNonBoldCharOfBlock = !characterBoldOrNot[i] && insideBoldBlock;
-    if (firstNonBoldCharOfBlock) {
-      // lineOut += BOLD_END_ESC;
-      lineOut += HIGHLIGHT_END_ESC;
-      insideBoldBlock = false;
+    bool firstCharOutsideBlock = !characterInsideSqence[i] && insideBlock;
+    if (firstCharOutsideBlock) {
+      lineOut += seqenceStop;
+      insideBlock = false;
     }
     lineOut += lineWithoutEscapeSeqences[i];
   }
