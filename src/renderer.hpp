@@ -37,42 +37,42 @@ class Renderer {
     set<int> pointingInstructions;
     // Counts occurances of a char in a drawing.
     map<char, int> switchIndex;
+
+    // RENDER STATE
     string insertActualValues(string lineIn);
-    // string setCharToBoldIfLogicOp(char cIn);
-    // string highlightLogicIndicator(char cIn, Instruction inst,
-    //                               size_t positionOfCharInLogicLabel);
-    // string setCharToBoldIfIncDecOp(char cIn);
-    // string highlightIncOrDec(char cIn, Instruction inst);
-    char getLightbulb(char cIn);
-    bool getRegisterAt(int i);
-    bool pcPointingToAddress(int adr);
-    bool instructionPointingToAddress(Address adr);
-    bool instructionHasId(int id);
-    char getFormattedOutput(int i);
-    char getCodeBit(int i);
-    char getDataBit(int i);
-    bool machineActive();
-    Instruction* getInstruction();
-    Instruction initializeInstruction();
     string insertEscSeqences(string lineWithoutEscapeSeqences,
                              vector<bool> characterInsideSqence,
                              string seqenceStart, string seqenceStop);
+    // GET HIGHLIGHTED LOCATIONS
     vector<bool> getHighlightedLocations(string lineIn);
-    vector<bool> highlightOperators(vector<bool> highlightedLocations, string lineIn,
-                                   Instruction *inst);
-    vector<bool> highlightWords(vector<bool> highlightedLocations, string lineIn,
-                               char indicator, AddrSpace addrSpace);
-    vector<bool> highlightLabel(vector<bool> highlightedLocations, string lineIn,
-                               string label, string exclude);
-    vector<bool> highlightCodeWord(vector<bool> highlightedLocations, string lineIn,
-                                  Instruction *inst);
-    vector<bool> highlightDataWord(vector<bool> highlightedLocations, string lineIn,
-                                  Instruction *inst);
     vector<bool> highlightPointingInstructions(vector<bool> highlightedLocations,
                                               string lineIn);
     set<int> getIndexesOfPointingInstructions();
     set<int> generatePointingInstructions();
     vector<Instruction> getAllInstructions();
+    vector<bool> highlightOperators(vector<bool> highlightedLocations, string lineIn,
+                                   Instruction *inst);
+    vector<bool> highlightCodeWord(vector<bool> highlightedLocations, string lineIn,
+                                  Instruction *inst);
+    vector<bool> highlightDataWord(vector<bool> highlightedLocations, string lineIn,
+                                  Instruction *inst);
+    vector<bool> highlightWords(vector<bool> highlightedLocations, string lineIn,
+                               char indicator, AddrSpace addrSpace);
+    vector<bool> highlightLabel(vector<bool> highlightedLocations, string lineIn,
+                               string label, string exclude);
+    // GET LIGHTBULB
+    char getLightbulb(char cIn);
+    char getCodeBit(int i);
+    char getDataBit(int i);
+    char getCharAt(int i, vector<vector<bool>>* matrix);
+    bool pcPointingToAddress(int adr);
+    char getFormattedOutput(int i);
+    // GET INSTRUCTION
+    Instruction* getInstruction();
+    bool machineActive();
+    Instruction initializeInstruction();
+    bool instructionHasId(int id);
+    bool instructionPointingToAddress(Address adr);
 };
 
 #endif

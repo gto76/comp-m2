@@ -52,6 +52,31 @@ string Renderer::insertActualValues(string lineIn) {
                            HIGHLIGHT_END_ESC);
 }
 
+string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
+                                   vector<bool> characterInsideSqence,
+                                   string seqenceStart, string seqenceStop) {
+  string lineOut = "";
+  bool insideBlock = false;
+  for (size_t i = 0; i < lineWithoutEscapeSeqences.length(); i++) {
+    bool firstCharInsideBlock = characterInsideSqence[i] && !insideBlock;
+    if (firstCharInsideBlock) {
+      lineOut += seqenceStart;
+      insideBlock = true;
+    }
+    bool firstCharOutsideBlock = !characterInsideSqence[i] && insideBlock;
+    if (firstCharOutsideBlock) {
+      lineOut += seqenceStop;
+      insideBlock = false;
+    }
+    lineOut += lineWithoutEscapeSeqences[i];
+  }
+  return lineOut;
+}
+
+/////////////////////////////////
+/// GET HIGHLIGHTED LOCATIONS ///
+/////////////////////////////////
+
 vector<bool> Renderer::getHighlightedLocations(string lineIn) {
   vector<bool> highlightedLocations (lineIn.length(), false);
   Instruction *inst = getInstruction();
@@ -66,6 +91,8 @@ vector<bool> Renderer::getHighlightedLocations(string lineIn) {
   }
   return highlightedLocations;
 }
+
+////////////
 
 vector<bool> Renderer::highlightPointingInstructions(vector<bool> highlightedLocations,
                                                     string lineIn) {
@@ -116,6 +143,8 @@ vector<Instruction> Renderer::getAllInstructions() {
   return instructions;
 }
 
+///////////////////
+
 vector<bool> Renderer::highlightOperators(vector<bool> highlightedLocations,
                                          string lineIn, Instruction *inst) {
   string exclude = "";
@@ -134,27 +163,7 @@ vector<bool> Renderer::highlightOperators(vector<bool> highlightedLocations,
   return highlightLabel(highlightedLocations, lineIn, label, exclude);
 }
 
-vector<bool> Renderer::highlightLabel(vector<bool> highlightedLocations,
-                                     string lineIn, string label,
-                                     string exclude) {
-  size_t labelPosition = lineIn.find(label);
-  if (labelPosition == string::npos) {
-    return highlightedLocations;
-  }
-  size_t excludePosition = numeric_limits<size_t>::max();
-  if (exclude != "") {
-    excludePosition = label.find(exclude);
-  }
-  for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
-    bool highlight = (labelPosition != string::npos) &&
-                     (i < labelPosition + excludePosition ||
-                     i >= labelPosition + excludePosition + exclude.length());
-    if (highlight) {
-      highlightedLocations[i] = true;
-    }
-  }
-  return highlightedLocations;
-}
+/////////////
 
 vector<bool> Renderer::highlightCodeWord(vector<bool> highlightedLocations,
                                         string lineIn, Instruction *inst) {
@@ -187,26 +196,33 @@ vector<bool> Renderer::highlightWords(vector<bool> highlightedLocations,
   return highlightedLocations;
 }
 
-string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
-                                   vector<bool> characterInsideSqence,
-                                   string seqenceStart, string seqenceStop) {
-  string lineOut = "";
-  bool insideBlock = false;
-  for (size_t i = 0; i < lineWithoutEscapeSeqences.length(); i++) {
-    bool firstCharInsideBlock = characterInsideSqence[i] && !insideBlock;
-    if (firstCharInsideBlock) {
-      lineOut += seqenceStart;
-      insideBlock = true;
-    }
-    bool firstCharOutsideBlock = !characterInsideSqence[i] && insideBlock;
-    if (firstCharOutsideBlock) {
-      lineOut += seqenceStop;
-      insideBlock = false;
-    }
-    lineOut += lineWithoutEscapeSeqences[i];
+///////////
+
+vector<bool> Renderer::highlightLabel(vector<bool> highlightedLocations,
+                                     string lineIn, string label,
+                                     string exclude) {
+  size_t labelPosition = lineIn.find(label);
+  if (labelPosition == string::npos) {
+    return highlightedLocations;
   }
-  return lineOut;
+  size_t excludePosition = numeric_limits<size_t>::max();
+  if (exclude != "") {
+    excludePosition = label.find(exclude);
+  }
+  for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
+    bool highlight = (labelPosition != string::npos) &&
+                     (i < labelPosition + excludePosition ||
+                     i >= labelPosition + excludePosition + exclude.length());
+    if (highlight) {
+      highlightedLocations[i] = true;
+    }
+  }
+  return highlightedLocations;
 }
+
+/////////////////////
+/// GET LIGHTBULB ///
+/////////////////////
 
 char Renderer::getLightbulb(char cIn) {
   int i = switchIndex[cIn]++;
@@ -239,6 +255,20 @@ char Renderer::getLightbulb(char cIn) {
   return ' ';
 }
 
+char Renderer::getCodeBit(int i) {
+  return getCharAt(i, &ram.state[CODE]);
+}
+
+char Renderer::getDataBit(int i) {
+  return getCharAt(i, &ram.state[DATA]);
+}
+
+char Renderer::getCharAt(int i, vector<vector<bool>>* matrix) {
+  int j = i / WORD_SIZE;
+  i = i % WORD_SIZE;
+  return Util::getChar((*matrix).at(j).at(i));
+}
+
 bool Renderer::pcPointingToAddress(int adr) {
   bool executionHasntStarted = cpu.getCycle() == 0;
   if (executionHasntStarted) {
@@ -247,16 +277,17 @@ bool Renderer::pcPointingToAddress(int adr) {
   return Util::getInt(cpu.getPc()) == adr;
 }
 
-/*
- * Is instruction pointing to passed address in passed address space.
- */
-bool Renderer::instructionPointingToAddress(Address adr) {
-  Instruction *inst = getInstruction();
-  if (inst == NULL) {
-    return false;
+char Renderer::getFormattedOutput(int i) {
+  if (printer.getPrinterOutput().length() <= (unsigned) i) {
+    return ' ';
+  } else {
+    return printer.getPrinterOutput().at(i);
   }
-  return inst->adr == adr;
 }
+
+///////////////////////
+/// GET INSTRUCTION ///
+///////////////////////
 
 Instruction* Renderer::getInstruction() {
   bool noActiveInstruction = !machineActive() &&
@@ -268,6 +299,12 @@ Instruction* Renderer::getInstruction() {
     instruction.push_back(initializeInstruction());
   }
   return &instruction[0];
+}
+
+bool Renderer::machineActive() {
+  bool executionHasntStarted = cpu.getCycle() == 0;
+  bool executionEnded = Util::getInt(cpu.getPc()) == RAM_SIZE;
+  return !(executionHasntStarted || executionEnded);
 }
 
 Instruction Renderer::initializeInstruction() {
@@ -286,30 +323,13 @@ bool Renderer::instructionHasId(int id) {
   return inst->index == id;
 }
 
-char Renderer::getFormattedOutput(int i) {
-  if (printer.getPrinterOutput().length() <= (unsigned) i) {
-    return ' ';
-  } else {
-    return printer.getPrinterOutput().at(i);
+/*
+ * Is instruction pointing to passed address in passed address space.
+ */
+bool Renderer::instructionPointingToAddress(Address adr) {
+  Instruction *inst = getInstruction();
+  if (inst == NULL) {
+    return false;
   }
-}
-
-char getCharAt(int i, vector<vector<bool>>* matrix) {
-  int j = i / WORD_SIZE;
-  i = i % WORD_SIZE;
-  return Util::getChar((*matrix).at(j).at(i));
-}
-
-char Renderer::getCodeBit(int i) {
-  return getCharAt(i, &ram.state[CODE]);
-}
-
-char Renderer::getDataBit(int i) {
-  return getCharAt(i, &ram.state[DATA]);
-}
-
-bool Renderer::machineActive() {
-  bool executionHasntStarted = cpu.getCycle() == 0;
-  bool executionEnded = Util::getInt(cpu.getPc()) == RAM_SIZE;
-  return !(executionHasntStarted || executionEnded);
+  return inst->adr == adr;
 }
