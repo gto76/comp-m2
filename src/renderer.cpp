@@ -36,6 +36,7 @@ string Renderer::renderState(const Printer &printerIn, const Ram &ramIn,
 string Renderer::insertActualValues(string lineIn) {
   vector<bool> highlightedChars = getHighlightedLocations(lineIn);
   vector<bool> boldChars = getBoldLocations(lineIn);
+  vector<bool> dimChars = getDimLocations(lineIn);
   string lineOut;
   for (char cIn : lineIn) {
     string sOut = "";
@@ -53,15 +54,17 @@ string Renderer::insertActualValues(string lineIn) {
   // lineOut = insertEscSeqences(lineOut, highlightedChars, HIGHLIGHT_ESC,
   //                          HIGHLIGHT_END_ESC);
   // return insertEscSeqences(lineOut, boldChars, BOLD_ESC, BOLD_END_ESC);
-  return insertEscSeqences(lineOut, highlightedChars, boldChars);
+  return insertEscSeqences(lineOut, highlightedChars, boldChars, dimChars);
 }
 
 string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
                                    vector<bool> highlightedChars,
-                                   vector<bool> boldChars) {
+                                   vector<bool> boldChars,
+                                   vector<bool> dimChars) {
   string lineOut = "";
   bool insideHighlightBlock = false;
   bool insideBoldBlock = false;
+  bool insideDimBlock = false;
   for (size_t i = 0; i < lineWithoutEscapeSeqences.length(); i++) {
     bool firstCharInsideBlock = highlightedChars[i] && !insideHighlightBlock;
     if (firstCharInsideBlock) {
@@ -82,6 +85,16 @@ string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
     if (firstCharOutsideBlock) {
       lineOut += BOLD_END_ESC;
       insideBoldBlock = false;
+    }
+    firstCharInsideBlock = dimChars[i] && !insideDimBlock;
+    if (firstCharInsideBlock) {
+      lineOut += DIM_ESC;
+      insideDimBlock = true;
+    }
+    firstCharOutsideBlock = !dimChars[i] && insideDimBlock;
+    if (firstCharOutsideBlock) {
+      lineOut += DIM_END_ESC;
+      insideDimBlock = false;
     }
     lineOut += lineWithoutEscapeSeqences[i];
   }
@@ -227,32 +240,28 @@ vector<bool> Renderer::highlightLabel(vector<bool> highlightedLocations,
 
 vector<bool> Renderer::getBoldLocations(string lineIn) {
   vector<bool> boldLocations (lineIn.length(), false);
-  boldLocations = enboldenCodeWords(boldLocations, lineIn);
-  boldLocations = enboldenDataWords(boldLocations, lineIn);
+  boldLocations = enboldenReferencedCodeIndicators(boldLocations, lineIn);
+  boldLocations = enboldenReferencedDataIndicators(boldLocations, lineIn);
   return boldLocations;
 }
 
-vector<bool> Renderer::enboldenCodeWords(vector<bool> boldLocations,
-                                         string lineIn) {
-  // TODO: STOP
-  // TODO: g
-  return enboldenWords(boldLocations, lineIn, 'a', CODE);
+vector<bool> Renderer::enboldenReferencedCodeIndicators(
+    vector<bool> boldLocations, string lineIn) {
+  return enboldenIndicators(boldLocations, lineIn, 'g', CODE);
 }
 
-vector<bool> Renderer::enboldenDataWords(vector<bool> boldLocations,
-                                         string lineIn) {
-  // TODO: IN/OUT
-  // TODO: v
-  return enboldenWords(boldLocations, lineIn, 'b', DATA);
+vector<bool> Renderer::enboldenReferencedDataIndicators(
+    vector<bool> boldLocations, string lineIn) {
+  return enboldenIndicators(boldLocations, lineIn, 'v', DATA);
 }
 
-// TODO COMBINE WITH HIGHLIGHT WORDS (pass function as pointer)
-vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
-                                     string lineIn, char indicator,
-                                     AddrSpace addrSpace) {
+// // TODO COMBINE WITH HIGHLIGHT WORDS (pass function as pointer)
+vector<bool> Renderer::enboldenIndicators(vector<bool> boldLocations,
+                                          string lineIn, char indicator,
+                                          AddrSpace addrSpace) {
   for (size_t i = 0; i < lineIn.length(); i++) {
     if (lineIn[i] == indicator) {
-      int addressValue = switchIndex[indicator] / WORD_SIZE; // TODO out of loop
+      int addressValue = switchIndex[indicator]; // TODO out of loop
       Address adr = Address(addrSpace, Util::getBoolNibb(addressValue)); // TODO out of loop
       if (isAddressReferenced(adr)) { // out
         boldLocations[i] = true; // out
@@ -262,15 +271,73 @@ vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
   return boldLocations;
 }
 
-bool Renderer::isAddressReferenced(Address adr) {
-  vector<Instruction> *instructions = getAllInstructions();
-  for (Instruction inst : *instructions) {
-    if (inst.adr == adr) {
-      return true;
+/////////////////////////
+/// GET DIM LOCATIONS ///
+/////////////////////////
+
+vector<bool> Renderer::getDimLocations(string lineIn) {
+  vector<bool> dimLocations (lineIn.length(), false);
+  dimLocations = dimUnreferencedCodeIndicators(dimLocations, lineIn);
+  dimLocations = dimUnreferencedDataIndicators(dimLocations, lineIn);
+  return dimLocations;
+}
+
+vector<bool> Renderer::dimUnreferencedCodeIndicators(
+    vector<bool> dimLocations, string lineIn) {
+  return dimIndicators(dimLocations, lineIn, 'g', CODE);
+}
+
+vector<bool> Renderer::dimUnreferencedDataIndicators(
+    vector<bool> dimLocations, string lineIn) {
+  return dimIndicators(dimLocations, lineIn, 'v', DATA);
+}
+
+// // TODO COMBINE WITH HIGHLIGHT WORDS (pass function as pointer)
+vector<bool> Renderer::dimIndicators(vector<bool> dimLocations,
+                                          string lineIn, char indicator,
+                                          AddrSpace addrSpace) {
+  for (size_t i = 0; i < lineIn.length(); i++) {
+    if (lineIn[i] == indicator) {
+      int addressValue = switchIndex[indicator]; // TODO out of loop
+      Address adr = Address(addrSpace, Util::getBoolNibb(addressValue)); // TODO out of loop
+      if (!isAddressReferenced(adr)) { // out
+        dimLocations[i] = true; // out
+      }
     }
   }
-  return false;
+  return dimLocations;
 }
+
+// vector<bool> Renderer::enboldenCodeWords(vector<bool> boldLocations,
+//                                          string lineIn) {
+//   // TODO: STOP
+//   // TODO: g
+//   return enboldenWords(boldLocations, lineIn, 'a', CODE);
+// }
+
+// vector<bool> Renderer::enboldenDataWords(vector<bool> boldLocations,
+//                                          string lineIn) {
+//   // TODO: IN/OUT
+//   // TODO: v
+//   return enboldenWords(boldLocations, lineIn, 'b', DATA);
+// }
+
+// // TODO COMBINE WITH HIGHLIGHT WORDS (pass function as pointer)
+// vector<bool> Renderer::enboldenWords(vector<bool> boldLocations,
+//                                      string lineIn, char indicator,
+//                                      AddrSpace addrSpace) {
+//   for (size_t i = 0; i < lineIn.length(); i++) {
+//     if (lineIn[i] == indicator) {
+//       int addressValue = switchIndex[indicator] / WORD_SIZE; // TODO out of loop
+//       Address adr = Address(addrSpace, Util::getBoolNibb(addressValue)); // TODO out of loop
+//       if (isAddressReferenced(adr)) { // out
+//         boldLocations[i] = true; // out
+//       }
+//     }
+//   }
+//   return boldLocations;
+// }
+
 
 /////////////////////
 /// GET LIGHTBULB ///
@@ -297,12 +364,12 @@ char Renderer::getLightbulb(char cIn) {
       return  Util::getChar(cpu.getRegister().at(i));
     case 'i':
       return Util::getChar(instructionHasId(i));
+    case 'g':
+      return getLocationName(CODE, i);
     case 'v':
-      return ram.variableNames[i];
+      return getLocationName(DATA, i);
     case 'o':
       return getFormattedOutput(i);
-    case 'g':
-      return '-';
   }
   fprintf(stderr, "There was an error parsing a drawing file."
           " Problem with char %c. Will ignore it.", cIn);
@@ -329,6 +396,20 @@ bool Renderer::pcPointingToAddress(int adr) {
     return false;
   }
   return Util::getInt(cpu.getPc()) == adr;
+}
+
+char Renderer::getLocationName(AddrSpace addrSpace, int index) {
+  char name = ram.names[addrSpace][index];
+  if (name == DEFAULT_VAR_NAME) {
+    Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
+    if (isAddressReferenced(indicatorsAddress)) {
+      return '*';
+    } else {
+      return DEFAULT_VAR_NAME;
+    }
+  } else {
+    return name;
+  }
 }
 
 char Renderer::getFormattedOutput(int i) {
@@ -420,4 +501,14 @@ vector<Instruction>* Renderer::getAllInstructions() {
     }
   }
   return &allInstructions;
+}
+
+bool Renderer::isAddressReferenced(Address adr) {
+  vector<Instruction> *instructions = getAllInstructions();
+  for (Instruction inst : *instructions) {
+    if (inst.adr == adr) {
+      return true;
+    }
+  }
+  return false;
 }

@@ -17,9 +17,11 @@ class Ram {
       // Initializes the state, one per address space.
       state[CODE] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
       state[DATA] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE)); 
+      names[CODE] = vector<char>(16, DEFAULT_VAR_NAME);
+      names[DATA] = vector<char>(16, DEFAULT_VAR_NAME);
     }
     map<AddrSpace, vector<vector<bool>>> state;
-    vector<char> variableNames = vector<char>(16, DEFAULT_VAR_NAME);
+    map<AddrSpace, vector<char>> names; 
     vector<bool> get(Address adr) const;
     void set(Address adr, vector<bool> wordIn);
     string getString() const;

@@ -43,7 +43,8 @@ class Renderer {
     string insertActualValues(string lineIn);
     string insertEscSeqences(string lineWithoutEscapeSeqences,
                              vector<bool> highlightedChars,
-                             vector<bool> boldChars);
+                             vector<bool> boldChars,
+                             vector<bool> dimChars);
     // GET HIGHLIGHTED LOCATIONS
     vector<bool> getHighlightedLocations(string lineIn);
     vector<bool> highlightPointingInstructions(
@@ -61,17 +62,29 @@ class Renderer {
                                 string lineIn, string label, string exclude);
     // GET BOLD LOCATIONS
     vector<bool> getBoldLocations(string lineIn);
-    vector<bool> enboldenCodeWords(vector<bool> boldLocations, string lineIn);
-    vector<bool> enboldenDataWords(vector<bool> boldLocations, string lineIn);
-    vector<bool> enboldenWords(vector<bool> boldLocations, string lineIn,
+    vector<bool> enboldenReferencedCodeIndicators(vector<bool> boldLocations, string lineIn);
+    vector<bool> enboldenReferencedDataIndicators(vector<bool> boldLocations, string lineIn);
+    vector<bool> enboldenIndicators(vector<bool> boldLocations, string lineIn,
                                char indicator, AddrSpace addrSpace);
-    bool isAddressReferenced(Address adr);
+    // GET DiM LOCATIONS
+    vector<bool> getDimLocations(string lineIn);
+    vector<bool> dimUnreferencedCodeIndicators(vector<bool> dimLocations, string lineIn);
+    vector<bool> dimUnreferencedDataIndicators(vector<bool> dimLocations, string lineIn);
+    vector<bool> dimIndicators(vector<bool> dimLocations, string lineIn,
+                               char indicator, AddrSpace addrSpace);
+
+    // vector<bool> enboldenCodeWords(vector<bool> boldLocations, string lineIn);
+    // vector<bool> enboldenDataWords(vector<bool> boldLocations, string lineIn);
+    // vector<bool> enboldenWords(vector<bool> boldLocations, string lineIn,
+    //                            char indicator, AddrSpace addrSpace);
+
     // GET LIGHTBULB
     char getLightbulb(char cIn);
     char getCodeBit(int i);
     char getDataBit(int i);
     char getCharAt(int i, vector<vector<bool>>* matrix);
     bool pcPointingToAddress(int adr);
+    char getLocationName(AddrSpace addrSpace, int index);
     char getFormattedOutput(int i);
     // GET INSTRUCTION
     Instruction* getInstruction();
@@ -82,6 +95,7 @@ class Renderer {
     set<int>* getIndexesOfPointingInstructions();
     set<int> generatePointingInstructions();
     vector<Instruction>* getAllInstructions();
+    bool isAddressReferenced(Address adr);
 };
 
 #endif
