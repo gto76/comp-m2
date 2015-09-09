@@ -47,6 +47,10 @@ class Renderer {
                              vector<bool> dimChars);
     // GET HIGHLIGHTED LOCATIONS
     vector<bool> getHighlightedLocations(string lineIn);
+    vector<bool> highlightCursor(vector<bool> highlightedLocations,
+                                 string lineIn);
+    vector<bool> findCursor(vector<bool> highlightedLocations, string lineIn,
+                            char c);
     vector<bool> highlightPointingInstructions(
         vector<bool> highlightedLocations, string lineIn);
     vector<bool> highlightOperators(vector<bool> highlightedLocations,

@@ -44,6 +44,12 @@ int Cursor::getY() {
   return getAddr() + getRamPositionY();
 }
 
+int Cursor::getAbsoluteBitIndex() {
+  initCheck(); 
+  return cursorPosition[addrSpace][Y] * WORD_SIZE +
+         cursorPosition[addrSpace][X];
+}
+
 void Cursor::increaseX() {
   bool atRightmostBit = getBitIndex() >= WORD_SIZE-1;
   if (atRightmostBit) {

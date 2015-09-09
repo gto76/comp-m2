@@ -69,23 +69,23 @@ char getCharUnderCursor() {
   return buffer.at(cursor.getY()).at(cursor.getX());
 }
 
-void highlightCursor(bool highlight) {
-  char c;
-  try {
-    c = getCharUnderCursor();
-  } catch (int e) {
-    cout << "Cursor out of bounds. Exception Nr. " << e << '\n';
-    return;
-  }
-  if (highlight) {
-    printf("\e[%dm\e[%dm", 30, 47);
-  }
-  printCharImediately(c, cursor.getX(), cursor.getY());
-  if (highlight) {
-    printf("\e[%dm\e[%dm", 37, 40);
-  }
-  fflush(stdout);
-}
+// void highlightCursor(bool highlight) {
+//   char c;
+//   try {
+//     c = getCharUnderCursor();
+//   } catch (int e) {
+//     cout << "Cursor out of bounds. Exception Nr. " << e << '\n';
+//     return;
+//   }
+//   if (highlight) {
+//     printf("\e[30m\e[47m");
+//   }
+//   printCharImediately(c, cursor.getX(), cursor.getY());
+//   if (highlight) {
+//     printf("\e[37m\e[40m");
+//   }
+//   fflush(stdout);
+// }
 
 void switchBitUnderCursor() {
   bool bitValue = cursor.getBit(); 
@@ -108,9 +108,9 @@ char readStdin(bool drawCursor) {
       exit(0);
     }
     redrawScreen();
-    if (drawCursor) {
-      highlightCursor(true);
-    }
+    // if (drawCursor) {
+    //   highlightCursor(true);
+    // }
     return readStdin(drawCursor);
   }
   return c;
@@ -195,7 +195,7 @@ void saveRamToFile() {
 void userInput() {
   while(1) {
     char c = readStdin(true);
-    highlightCursor(false);
+    //highlightCursor(false);
     switch (c) {
       // UP
       case 107: // k
@@ -258,7 +258,7 @@ void userInput() {
         break;
     }
     redrawScreen();
-    highlightCursor(true);
+    //highlightCursor(true);
   }
 }
 
@@ -347,7 +347,7 @@ void startInteractiveMode() {
   clearScreen();
   clearScreen();
   redrawScreen();
-  highlightCursor(true);
+  //highlightCursor(true);
   userInput();
 }
 

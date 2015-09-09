@@ -25,6 +25,7 @@ class Cursor {
 
     int getX();
     int getY();
+    int getAbsoluteBitIndex();
     void increaseX();
     void increaseY();
     void decreaseX();

@@ -101,6 +101,7 @@ string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
   return lineOut;
 }
 
+// TODO derepetition
 // string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
 //                                    vector<bool> characterInsideSqence,
 //                                    string seqenceStart, string seqenceStop) {
@@ -128,23 +129,55 @@ string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
 
 vector<bool> Renderer::getHighlightedLocations(string lineIn) {
   vector<bool> highlightedLocations (lineIn.length(), false);
+  highlightedLocations = highlightCursor(highlightedLocations, lineIn);
   Instruction *inst = getInstruction();
   if (inst == NULL) {
     return highlightPointingInstructions(highlightedLocations, lineIn);
   }
   highlightedLocations = highlightOperators(highlightedLocations, lineIn, inst);
   if (inst->adr.space == CODE) {
-    highlightedLocations = highlightCodeWord(highlightedLocations, lineIn, inst);
+    highlightedLocations = highlightCodeWord(highlightedLocations, lineIn, 
+                                            inst);
   } else if (inst->adr.space == DATA) {
-    highlightedLocations = highlightDataWord(highlightedLocations, lineIn, inst);
+    highlightedLocations = highlightDataWord(highlightedLocations, lineIn,
+                                             inst);
+  }
+  return highlightedLocations;
+}
+
+/////////
+
+vector<bool> Renderer::highlightCursor(vector<bool> highlightedLocations,
+                                       string lineIn) {
+  if (machineActive()) {
+    return highlightedLocations;
+  }
+  if (cursor.getAddressSpace() == CODE) {
+    highlightedLocations = findCursor(highlightedLocations, lineIn, 'a');
+  } else if (cursor.getAddressSpace() == DATA) {
+    highlightedLocations = findCursor(highlightedLocations, lineIn, 'b');
+  }
+  return highlightedLocations;
+}
+
+vector<bool> Renderer::findCursor(vector<bool> highlightedLocations,
+                                  string lineIn, char c) {
+  int indexDelta = 0;
+  for (size_t i = 0; i < lineIn.length(); i++) {
+    if (lineIn[i] == c) {
+      int lightbulbIndex = switchIndex[c] + indexDelta++;
+      if (cursor.getAbsoluteBitIndex() == lightbulbIndex) {
+        highlightedLocations[i] = true;
+      }
+    }
   }
   return highlightedLocations;
 }
 
 ////////////
 
-vector<bool> Renderer::highlightPointingInstructions(vector<bool> highlightedLocations,
-                                                    string lineIn) {
+vector<bool> Renderer::highlightPointingInstructions(
+    vector<bool> highlightedLocations, string lineIn) {
   set<int> *pointingInstructions = getIndexesOfPointingInstructions();
   for (size_t i = 0; i < lineIn.length(); i++) {
     if (lineIn[i] == 'a') {
@@ -182,7 +215,8 @@ vector<bool> Renderer::highlightOperators(vector<bool> highlightedLocations,
 vector<bool> Renderer::highlightCodeWord(vector<bool> highlightedLocations,
                                         string lineIn, Instruction *inst) {
   if (inst->adr.val == LAST_ADDRESS) {
-    return highlightLabel(highlightedLocations, lineIn, LAST_CODE_ADDR_LABEL, "");
+    return highlightLabel(highlightedLocations, lineIn,
+                          LAST_CODE_ADDR_LABEL, "");
   }
   return highlightWords(highlightedLocations, lineIn, 'a', CODE);
 }
@@ -190,7 +224,8 @@ vector<bool> Renderer::highlightCodeWord(vector<bool> highlightedLocations,
 vector<bool> Renderer::highlightDataWord(vector<bool> highlightedLocations,
                                         string lineIn, Instruction *inst) {
   if (inst->adr.val == LAST_ADDRESS) {
-    return highlightLabel(highlightedLocations, lineIn, LAST_DATA_ADDR_LABEL, "");
+    return highlightLabel(highlightedLocations, lineIn, LAST_DATA_ADDR_LABEL,
+                          "");
   }
   return highlightWords(highlightedLocations, lineIn, 'b', DATA);
 }
@@ -240,8 +275,8 @@ vector<bool> Renderer::highlightLabel(vector<bool> highlightedLocations,
 
 vector<bool> Renderer::getBoldLocations(string lineIn) {
   vector<bool> boldLocations (lineIn.length(), false);
-  boldLocations = enboldenReferencedCodeIndicators(boldLocations, lineIn);
-  boldLocations = enboldenReferencedDataIndicators(boldLocations, lineIn);
+  // boldLocations = enboldenReferencedCodeIndicators(boldLocations, lineIn);
+  // boldLocations = enboldenReferencedDataIndicators(boldLocations, lineIn);
   return boldLocations;
 }
 
