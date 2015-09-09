@@ -3,21 +3,21 @@
                   |            | 
 PC   CODE         | [rrrrrrrr] |         DATA   AD
  _ ________       |____________|       ________ _   
-|p|aaaaaaaa| ---- | READ       | ---- |bbbbbbbb|v|  
-|p|aaaaaaaa| ---* | WRITE      | ---* |bbbbbbbb|v|  
-|p|aaaaaaaa| --*- | ADD        | --*- |bbbbbbbb|v|  
-|p|aaaaaaaa| --** | SUB        | --** |bbbbbbbb|v|            PRINTER  
-|p|aaaaaaaa| -*-- | JUMP       | -*-- |bbbbbbbb|v|    ________________________ 
-|p|aaaaaaaa| -*-* | IF MAX     | -*-* |bbbbbbbb|v|   |                        |
-|p|aaaaaaaa| -**- | IF MIN     | -**- |bbbbbbbb|v|  (|   |=============[]=|   |)
-|p|aaaaaaaa| -*** | JRI~<>&VX  | -*** |bbbbbbbb|v|   |__ _ ______________ _ __|
-|p|aaaaaaaa| *--- | READ *     | *--- |bbbbbbbb|v|    | oooooooooooooooooooo | 
-|p|aaaaaaaa| *--* | WRITE *    | *--* |bbbbbbbb|v|    | oooooooooooooooooooo |
-|p|aaaaaaaa| *-*- | INC/DEC    | *-*- |bbbbbbbb|v|    | oooooooooooooooooooo | 
-|p|aaaaaaaa| *-** | PRINT      | *-** |bbbbbbbb|v|    | oooooooooooooooooooo |
-|p|aaaaaaaa| **-- |            | **-- |bbbbbbbb|v|    | oooooooooooooooooooo |
-|p|aaaaaaaa| **-* | IF NOT MAX | **-* |bbbbbbbb|v|    | oooooooooooooooooooo |
-|p|aaaaaaaa| ***- | IF NOT MIN | ***- |bbbbbbbb|v|    | oooooooooooooooooooo |
-|p|  STOP  | **** |            | **** | IN/OUT |v|    | oooooooooooooooooooo |
+|g|aaaaaaaa| ---- | READ       | ---- |bbbbbbbb|v|  
+|g|aaaaaaaa| ---* | WRITE      | ---* |bbbbbbbb|v|  
+|g|aaaaaaaa| --*- | ADD        | --*- |bbbbbbbb|v|  
+|g|aaaaaaaa| --** | SUB        | --** |bbbbbbbb|v|            PRINTER  
+|g|aaaaaaaa| -*-- | JUMP       | -*-- |bbbbbbbb|v|    ________________________ 
+|g|aaaaaaaa| -*-* | IF MAX     | -*-* |bbbbbbbb|v|   |                        |
+|g|aaaaaaaa| -**- | IF MIN     | -**- |bbbbbbbb|v|  (|   |=============[]=|   |)
+|g|aaaaaaaa| -*** | JRI~<>&VX  | -*** |bbbbbbbb|v|   |__ _ ______________ _ __|
+|g|aaaaaaaa| *--- | READ *     | *--- |bbbbbbbb|v|    | oooooooooooooooooooo | 
+|g|aaaaaaaa| *--* | WRITE *    | *--* |bbbbbbbb|v|    | oooooooooooooooooooo |
+|g|aaaaaaaa| *-*- | INC/DEC    | *-*- |bbbbbbbb|v|    | oooooooooooooooooooo | 
+|g|aaaaaaaa| *-** | PRINT      | *-** |bbbbbbbb|v|    | oooooooooooooooooooo |
+|g|aaaaaaaa| **-- |            | **-- |bbbbbbbb|v|    | oooooooooooooooooooo |
+|g|aaaaaaaa| **-* | IF NOT MAX | **-* |bbbbbbbb|v|    | oooooooooooooooooooo |
+|g|aaaaaaaa| ***- | IF NOT MIN | ***- |bbbbbbbb|v|    | oooooooooooooooooooo |
+|g|  STOP  | **** |            | **** | IN/OUT |v|    | oooooooooooooooooooo |
  ##########        ############        ##########      ###################### 
   []    [] \______/ []      [] \______/ []    [] \____/ []                [] 

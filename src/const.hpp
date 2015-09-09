@@ -32,8 +32,8 @@ const int FQ = 333;
 
 const string SAVE_FILE_NAME = "saved-ram-";
 
-const string BOLD_ESC = "\033[1m";
-const string BOLD_END_ESC = "\033[0;37m";
+const string BOLD_ESC = "\e[2m"; // "\033[1m";
+const string BOLD_END_ESC = "\e[22m"; // "\033[0;37m";
 const string HIGHLIGHT_ESC = "\e[7m";
 const string HIGHLIGHT_END_ESC = "\e[27m";
 
