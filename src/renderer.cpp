@@ -129,6 +129,7 @@ string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
 
 vector<bool> Renderer::getHighlightedLocations(string lineIn) {
   vector<bool> highlightedLocations (lineIn.length(), false);
+  highlightedLocations = highlightPc(highlightedLocations, lineIn);
   highlightedLocations = highlightCursor(highlightedLocations, lineIn);
   Instruction *inst = getInstruction();
   if (inst == NULL) {
@@ -141,6 +142,20 @@ vector<bool> Renderer::getHighlightedLocations(string lineIn) {
   } else if (inst->adr.space == DATA) {
     highlightedLocations = highlightDataWord(highlightedLocations, lineIn,
                                              inst);
+  }
+  return highlightedLocations;
+}
+
+vector<bool> Renderer::highlightPc(vector<bool> highlightedLocations,
+                                       string lineIn) {
+  if (!machineActive()) {
+    return highlightedLocations;
+  }
+  for (size_t i = 0; i < lineIn.length(); i++) {
+    if (lineIn[i] == 'g') {
+      int index = switchIndex['g'];
+      highlightedLocations[i] = pcPointingToAddress(index);;
+    }
   }
   return highlightedLocations;
 }
@@ -312,8 +327,8 @@ vector<bool> Renderer::enboldenIndicators(vector<bool> boldLocations,
 
 vector<bool> Renderer::getDimLocations(string lineIn) {
   vector<bool> dimLocations (lineIn.length(), false);
-  dimLocations = dimUnreferencedCodeIndicators(dimLocations, lineIn);
-  dimLocations = dimUnreferencedDataIndicators(dimLocations, lineIn);
+  // dimLocations = dimUnreferencedCodeIndicators(dimLocations, lineIn);
+  // dimLocations = dimUnreferencedDataIndicators(dimLocations, lineIn);
   return dimLocations;
 }
 
