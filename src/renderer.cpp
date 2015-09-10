@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -26,35 +27,33 @@ string Renderer::renderState(const Printer &printerIn, const Ram &ramIn,
                              const Cpu &cpuIn, const Cursor &cursorIn) {
   Renderer instance(printerIn, ramIn, cpuIn, cursorIn);
   string out;
-  for (string line : Util::splitString(drawing)) {
+  for (vector<string> line : Util::splitIntoLines(drawing)) {
     out += instance.insertActualValues(line) + "\n";
   }
   out.erase(out.end() - 1);
   return out;
 }
 
-string Renderer::insertActualValues(string lineIn) {
-  vector<bool> highlightedChars = getHighlightedLocations(lineIn);
-  vector<bool> boldChars = getBoldLocations(lineIn);
-  vector<bool> dimChars = getDimLocations(lineIn);
+string Renderer::insertActualValues(vector<string> lineIn) {
+  // vector<bool> highlightedChars = getHighlightedLocations(lineIn);
+  // vector<bool> boldChars = getBoldLocations(lineIn);
+  // vector<bool> dimChars = getDimLocations(lineIn);
   string lineOut;
-  for (char cIn : lineIn) {
+  for (string cIn : lineIn) {
     string sOut = "";
     // Regex: [0-9a-z]
-    bool charIsALightbulb = (cIn >= 'a' && cIn <= 'z') || 
-                            (cIn >= '0' && cIn <= '9');
+    bool charIsALightbulb = ALL_INDICATORS.count(cIn);
+    // bool charIsALightbulb = (cIn >= 'a' && cIn <= 'z') || 
+    //                         (cIn >= '0' && cIn <= '9');
     if (charIsALightbulb) {
-      sOut.push_back(getLightbulb(cIn));
+      sOut += getLightbulb(cIn);
     } else {
-      sOut.push_back(cIn);
+      sOut += cIn;
     }
     lineOut += sOut;
   }
-  // TODO combine in one function
-  // lineOut = insertEscSeqences(lineOut, highlightedChars, HIGHLIGHT_ESC,
-  //                          HIGHLIGHT_END_ESC);
-  // return insertEscSeqences(lineOut, boldChars, BOLD_ESC, BOLD_END_ESC);
-  return insertEscSeqences(lineOut, highlightedChars, boldChars, dimChars);
+  return lineOut;
+  // return insertEscSeqences(lineOut, highlightedChars, boldChars, dimChars);
 }
 
 string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
@@ -101,6 +100,7 @@ string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
   return lineOut;
 }
 
+// NOT USED:
 // TODO derepetition
 // string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
 //                                    vector<bool> characterInsideSqence,
@@ -127,236 +127,238 @@ string Renderer::insertEscSeqences(string lineWithoutEscapeSeqences,
 /// GET HIGHLIGHTED LOCATIONS ///
 /////////////////////////////////
 
-vector<bool> Renderer::getHighlightedLocations(string lineIn) {
-  vector<bool> highlightedLocations (lineIn.length(), false);
-  highlightedLocations = highlightPc(highlightedLocations, lineIn);
-  highlightedLocations = highlightCursor(highlightedLocations, lineIn);
-  Instruction *inst = getInstruction();
-  if (inst == NULL) {
-    return highlightPointingInstructions(highlightedLocations, lineIn);
-  }
-  highlightedLocations = highlightOperators(highlightedLocations, lineIn, inst);
-  if (inst->adr.space == CODE) {
-    highlightedLocations = highlightCodeWord(highlightedLocations, lineIn, 
-                                            inst);
-  } else if (inst->adr.space == DATA) {
-    highlightedLocations = highlightDataWord(highlightedLocations, lineIn,
-                                             inst);
-  }
-  return highlightedLocations;
-}
+// vector<bool> Renderer::getHighlightedLocations(string lineIn) {
+//   vector<bool> highlightedLocations (lineIn.length(), false);
+//   highlightedLocations = highlightPc(highlightedLocations, lineIn);
+//   highlightedLocations = highlightCursor(highlightedLocations, lineIn);
+//   Instruction *inst = getInstruction();
+//   if (inst == NULL) {
+//     return highlightPointingInstructions(highlightedLocations, lineIn);
+//   }
+//   highlightedLocations = highlightOperators(highlightedLocations, lineIn, inst);
+//   if (inst->adr.space == CODE) {
+//     highlightedLocations = highlightCodeWord(highlightedLocations, lineIn, 
+//                                             inst);
+//   } else if (inst->adr.space == DATA) {
+//     highlightedLocations = highlightDataWord(highlightedLocations, lineIn,
+//                                              inst);
+//   }
+//   return highlightedLocations;
+// }
 
-vector<bool> Renderer::highlightPc(vector<bool> highlightedLocations,
-                                       string lineIn) {
-  if (!machineActive()) {
-    return highlightedLocations;
-  }
-  for (size_t i = 0; i < lineIn.length(); i++) {
-    if (lineIn[i] == 'g') {
-      int index = switchIndex['g'];
-      highlightedLocations[i] = pcPointingToAddress(index);;
-    }
-  }
-  return highlightedLocations;
-}
+// vector<bool> Renderer::highlightPc(vector<bool> highlightedLocations,
+//                                        string lineIn) {
+//   if (!machineActive()) {
+//     return highlightedLocations;
+//   }
+//   for (size_t i = 0; i < lineIn.length(); i++) {
+//     if (lineIn[i] == CODE_ADR_INDICATOR) {
+//       int index = switchIndex[CODE_ADR_INDICATOR];
+//       highlightedLocations[i] = pcPointingToAddress(index);;
+//     }
+//   }
+//   return highlightedLocations;
+// }
 
-/////////
+// /////////
 
-vector<bool> Renderer::highlightCursor(vector<bool> highlightedLocations,
-                                       string lineIn) {
-  if (machineActive()) {
-    return highlightedLocations;
-  }
-  if (cursor.getAddressSpace() == CODE) {
-    highlightedLocations = findCursor(highlightedLocations, lineIn, 'a');
-  } else if (cursor.getAddressSpace() == DATA) {
-    highlightedLocations = findCursor(highlightedLocations, lineIn, 'b');
-  }
-  return highlightedLocations;
-}
+// vector<bool> Renderer::highlightCursor(vector<bool> highlightedLocations,
+//                                        string lineIn) {
+//   if (machineActive()) {
+//     return highlightedLocations;
+//   }
+//   if (cursor.getAddressSpace() == CODE) {
+//     highlightedLocations = findCursor(highlightedLocations, lineIn, CODE_INDICATOR);
+//   } else if (cursor.getAddressSpace() == DATA) {
+//     highlightedLocations = findCursor(highlightedLocations, lineIn, DATA_INDICATOR);
+//   }
+//   return highlightedLocations;
+// }
 
-vector<bool> Renderer::findCursor(vector<bool> highlightedLocations,
-                                  string lineIn, char c) {
-  int indexDelta = 0;
-  for (size_t i = 0; i < lineIn.length(); i++) {
-    if (lineIn[i] == c) {
-      int lightbulbIndex = switchIndex[c] + indexDelta++;
-      if (cursor.getAbsoluteBitIndex() == lightbulbIndex) {
-        highlightedLocations[i] = true;
-      }
-    }
-  }
-  return highlightedLocations;
-}
+// vector<bool> Renderer::findCursor(vector<bool> highlightedLocations,
+//                                   string lineIn, string c) {
+//   int indexDelta = 0;
+//   for (size_t i = 0; i < lineIn.length(); i++) {
+//     if (lineIn[i] == c) {
+//       int lightbulbIndex = switchIndex[c] + indexDelta++;
+//       if (cursor.getAbsoluteBitIndex() == lightbulbIndex) {
+//         highlightedLocations[i] = true;
+//       }
+//     }
+//   }
+//   return highlightedLocations;
+// }
 
-////////////
+// ////////////
 
-vector<bool> Renderer::highlightPointingInstructions(
-    vector<bool> highlightedLocations, string lineIn) {
-  set<int> *pointingInstructions = getIndexesOfPointingInstructions();
-  for (size_t i = 0; i < lineIn.length(); i++) {
-    if (lineIn[i] == 'a') {
-      int addressValue = switchIndex['a'] / WORD_SIZE;
-      if (pointingInstructions->count(addressValue)) {
-        highlightedLocations[i] = true;
-      }
-    }
-  }
-  return highlightedLocations;
-}
+// vector<bool> Renderer::highlightPointingInstructions(
+//     vector<bool> highlightedLocations, string lineIn) {
+//   set<int> *pointingInstructions = getIndexesOfPointingInstructions();
+//   for (size_t i = 0; i < lineIn.length(); i++) {
+//     if (lineIn[i] == CODE_INDICATOR) {
+//       int addressValue = switchIndex[CODE_INDICATOR] / WORD_SIZE;
+//       if (pointingInstructions->count(addressValue)) {
+//         highlightedLocations[i] = true;
+//       }
+//     }
+//   }
+//   return highlightedLocations;
+// }
 
-///////////////////
+// ///////////////////
 
-vector<bool> Renderer::highlightOperators(vector<bool> highlightedLocations,
-                                         string lineIn, Instruction *inst) {
-  string exclude = "";
-  if (inst->isLogic()) {
-    exclude = LOGIC_OPS_INDICATOR[min(inst->logicIndex, 8)];
-  }
-  if (inst->index == INC_DEC_OPS_INDEX) {
-    if (inst->logicIndex <= 7) {
-      exclude = "INC";
-    } else {
-      exclude = "DEC";
-    }
-  }
-  string label = " " + inst->label;
-  label.append(11 - inst->label.length(), ' ');  
-  return highlightLabel(highlightedLocations, lineIn, label, exclude);
-}
+// vector<bool> Renderer::highlightOperators(vector<bool> highlightedLocations,
+//                                          string lineIn, Instruction *inst) {
+//   string exclude = "";
+//   if (inst->isLogic()) {
+//     exclude = LOGIC_OPS_INDICATOR[min(inst->logicIndex, 8)];
+//   }
+//   if (inst->index == INC_DEC_OPS_INDEX) {
+//     if (inst->logicIndex <= 7) {
+//       exclude = "INC";
+//     } else {
+//       exclude = "DEC";
+//     }
+//   }
+//   string label = " " + inst->label;
+//   label.append(11 - inst->label.length(), ' ');  
+//   return highlightLabel(highlightedLocations, lineIn, label, exclude);
+// }
 
-/////////////
+// /////////////
 
-vector<bool> Renderer::highlightCodeWord(vector<bool> highlightedLocations,
-                                        string lineIn, Instruction *inst) {
-  if (inst->adr.val == LAST_ADDRESS) {
-    return highlightLabel(highlightedLocations, lineIn,
-                          LAST_CODE_ADDR_LABEL, "");
-  }
-  return highlightWords(highlightedLocations, lineIn, 'a', CODE);
-}
+// vector<bool> Renderer::highlightCodeWord(vector<bool> highlightedLocations,
+//                                         string lineIn, Instruction *inst) {
+//   if (inst->adr.val == LAST_ADDRESS) {
+//     return highlightLabel(highlightedLocations, lineIn,
+//                           LAST_CODE_ADDR_LABEL, "");
+//   }
+//   return highlightWords(highlightedLocations, lineIn, CODE_INDICATOR, CODE);
+// }
 
-vector<bool> Renderer::highlightDataWord(vector<bool> highlightedLocations,
-                                        string lineIn, Instruction *inst) {
-  if (inst->adr.val == LAST_ADDRESS) {
-    return highlightLabel(highlightedLocations, lineIn, LAST_DATA_ADDR_LABEL,
-                          "");
-  }
-  return highlightWords(highlightedLocations, lineIn, 'b', DATA);
-}
+// vector<bool> Renderer::highlightDataWord(vector<bool> highlightedLocations,
+//                                         string lineIn, Instruction *inst) {
+//   if (inst->adr.val == LAST_ADDRESS) {
+//     return highlightLabel(highlightedLocations, lineIn, LAST_DATA_ADDR_LABEL,
+//                           "");
+//   }
+//   return highlightWords(highlightedLocations, lineIn, DATA_INDICATOR, DATA);
+// }
 
-vector<bool> Renderer::highlightWords(vector<bool> highlightedLocations,
-                                     string lineIn, char indicator,
-                                     AddrSpace addrSpace) {
-  for (size_t i = 0; i < lineIn.length(); i++) {
-    if (lineIn[i] == indicator) {
-      int addressValue = switchIndex[indicator] / WORD_SIZE;
-      Address adr = Address(addrSpace, Util::getBoolNibb(addressValue));
-      if (instructionPointingToAddress(adr)) {
-        highlightedLocations[i] = true;
-      }
-    }
-  }
-  return highlightedLocations;
-}
+// vector<bool> Renderer::highlightWords(vector<bool> highlightedLocations,
+//                                      string lineIn, string indicator,
+//                                      AddrSpace addrSpace) {
+//   for (size_t i = 0; i < lineIn.length(); i++) {
+//     if (lineIn[i] == indicator) {
+//       int addressValue = switchIndex[indicator] / WORD_SIZE;
+//       Address adr = Address(addrSpace, Util::getBoolNibb(addressValue));
+//       if (instructionPointingToAddress(adr)) {
+//         highlightedLocations[i] = true;
+//       }
+//     }
+//   }
+//   return highlightedLocations;
+// }
 
-///////////
+// ///////////
 
-vector<bool> Renderer::highlightLabel(vector<bool> highlightedLocations,
-                                     string lineIn, string label,
-                                     string exclude) {
-  size_t labelPosition = lineIn.find(label);
-  if (labelPosition == string::npos) {
-    return highlightedLocations;
-  }
-  size_t excludePosition = numeric_limits<size_t>::max();
-  if (exclude != "") {
-    excludePosition = label.find(exclude);
-  }
-  for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
-    bool highlight = (labelPosition != string::npos) &&
-                     (i < labelPosition + excludePosition ||
-                     i >= labelPosition + excludePosition + exclude.length());
-    if (highlight) {
-      highlightedLocations[i] = true;
-    }
-  }
-  return highlightedLocations;
-}
+// vector<bool> Renderer::highlightLabel(vector<bool> highlightedLocations,
+//                                      string lineIn, string label,
+//                                      string exclude) {
+//   size_t labelPosition = lineIn.find(label);
+//   if (labelPosition == string::npos) {
+//     return highlightedLocations;
+//   }
+//   size_t excludePosition = numeric_limits<size_t>::max();
+//   if (exclude != "") {
+//     excludePosition = label.find(exclude);
+//   }
+//   for (size_t i = labelPosition; i < labelPosition + label.length(); i++) {
+//     bool highlight = (labelPosition != string::npos) &&
+//                      (i < labelPosition + excludePosition ||
+//                      i >= labelPosition + excludePosition + exclude.length());
+//     if (highlight) {
+//       highlightedLocations[i] = true;
+//     }
+//   }
+//   return highlightedLocations;
+// }
 
-//////////////////////////
-/// GET BOLD LOCATIONS ///
-//////////////////////////
+// //////////////////////////
+// /// GET BOLD LOCATIONS ///
+// //////////////////////////
 
-vector<bool> Renderer::getBoldLocations(string lineIn) {
-  vector<bool> boldLocations (lineIn.length(), false);
-  // boldLocations = enboldenReferencedCodeIndicators(boldLocations, lineIn);
-  // boldLocations = enboldenReferencedDataIndicators(boldLocations, lineIn);
-  return boldLocations;
-}
+// vector<bool> Renderer::getBoldLocations(string lineIn) {
+//   vector<bool> boldLocations (lineIn.length(), false);
+//   // boldLocations = enboldenReferencedCodeIndicators(boldLocations, lineIn);
+//   // boldLocations = enboldenReferencedDataIndicators(boldLocations, lineIn);
+//   return boldLocations;
+// }
 
-vector<bool> Renderer::enboldenReferencedCodeIndicators(
-    vector<bool> boldLocations, string lineIn) {
-  return enboldenIndicators(boldLocations, lineIn, 'g', CODE);
-}
+// vector<bool> Renderer::enboldenReferencedCodeIndicators(
+//     vector<bool> boldLocations, string lineIn) {
+//   return enboldenIndicators(boldLocations, lineIn, CODE_ADR_INDICATOR, CODE);
+// }
 
-vector<bool> Renderer::enboldenReferencedDataIndicators(
-    vector<bool> boldLocations, string lineIn) {
-  return enboldenIndicators(boldLocations, lineIn, 'v', DATA);
-}
+// vector<bool> Renderer::enboldenReferencedDataIndicators(
+//     vector<bool> boldLocations, string lineIn) {
+//   return enboldenIndicators(boldLocations, lineIn, DATA_ADR_INDICATOR, DATA);
+// }
 
-// // TODO COMBINE WITH HIGHLIGHT WORDS (pass function as pointer)
-vector<bool> Renderer::enboldenIndicators(vector<bool> boldLocations,
-                                          string lineIn, char indicator,
-                                          AddrSpace addrSpace) {
-  for (size_t i = 0; i < lineIn.length(); i++) {
-    if (lineIn[i] == indicator) {
-      int addressValue = switchIndex[indicator]; // TODO out of loop
-      Address adr = Address(addrSpace, Util::getBoolNibb(addressValue)); // TODO out of loop
-      if (isAddressReferenced(adr)) { // out
-        boldLocations[i] = true; // out
-      }
-    }
-  }
-  return boldLocations;
-}
+// // // TODO COMBINE WITH HIGHLIGHT WORDS (pass function as pointer)
+// vector<bool> Renderer::enboldenIndicators(vector<bool> boldLocations,
+//                                           string lineIn, string indicator,
+//                                           AddrSpace addrSpace) {
+//   for (size_t i = 0; i < lineIn.length(); i++) {
+//     if (lineIn[i] == indicator) {
+//       int addressValue = switchIndex[indicator]; // TODO out of loop
+//       Address adr = Address(addrSpace, Util::getBoolNibb(addressValue)); // TODO out of loop
+//       if (isAddressReferenced(adr)) { // out
+//         boldLocations[i] = true; // out
+//       }
+//     }
+//   }
+//   return boldLocations;
+// }
 
-/////////////////////////
-/// GET DIM LOCATIONS ///
-/////////////////////////
+// /////////////////////////
+// /// GET DIM LOCATIONS ///
+// /////////////////////////
 
-vector<bool> Renderer::getDimLocations(string lineIn) {
-  vector<bool> dimLocations (lineIn.length(), false);
-  // dimLocations = dimUnreferencedCodeIndicators(dimLocations, lineIn);
-  // dimLocations = dimUnreferencedDataIndicators(dimLocations, lineIn);
-  return dimLocations;
-}
+// vector<bool> Renderer::getDimLocations(string lineIn) {
+//   vector<bool> dimLocations (lineIn.length(), false);
+//   // dimLocations = dimUnreferencedCodeIndicators(dimLocations, lineIn);
+//   // dimLocations = dimUnreferencedDataIndicators(dimLocations, lineIn);
+//   return dimLocations;
+// }
 
-vector<bool> Renderer::dimUnreferencedCodeIndicators(
-    vector<bool> dimLocations, string lineIn) {
-  return dimIndicators(dimLocations, lineIn, 'g', CODE);
-}
+// vector<bool> Renderer::dimUnreferencedCodeIndicators(
+//     vector<bool> dimLocations, string lineIn) {
+//   return dimIndicators(dimLocations, lineIn, CODE_ADR_INDICATOR, CODE);
+// }
 
-vector<bool> Renderer::dimUnreferencedDataIndicators(
-    vector<bool> dimLocations, string lineIn) {
-  return dimIndicators(dimLocations, lineIn, 'v', DATA);
-}
+// vector<bool> Renderer::dimUnreferencedDataIndicators(
+//     vector<bool> dimLocations, string lineIn) {
+//   return dimIndicators(dimLocations, lineIn, DATA_ADR_INDICATOR, DATA);
+// }
 
-// // TODO COMBINE WITH HIGHLIGHT WORDS (pass function as pointer)
-vector<bool> Renderer::dimIndicators(vector<bool> dimLocations,
-                                          string lineIn, char indicator,
-                                          AddrSpace addrSpace) {
-  for (size_t i = 0; i < lineIn.length(); i++) {
-    if (lineIn[i] == indicator) {
-      int addressValue = switchIndex[indicator]; // TODO out of loop
-      Address adr = Address(addrSpace, Util::getBoolNibb(addressValue)); // TODO out of loop
-      if (!isAddressReferenced(adr)) { // out
-        dimLocations[i] = true; // out
-      }
-    }
-  }
-  return dimLocations;
-}
+// // // TODO COMBINE WITH HIGHLIGHT WORDS (pass function as pointer)
+// vector<bool> Renderer::dimIndicators(vector<bool> dimLocations,
+//                                           string lineIn, string indicator,
+//                                           AddrSpace addrSpace) {
+//   for (size_t i = 0; i < lineIn.length(); i++) {
+//     if (lineIn[i] == indicator) {
+//       int addressValue = switchIndex[indicator]; // TODO out of loop
+//       Address adr = Address(addrSpace, Util::getBoolNibb(addressValue)); // TODO out of loop
+//       if (!isAddressReferenced(adr)) { // out
+//         dimLocations[i] = true; // out
+//       }
+//     }
+//   }
+//   return dimLocations;
+// }
+
+// NOT USED:
 
 // vector<bool> Renderer::enboldenCodeWords(vector<bool> boldLocations,
 //                                          string lineIn) {
@@ -393,48 +395,65 @@ vector<bool> Renderer::dimIndicators(vector<bool> dimLocations,
 /// GET LIGHTBULB ///
 /////////////////////
 
-char Renderer::getLightbulb(char cIn) {
+string Renderer::getLightbulb(string cIn) {
   int i = switchIndex[cIn]++;
-  switch (cIn) {
-    case 'a':
+
+  if (cIn == CODE_INDICATOR) {
       return getCodeBit(i);
-    case 'b':
+  } else if (cIn == DATA_INDICATOR) {
       return getDataBit(i);
-    case 'p':
-      return Util::getChar(pcPointingToAddress(i));
-    case 'd': {
-      Address adr = Address(CODE, Util::getBoolNibb(i));
-      return Util::getChar(instructionPointingToAddress(adr));
-    }
-    case 's': {
-      Address adr = Address(DATA, Util::getBoolNibb(i));
-      return Util::getChar(instructionPointingToAddress(adr));
-    }
-    case 'r':
+  } else if (cIn == REGISTER_INDICATOR) {
       return  Util::getChar(cpu.getRegister().at(i));
-    case 'i':
-      return Util::getChar(instructionHasId(i));
-    case 'g':
+  } else if (cIn == CODE_ADR_INDICATOR) {
       return getLocationName(CODE, i);
-    case 'v':
+  } else if (cIn == DATA_ADR_INDICATOR) {
       return getLocationName(DATA, i);
-    case 'o':
+  } else if (cIn == OUTPUT_INDICATOR) {
       return getFormattedOutput(i);
   }
-  fprintf(stderr, "There was an error parsing a drawing file."
-          " Problem with char %c. Will ignore it.", cIn);
-  return ' ';
+
+  // switch (cIn) {
+  //   case CODE_INDICATOR:
+  //     return getCodeBit(i);
+  //   case DATA_INDICATOR:
+  //     return getDataBit(i);
+  //   // case "p":
+  //   //   return Util::getChar(pcPointingToAddress(i));
+  //   // case "d": {
+  //   //   Address adr = Address(CODE, Util::getBoolNibb(i));
+  //   //   return Util::getChar(instructionPointingToAddress(adr));
+  //   // }
+  //   // case "s": {
+  //   //   Address adr = Address(DATA, Util::getBoolNibb(i));
+  //   //   return Util::getChar(instructionPointingToAddress(adr));
+  //   // }
+  //   case REGISTER_INDICATOR:
+  //     return  Util::getChar(cpu.getRegister().at(i));
+  //   // case "i":
+  //   //   return Util::getChar(instructionHasId(i));
+  //   case CODE_ADR_INDICATOR:
+  //     return getLocationName(CODE, i);
+  //   case DATA_ADR_INDICATOR:
+  //     return getLocationName(DATA, i);
+  //   case OUTPUT_INDICATOR:
+  //     return getFormattedOutput(i);
+  // }
+  // fprintf(stderr, "There was an error parsing a drawing file."
+  //         " Problem with char %s. Will ignore it.", cIn);
+  cerr << "There was an error parsing a drawing file.";
+  cerr << " Problem with char" << cIn << ". Will ignore it.";
+  return " ";
 }
 
-char Renderer::getCodeBit(int i) {
+string Renderer::getCodeBit(int i) {
   return getCharAt(i, &ram.state[CODE]);
 }
 
-char Renderer::getDataBit(int i) {
+string Renderer::getDataBit(int i) {
   return getCharAt(i, &ram.state[DATA]);
 }
 
-char Renderer::getCharAt(int i, vector<vector<bool>>* matrix) {
+string Renderer::getCharAt(int i, vector<vector<bool>>* matrix) {
   int j = i / WORD_SIZE;
   i = i % WORD_SIZE;
   return Util::getChar((*matrix).at(j).at(i));
@@ -448,25 +467,26 @@ bool Renderer::pcPointingToAddress(int adr) {
   return Util::getInt(cpu.getPc()) == adr;
 }
 
-char Renderer::getLocationName(AddrSpace addrSpace, int index) {
-  char name = ram.names[addrSpace][index];
-  if (name == DEFAULT_VAR_NAME) {
-    Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
-    if (isAddressReferenced(indicatorsAddress)) {
-      return '*';
-    } else {
-      return DEFAULT_VAR_NAME;
-    }
-  } else {
-    return name;
-  }
+string Renderer::getLocationName(AddrSpace addrSpace, int index) {
+  return "-";
+  // char name = ram.names[addrSpace][index];
+  // if (name == DEFAULT_VAR_NAME) {
+  //   Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
+  //   if (isAddressReferenced(indicatorsAddress)) {
+  //     return '*';
+  //   } else {
+  //     return DEFAULT_VAR_NAME;
+  //   }
+  // } else {
+  //   return name;
+  // }
 }
 
-char Renderer::getFormattedOutput(int i) {
+string Renderer::getFormattedOutput(int i) {
   if (printer.getPrinterOutput().length() <= (unsigned) i) {
-    return ' ';
+    return " ";
   } else {
-    return printer.getPrinterOutput().at(i);
+    return string(1, printer.getPrinterOutput().at(i));
   }
 }
 

@@ -65,9 +65,9 @@ void drawScreen() {
   }
 }
 
-char getCharUnderCursor() {
-  return buffer.at(cursor.getY()).at(cursor.getX());
-}
+// char getCharUnderCursor() {
+//   return buffer.at(cursor.getY()).at(cursor.getX());
+// }
 
 // void highlightCursor(bool highlight) {
 //   char c;
@@ -90,7 +90,7 @@ char getCharUnderCursor() {
 void switchBitUnderCursor() {
   bool bitValue = cursor.getBit(); 
   cursor.setBit(!bitValue);
-  buffer.at(cursor.getY()).at(cursor.getX()) = Util::getChar(!bitValue);
+  // buffer.at(cursor.getY()).at(cursor.getX()) = Util::getChar(!bitValue);
 }
 
 void eraseByteUnderCursor() {
@@ -270,8 +270,8 @@ void userInput() {
 void prepareOutput() {
   size_t drawingWidth = 0;
   size_t drawingHeight = 0;
-  for (string line : Util::splitString(drawing)) {
-    drawingWidth = std::max(drawingWidth, line.length());
+  for (vector<string> line : Util::splitIntoLines(drawing)) {
+    drawingWidth = std::max(drawingWidth, line.size());
     drawingHeight++;
   }
   setOutput(&drawScreen, drawingWidth, drawingHeight);

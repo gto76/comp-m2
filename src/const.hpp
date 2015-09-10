@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 using namespace std;
 
@@ -38,5 +39,17 @@ const string DIM_ESC = "\e[2m";
 const string DIM_END_ESC = "\e[22m";
 const string HIGHLIGHT_ESC = "\e[7m";
 const string HIGHLIGHT_END_ESC = "\e[27m";
+
+const string CODE_INDICATOR = "a";
+const string DATA_INDICATOR = "b";
+const string CODE_ADR_INDICATOR = "g";
+const string DATA_ADR_INDICATOR = "v";
+const string REGISTER_INDICATOR = "r";
+const string OUTPUT_INDICATOR = "o";
+const set<string> ALL_INDICATORS = { CODE_INDICATOR, DATA_INDICATOR, CODE_ADR_INDICATOR,
+                             DATA_ADR_INDICATOR, REGISTER_INDICATOR, 
+                             OUTPUT_INDICATOR };
+
+const string NEW_LINE = u8"\u000D";
 
 #endif

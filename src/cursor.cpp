@@ -19,9 +19,9 @@ void Cursor::initialize() {
   // Coordinates of first ram lightbulb in the ascii drawing. 
   // One per address space.
   tuple<int, int> codeRamPosition = 
-      Util::getCoordinatesOfFirstOccurance(&drawing, 'a');
+      Util::getCoordinatesOfFirstOccurance(drawing, CODE_INDICATOR);
   tuple<int, int> dataRamPosition = 
-      Util::getCoordinatesOfFirstOccurance(&drawing, 'b');
+      Util::getCoordinatesOfFirstOccurance(drawing, DATA_INDICATOR);
   ramPosition[CODE][X] = get<0>(codeRamPosition);
   ramPosition[CODE][Y] = get<1>(codeRamPosition);
   ramPosition[DATA][X] = get<0>(dataRamPosition);

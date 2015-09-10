@@ -37,10 +37,10 @@ class Renderer {
     vector<Instruction> allInstructions;
     set<int> pointingInstructions;
     // Counts occurances of a char in a drawing.
-    map<char, int> switchIndex;
+    map<string, int> switchIndex;
 
     // RENDER STATE
-    string insertActualValues(string lineIn);
+    string insertActualValues(vector<string> lineIn);
     string insertEscSeqences(string lineWithoutEscapeSeqences,
                              vector<bool> highlightedChars,
                              vector<bool> boldChars,
@@ -52,7 +52,7 @@ class Renderer {
     vector<bool> highlightCursor(vector<bool> highlightedLocations,
                                  string lineIn);
     vector<bool> findCursor(vector<bool> highlightedLocations, string lineIn,
-                            char c);
+                            string c);
     vector<bool> highlightPointingInstructions(
         vector<bool> highlightedLocations, string lineIn);
     vector<bool> highlightOperators(vector<bool> highlightedLocations,
@@ -62,7 +62,7 @@ class Renderer {
     vector<bool> highlightDataWord(vector<bool> highlightedLocations,
                                    string lineIn, Instruction *inst);
     vector<bool> highlightWords(vector<bool> highlightedLocations,
-                                string lineIn, char indicator,
+                                string lineIn, string indicator,
                                 AddrSpace addrSpace);
     vector<bool> highlightLabel(vector<bool> highlightedLocations,
                                 string lineIn, string label, string exclude);
@@ -71,13 +71,13 @@ class Renderer {
     vector<bool> enboldenReferencedCodeIndicators(vector<bool> boldLocations, string lineIn);
     vector<bool> enboldenReferencedDataIndicators(vector<bool> boldLocations, string lineIn);
     vector<bool> enboldenIndicators(vector<bool> boldLocations, string lineIn,
-                               char indicator, AddrSpace addrSpace);
+                               string indicator, AddrSpace addrSpace);
     // GET DiM LOCATIONS
     vector<bool> getDimLocations(string lineIn);
     vector<bool> dimUnreferencedCodeIndicators(vector<bool> dimLocations, string lineIn);
     vector<bool> dimUnreferencedDataIndicators(vector<bool> dimLocations, string lineIn);
     vector<bool> dimIndicators(vector<bool> dimLocations, string lineIn,
-                               char indicator, AddrSpace addrSpace);
+                               string indicator, AddrSpace addrSpace);
 
     // vector<bool> enboldenCodeWords(vector<bool> boldLocations, string lineIn);
     // vector<bool> enboldenDataWords(vector<bool> boldLocations, string lineIn);
@@ -85,13 +85,13 @@ class Renderer {
     //                            char indicator, AddrSpace addrSpace);
 
     // GET LIGHTBULB
-    char getLightbulb(char cIn);
-    char getCodeBit(int i);
-    char getDataBit(int i);
-    char getCharAt(int i, vector<vector<bool>>* matrix);
+    string getLightbulb(string cIn);
+    string getCodeBit(int i);
+    string getDataBit(int i);
+    string getCharAt(int i, vector<vector<bool>>* matrix);
     bool pcPointingToAddress(int adr);
-    char getLocationName(AddrSpace addrSpace, int index);
-    char getFormattedOutput(int i);
+    string getLocationName(AddrSpace addrSpace, int index);
+    string getFormattedOutput(int i);
     // GET INSTRUCTION
     Instruction* getInstruction();
     bool machineActive();

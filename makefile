@@ -1,5 +1,5 @@
 CFLAGS=-std=gnu11 -Wall -g -O3
-CPPFLAGS=-std=c++11 -Wall -g -O2
+CPPFLAGS=-std=c++11 -Wall -g -O1
 
 SOURCES_CPP=$(wildcard src/*.cpp) 
 SOURCES_C=$(wildcard src/*.c)
@@ -40,9 +40,13 @@ clean:
 # Convert a drawing textfile to a drawing.hpp, containing
 # that textfile in a string constant.
 src/drawing.hpp: src/resources/drawing
-	sed '/Do not edit/q' src/drawing.hpp > /tmp/drawing.hpp
-	printf "\nconst string drawing = {" >> /tmp/drawing.hpp 
-	xxd -i src/resources/drawing | tail -n+2 | head -n-1 >> /tmp/drawing.hpp
-	printf "\n#endif" >> /tmp/drawing.hpp
+	./tools/parseDrawing > /tmp/drawing.hpp
 	mv -f /tmp/drawing.hpp src/drawing.hpp
+
+#	sed '/Do not edit/q' src/drawing.hpp > /tmp/drawing.hpp
+#	printf "\nconst string[] drawing = {" >> /tmp/drawing.hpp 
+#	xxd -i src/resources/drawing | tail -n+2 | head -n-1 >> /tmp/drawing.hpp
+#	unicode -s -m0 $(cat src/resources/drawing) | grep "UTF-16BE: " | sed 's/^.*UTF-16BE: \([^ ]*\).*$/\1/g' | sed 's/^/u8\"\\u/'  | sed 's/$/\"/' | tr '\n' ' ' | sed 's/ /, /g' | sed 's/, $/\n/' | fold -s
+#	printf "};\n\n#endif" >> /tmp/drawing.hpp
+#	mv -f /tmp/drawing.hpp src/drawing.hpp
 

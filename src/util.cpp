@@ -91,11 +91,11 @@ string Util::getString(vector<bool> bbb) {
   return out;
 }
 
-char Util::getChar(bool b) {
+string Util::getChar(bool b) {
   if (b) {
-    return '*';
+    return "*";
   } else {
-    return '-';
+    return "-";
   }
 }
 
@@ -132,6 +132,19 @@ vector<bool> Util::readWordFromPipe() {
 /*
  * GENERAL UTIL
  */
+
+vector<vector<string>> Util::splitIntoLines(vector<string> drawing) {
+  vector<vector<string>> out;
+  vector<string> line;
+  for (string c : drawing) {
+    if (c == NEW_LINE) {
+      out.push_back(line);
+      line = {};
+    }
+    line.push_back(c);
+  }
+  return out;
+} 
 
 vector<string> Util::splitString(string stringIn) {
   vector<string> out;
@@ -186,15 +199,15 @@ vector<bool> Util::getRandomWord() {
   return wordOut;
 }
 
-tuple<int, int> Util::getCoordinatesOfFirstOccurance(const string* text,
-                                                     char cIn) {
+tuple<int, int> Util::getCoordinatesOfFirstOccurance(vector<string> text,
+                                                     string cIn) {
   int i = 0;
   int j = 0;
-  for (char c : *text) {
+  for (string c : text) {
     if (c == cIn) {
       return tuple<int, int>(i, j);
     }
-    if (c == '\n') {
+    if (c == NEW_LINE) {
       i = 0;
       j++;
     } else {

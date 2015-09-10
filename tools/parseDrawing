@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# Usage: parseDrawing
+# Converts src/resources/drawing textfile into hpp header file containing const
+# string[] definition containing characters of drawing.
+
+# Stops execution if any command fails.
+set -eo pipefail
+
+main() {
+  sed '/Do not edit/q' src/drawing.hpp
+  printf "\nconst vector<string> drawing = {"
+
+  cat src/resources/drawing \
+    | perl -C7 -ne 'for(split(//)){print sprintf("%04X", ord)."\n"}' \
+    | sed 's/^/u8\"\\u/'  \
+    | sed 's/$/\"/' \
+    | tr '\n' ' ' \
+    | sed 's/ /, /g' \
+    | sed 's/, $/\n/' \
+    | fold -s
+  printf "};\n\n#endif"
+}
+
+main "$@"
+
+#unicode -s -m0 "$(cat src/resources/drawing)" \
+#    | grep "UTF-16BE: " \
+#    | sed 's/^.*UTF-16BE: \([^ ]*\).*$/\1/g' \
