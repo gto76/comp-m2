@@ -41,31 +41,30 @@ class Renderer {
 
     // RENDER STATE
     vector<string> insertActualValues(vector<string> lineIn);
-    string insertEscSeqences(string lineWithoutEscapeSeqences,
-                             vector<bool> highlightedChars,
-                             vector<bool> boldChars,
-                             vector<bool> dimChars);
+    vector<string> insertEscSeqences(vector<string> lineWithoutEscapeSeqences,
+                             vector<bool> highlightedChars);
     // GET HIGHLIGHTED LOCATIONS
-    vector<bool> getHighlightedLocations(string lineIn);
+    vector<bool> getHighlightedLocations(vector<string> lineIn);
     vector<bool> highlightPc(vector<bool> highlightedLocations,
-                                       string lineIn);
+                                       vector<string> lineIn);
     vector<bool> highlightCursor(vector<bool> highlightedLocations,
-                                 string lineIn);
-    vector<bool> findCursor(vector<bool> highlightedLocations, string lineIn,
+                                 vector<string> lineIn);
+    vector<bool> findCursor(vector<bool> highlightedLocations, vector<string> lineIn,
                             string c);
     vector<bool> highlightPointingInstructions(
-        vector<bool> highlightedLocations, string lineIn);
+        vector<bool> highlightedLocations, vector<string> lineIn);
     vector<bool> highlightOperators(vector<bool> highlightedLocations,
-                                    string lineIn, Instruction *inst);
+                                    vector<string> lineIn, Instruction *inst);
     vector<bool> highlightCodeWord(vector<bool> highlightedLocations,
-                                   string lineIn, Instruction *inst);
+                                   vector<string> lineIn, Instruction *inst);
     vector<bool> highlightDataWord(vector<bool> highlightedLocations,
-                                   string lineIn, Instruction *inst);
+                                   vector<string> lineIn, Instruction *inst);
     vector<bool> highlightWords(vector<bool> highlightedLocations,
-                                string lineIn, string indicator,
+                                vector<string> lineIn, string indicator,
                                 AddrSpace addrSpace);
     vector<bool> highlightLabel(vector<bool> highlightedLocations,
-                                string lineIn, string label, string exclude);
+                                vector<string> lineIn, vector<string> label, 
+                                vector<string> exclude);
     // GET BOLD LOCATIONS
     vector<bool> getBoldLocations(string lineIn);
     vector<bool> enboldenReferencedCodeIndicators(vector<bool> boldLocations, string lineIn);

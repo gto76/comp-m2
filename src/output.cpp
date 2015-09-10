@@ -76,8 +76,7 @@ void printLine(vector<string> lineVec, int lineNo) {
   string line = accumulate(lineVec.begin(), lineVec.end(), string(""));
   string controlSeq = "\033[" + to_string(getAbsoluteY(lineNo)) + ";" + 
                       to_string(getAbsoluteX(0)) + "H" + line;
-  cerr << controlSeq << endl;
-  cout << controlSeq; //<< endl;
+  cout << controlSeq;
 }
 
 void setBuffer(vector<string> s, int x, int y) {

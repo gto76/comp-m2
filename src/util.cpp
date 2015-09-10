@@ -329,5 +329,13 @@ vector<bool> Util::bitwiseNot(vector<bool> val) {
   return val;
 }
 
+vector<string> Util::stringToVecOfString(string stringIn) {
+  vector<string> out;
+  for (char c : stringIn) {
+    out.push_back(string(1, c));
+  }
+  return out;
+}
+
 
 

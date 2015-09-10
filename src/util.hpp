@@ -45,6 +45,7 @@ class Util {
                                        bool isAnd);
     static vector<bool> bitwiseXor(vector<bool> value1, vector<bool> value2);
     static vector<bool> bitwiseNot(vector<bool> val);
+    static vector<string> stringToVecOfString(string stringIn);
 
   private:
     static vector<bool> getBool(int num, int length);
