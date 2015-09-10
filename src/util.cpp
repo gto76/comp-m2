@@ -137,9 +137,13 @@ vector<vector<string>> Util::splitIntoLines(vector<string> drawing) {
   vector<vector<string>> out;
   vector<string> line;
   for (string c : drawing) {
-    if (c == NEW_LINE) {
+    if (c == NEW_LINE_SECOND) {
+      continue;
+    }
+    if (c == NEW_LINE_FIRST) {
       out.push_back(line);
       line = {};
+      continue;
     }
     line.push_back(c);
   }
@@ -204,10 +208,13 @@ tuple<int, int> Util::getCoordinatesOfFirstOccurance(vector<string> text,
   int i = 0;
   int j = 0;
   for (string c : text) {
+    if (c == NEW_LINE_SECOND) {
+      continue;
+    }
     if (c == cIn) {
       return tuple<int, int>(i, j);
     }
-    if (c == NEW_LINE) {
+    if (c == NEW_LINE_FIRST) {
       i = 0;
       j++;
     } else {

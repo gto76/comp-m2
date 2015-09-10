@@ -23,11 +23,10 @@ void clearScreen(void);
 void registerSigWinChCatcher(void);
 void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
-// void copyArray(char dest[], const char src[], int width);
 int getLengthOfString(vector<string> s);
 void setLine(vector<string> line, int y);
 // void replaceLine(char const s[], int y);
-void print(vector<string> lineVec, int lineNo);
+void printLine(vector<string> lineVec, int lineNo);
 
 ////////////////////////////
 
@@ -68,20 +67,17 @@ void updateScreen() {
     if (screenBuffer.at(i) != onScreen.at(i)) {
       onScreen.at(i) = screenBuffer.at(i);
       vector<string> lineVec = screenBuffer.at(i);
-      print(lineVec, i);
-      // string line = accumulate(lineVec.begin(), lineVec.end(), string(""));
-      // cout << "\033[" << getAbsoluteY(i) << ";" << getAbsoluteX(0)
-      // cout << "H" << line << endl
-      // printf("\033[%d;%dH%s", getAbsoluteY(i), getAbsoluteX(0),
-      //        screenBuffer.at(i).c_str());
+      printLine(lineVec, i);
     }
   }
 }
 
-void print(vector<string> lineVec, int lineNo) {
+void printLine(vector<string> lineVec, int lineNo) {
   string line = accumulate(lineVec.begin(), lineVec.end(), string(""));
-  cout << "\033[" << getAbsoluteY(lineNo) << ";" << getAbsoluteX(0);
-  cout << "H" << line << endl;
+  string controlSeq = "\033[" + to_string(getAbsoluteY(lineNo)) + ";" + 
+                      to_string(getAbsoluteX(0)) + "H" + line;
+  cerr << controlSeq << endl;
+  cout << controlSeq; //<< endl;
 }
 
 void setBuffer(vector<string> s, int x, int y) {
@@ -104,12 +100,12 @@ void printCharXY(string c, int x, int y) {
   setBuffer({ c }, x, y);
 }
 
-void printCharImediately(char c, int x, int y) {
-  if (coordinatesOutOfBounds(x, y)) {
-    return;
-  }
-  printf("\033[%d;%dH%c", getAbsoluteY(y), getAbsoluteX(x), c);
-}
+// void printCharImediately(char c, int x, int y) {
+//   if (coordinatesOutOfBounds(x, y)) {
+//     return;
+//   }
+//   printf("\033[%d;%dH%c", getAbsoluteY(y), getAbsoluteX(x), c);
+// }
 
 void printString(vector<string> s, int x, int y) {
   if (coordinatesOutOfBounds(x, y)) {
@@ -146,7 +142,8 @@ void replaceLine(vector<string> s, int y) {
   if (coordinatesOutOfBounds(x, y)) {
     return;
   }
-  int itDoesntFitTheScreen = getLengthOfString(s) + (unsigned) x > (unsigned) columns;
+  int itDoesntFitTheScreen = getLengthOfString(s) + (unsigned) x > 
+                             (unsigned) columns;
   if (itDoesntFitTheScreen) {
     int distanceToTheRightEdge = columns - x - 1;
     s.resize(distanceToTheRightEdge);
@@ -178,7 +175,9 @@ int getLengthOfString(vector<string> s) {
 }
 
 int getAbsoluteX(int x) {
-  return getAbsoluteCoordinate(x, columns, pictureWidth);
+  int absC = getAbsoluteCoordinate(x, columns, pictureWidth);
+  // cerr << absC << endl;
+  return absC;
 }
 
 int getAbsoluteY(int y) {
@@ -206,7 +205,7 @@ void refresh() {
     if (onScreen.size() <= i) {
       onScreen.push_back({});
     }
-    print(screenBuffer.at(i), i);
+    printLine(screenBuffer.at(i), i);
     // printf("\033[%d;%dH%s", getAbsoluteY(i), getAbsoluteX(0),
     //        screenBuffer.at(i).c_str());
     if (screenBuffer.at(i) != onScreen.at(i)) {
@@ -268,14 +267,5 @@ void updateConsoleSize() {
   rows = w.ws_row;
 }
 
-/////////// UTIL ///////////
-
-// void copyArray(char dest[], const char src[], int width) {
-//   int i;
-//   for (i = 0; i < width-1; i++) {
-//     dest[i] = src[i];
-//   }
-//   dest[width-1] = '\0';
-// }
 
 

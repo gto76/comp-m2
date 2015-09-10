@@ -1,3 +1,4 @@
+╲                                                                                                ╱
  ╲                                                                                              ╱
   ╲                                                                                            ╱
     ──────────────────────────────────────────────────────────────────────────────────────────
@@ -13,7 +14,7 @@
    │   │g│aaaaaaaa│ │ ·✷·✷ │ IF MAX     │ │ ·✷·✷ │ │bbbbbbbb│v│  │ │   ╭────────────────╮   │ │
    │   │g│aaaaaaaa│ │ ·✷✷· │ IF MIN     │ │ ·✷✷· │ │bbbbbbbb│v│  │ │   │=============[]=│   │ │
    │   │g│aaaaaaaa│ │ ·✷✷✷ │ JRI~<>&VX  │ │ ·✷✷✷ │ │bbbbbbbb│v│  │ │   ╰────────────────╯   │ │
-   │   │g│aaaaaaaa│ │ ✷··· │ READ *     │ │ ✷··· │ │bbbbbbbb│v│  ╰┬┴┬──────────────────────┬┘ │
+   │   │g│aaaaaaaa│ │ ✷··· │ READ *     │ │ ✷··· │ │bbbbbbbb│v│  ╰┬┴───────────────────────┬┘ │
    │   │g│aaaaaaaa│ │ ✷··✷ │ WRITE *    │ │ ✷··✷ │ │bbbbbbbb│v│   │ │ oooooooooooooooooooo │  │
    │   │g│aaaaaaaa│ │ ✷·✷· │ INC/DEC    │ │ ✷·✷· │ │bbbbbbbb│v│   │ │ oooooooooooooooooooo │  │
    │   │g│aaaaaaaa│ │ ✷·✷✷ │ PRINT      │ │ ✷·✷✷ │ │bbbbbbbb│v│   │ │ oooooooooooooooooooo │  │

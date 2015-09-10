@@ -50,7 +50,8 @@ const set<string> ALL_INDICATORS = { CODE_INDICATOR, DATA_INDICATOR, CODE_ADR_IN
                              DATA_ADR_INDICATOR, REGISTER_INDICATOR, 
                              OUTPUT_INDICATOR };
 
-const string NEW_LINE = u8"\u000D";
+const string NEW_LINE_FIRST = u8"\u000D";
+const string NEW_LINE_SECOND = u8"\u000A";
 const string ESCAPE = u8"\u001B";
 const string LOWERCASE_M = u8"\u006D";
 

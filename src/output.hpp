@@ -20,7 +20,7 @@ void printCharXY(char c, int x, int y);
 void printString(vector<string> s, int x, int y);
 void replaceLine(vector<string> s, int y);
 void redrawScreen();
-void printCharImediately(char c, int x, int y);
+//void printCharImediately(char c, int x, int y);
 void clearScreen(void);
 
 extern volatile sig_atomic_t screenResized;
