@@ -51,5 +51,7 @@ const set<string> ALL_INDICATORS = { CODE_INDICATOR, DATA_INDICATOR, CODE_ADR_IN
                              OUTPUT_INDICATOR };
 
 const string NEW_LINE = u8"\u000D";
+const string ESCAPE = u8"\u001B";
+const string LOWERCASE_M = u8"\u006D";
 
 #endif

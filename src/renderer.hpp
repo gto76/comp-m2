@@ -16,7 +16,7 @@ using namespace std;
 
 class Renderer {
   public:
-    static string renderState(const Printer &printerIn, const Ram &ramIn, 
+    static vector<vector<string>> renderState(const Printer &printerIn, const Ram &ramIn, 
                               const Cpu &cpuIn, const Cursor &cursorIn);
 
   private:
@@ -40,7 +40,7 @@ class Renderer {
     map<string, int> switchIndex;
 
     // RENDER STATE
-    string insertActualValues(vector<string> lineIn);
+    vector<string> insertActualValues(vector<string> lineIn);
     string insertEscSeqences(string lineWithoutEscapeSeqences,
                              vector<bool> highlightedChars,
                              vector<bool> boldChars,

@@ -42,7 +42,7 @@ Ram ram = Ram(printer);
 Cpu cpu = Cpu(&ram);
 
 // Graphic representation of the computer state.
-vector<string> buffer;
+vector<vector<string>> buffer;
 
 int executionCounter = 0;
 
@@ -56,12 +56,14 @@ Cursor cursor = Cursor(ram);
 /////// FUNCTIONS ////////
 //////////////////////////
 
+///////////////////////
 void drawScreen() {
-  string out = Renderer::renderState(printer, ram, cpu, cursor);
-  buffer = Util::splitString(out);
+  buffer = Renderer::renderState(printer, ram, cpu, cursor);
+  //buffer = Util::splitString(out);
   int i = 0;
-  for (string line : buffer) {
-    replaceLine(line.c_str(), i++);
+  for (vector<string> line : buffer) {
+    replaceLine(line, i++);
+    //printString(line.c_str(), 0, i++);
   }
 }
 

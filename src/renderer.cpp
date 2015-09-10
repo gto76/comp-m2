@@ -23,22 +23,22 @@ using namespace std;
  * Only public method. Also static. It creates new object every time 
  * it gets called.
  */
-string Renderer::renderState(const Printer &printerIn, const Ram &ramIn, 
+vector<vector<string>> Renderer::renderState(const Printer &printerIn, const Ram &ramIn, 
                              const Cpu &cpuIn, const Cursor &cursorIn) {
   Renderer instance(printerIn, ramIn, cpuIn, cursorIn);
-  string out;
+  vector<vector<string>> out;
   for (vector<string> line : Util::splitIntoLines(drawing)) {
-    out += instance.insertActualValues(line) + "\n";
+    out.push_back(instance.insertActualValues(line)); // + "\n";
   }
-  out.erase(out.end() - 1);
+  //out.erase(out.end() - 1);
   return out;
 }
 
-string Renderer::insertActualValues(vector<string> lineIn) {
+vector<string> Renderer::insertActualValues(vector<string> lineIn) {
   // vector<bool> highlightedChars = getHighlightedLocations(lineIn);
   // vector<bool> boldChars = getBoldLocations(lineIn);
   // vector<bool> dimChars = getDimLocations(lineIn);
-  string lineOut;
+  vector<string> lineOut;
   for (string cIn : lineIn) {
     string sOut = "";
     // Regex: [0-9a-z]
@@ -50,7 +50,7 @@ string Renderer::insertActualValues(vector<string> lineIn) {
     } else {
       sOut += cIn;
     }
-    lineOut += sOut;
+    lineOut.push_back(sOut);
   }
   return lineOut;
   // return insertEscSeqences(lineOut, highlightedChars, boldChars, dimChars);
