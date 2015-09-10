@@ -19,11 +19,7 @@ $(EXECUTABLE): $(OBJECTS)
 # statements. This is needed, so that changes to header files
 # get noticed, and apropriate files that depend on them get
 # recompiled. The dependencies get generated with compilers -MM
-# option. Is it just me or is this way too complicated. I just
-# want to compile a simple project for god sake, been
-# copypasting bits and pieces for whole day now. Don't you event
-# think about RTFMing me, I'll find where you live and burn your
-# house down :)
+# option. 
 -include $(OBJDIR)/*.d
 
 $(OBJDIR)/%.o: src/%.cpp
