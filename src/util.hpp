@@ -46,6 +46,7 @@ class Util {
     static vector<bool> bitwiseXor(vector<bool> value1, vector<bool> value2);
     static vector<bool> bitwiseNot(vector<bool> val);
     static vector<string> stringToVecOfString(string stringIn);
+    static size_t getSizeOfLargestElement(vector<vector<string>> lines);
 
   private:
     static vector<bool> getBool(int num, int length);

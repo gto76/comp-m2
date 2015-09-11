@@ -137,10 +137,10 @@ vector<vector<string>> Util::splitIntoLines(vector<string> drawing) {
   vector<vector<string>> out;
   vector<string> line;
   for (string c : drawing) {
-    if (c == NEW_LINE_SECOND) {
+    if (c == u8"\u000A" /*NEW_LINE_SECOND*/) {
       continue;
     }
-    if (c == NEW_LINE_FIRST) {
+    if (c == u8"\u000D" /*NEW_LINE_FIRST*/) {
       out.push_back(line);
       line = {};
       continue;
@@ -335,6 +335,14 @@ vector<string> Util::stringToVecOfString(string stringIn) {
     out.push_back(string(1, c));
   }
   return out;
+}
+
+size_t Util::getSizeOfLargestElement(vector<vector<string>> lines) {
+  size_t maxSize = 0;
+  for (vector<string> line : lines) {
+    maxSize = std::max(maxSize, line.size());
+  }
+  return maxSize;
 }
 
 

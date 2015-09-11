@@ -22,7 +22,7 @@
      │   │g│aaaaaaaa│ │ ✷✷·· │            │ │ ✷✷·· │ │bbbbbbbb│v│   │ │ oooooooooooooooooooo │  │
      │   │g│aaaaaaaa│ │ ✷✷·✷ │ IF NOT MAX │ │ ✷✷·✷ │ │bbbbbbbb│v│   │ │ oooooooooooooooooooo │  │
      │   │g│aaaaaaaa│ │ ✷✷✷· │ IF NOT MIN │ │ ✷✷✷· │ │bbbbbbbb│v│   │ │ oooooooooooooooooooo │  │
-     │   │g│  STOP  │ ╵ ✷✷✷✷ │            │ ╵ ✷✷✷✷ ╵ │ IN/OUT │v│   ╵ │ oooooooooooooooooooo │  │
+     │   │g│  STOP  │╱╵ ✷✷✷✷ │            │╱╵ ✷✷✷✷ ╵╲│ IN/OUT │v│   ╵╲│ oooooooooooooooooooo │  │
       ───╞═╧════════╡╱───────╞════════════╡╱────────╲╞════════╧═╡────╲╞══════════════════════╡──
     ╱    ╘╤╤══════╤╤╛┵┈      ╘╤╤════════╤╤╛┵┈      ┈┄╘╤╤══════╤╤╛┈  ┈┶╘═╤╤════════════════╤╤═╛   ╲
    ╱    ┈┄┶┵┄┈  ┈┄┶┵┄┈      ┈┄┶┵┄┈    ┈┄┶┵┄┈        ┈┄┶┵┄┈  ┈┄┶┵┄┈┈   ┈┄┶┵┄┈            ┈┄┶┵┄┈    ╲

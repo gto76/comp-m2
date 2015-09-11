@@ -88,7 +88,6 @@ void setBuffer(vector<string> s, int x, int y) {
   for (size_t j = 0; j < s.size(); j++) {
     screenBuffer[y][j+x] = s[j]; 
   }
-  // screenBuffer.at(y).replace(x, s.length(), s);
 }
 
 void printCharXY(string c, int x, int y) {

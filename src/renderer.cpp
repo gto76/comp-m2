@@ -11,7 +11,8 @@
 #include "const.hpp"
 #include "cpu.hpp"
 #include "cursor.hpp"
-#include "drawing.hpp"
+#include "drawing2D.hpp"
+#include "drawing3D.hpp"
 #include "instruction.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
@@ -26,10 +27,11 @@ using namespace std;
 vector<vector<string>> Renderer::renderState(const Printer &printerIn,
                                              const Ram &ramIn, 
                                              const Cpu &cpuIn, 
-                                             const Cursor &cursorIn) {
-  Renderer instance(printerIn, ramIn, cpuIn, cursorIn);
+                                             const Cursor &cursorIn,
+                                             const View &viewIn) {
+  Renderer instance(printerIn, ramIn, cpuIn, cursorIn, viewIn);
   vector<vector<string>> out;
-  for (vector<string> line : Util::splitIntoLines(drawing)) {
+  for (vector<string> line : viewIn.lines) {
     out.push_back(instance.insertActualValues(line));
   }
   return out;
@@ -39,13 +41,12 @@ vector<string> Renderer::insertActualValues(vector<string> lineIn) {
   vector<bool> highlightedChars = getHighlightedLocations(lineIn);
   vector<string> lineOut;
   for (string cIn : lineIn) {
-    string sOut = "";
-    // Regex: [0-9a-z]
+    string sOut;
     bool charIsALightbulb = ALL_INDICATORS.count(cIn);
     if (charIsALightbulb) {
-      sOut += getLightbulb(cIn);
+      sOut = getLightbulb(cIn);
     } else {
-      sOut += cIn;
+      sOut = cIn;
     }
     lineOut.push_back(sOut);
   }
@@ -246,11 +247,11 @@ string Renderer::getLightbulb(string cIn) {
   } else if (cIn == DATA_INDICATOR) {
       return getDataBit(i);
   } else if (cIn == REGISTER_INDICATOR) {
-      return  Util::getChar(cpu.getRegister().at(i));
+      return view.getLightbulb(cpu.getRegister().at(i));
   } else if (cIn == CODE_ADR_INDICATOR) {
-      return getLocationName(CODE, i);
+      return getAdrIndicator(CODE, i);
   } else if (cIn == DATA_ADR_INDICATOR) {
-      return getLocationName(DATA, i);
+      return getAdrIndicator(DATA, i);
   } else if (cIn == OUTPUT_INDICATOR) {
       return getFormattedOutput(i);
   }
@@ -270,7 +271,7 @@ string Renderer::getDataBit(int i) {
 string Renderer::getCharAt(int i, vector<vector<bool>>* matrix) {
   int j = i / WORD_SIZE;
   i = i % WORD_SIZE;
-  return Util::getChar((*matrix).at(j).at(i));
+  return view.getLightbulb((*matrix).at(j).at(i));
 }
 
 bool Renderer::pcPointingToAddress(int adr) {
@@ -281,13 +282,10 @@ bool Renderer::pcPointingToAddress(int adr) {
   return Util::getInt(cpu.getPc()) == adr;
 }
 
-string Renderer::getLocationName(AddrSpace addrSpace, int index) {
+string Renderer::getAdrIndicator(AddrSpace addrSpace, int index) {
   Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
-  if (isAddressReferenced(indicatorsAddress)) {
-    return string(1, '*');
-  } else {
-    return string(1, '-');
-  }
+  bool addressReferenced = isAddressReferenced(indicatorsAddress);
+  return view.getLightbulb(addressReferenced);
 }
 
 string Renderer::getFormattedOutput(int i) {

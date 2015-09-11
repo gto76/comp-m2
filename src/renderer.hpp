@@ -11,25 +11,31 @@
 #include "printer.hpp"
 #include "ram.hpp"
 #include "specific_instruction.hpp"
+#include "view.hpp"
 
 using namespace std;
 
 class Renderer {
   public:
-    static vector<vector<string>> renderState(const Printer &printerIn, const Ram &ramIn, 
-                              const Cpu &cpuIn, const Cursor &cursorIn);
+    static vector<vector<string>> renderState(const Printer &printerIn,
+                                              const Ram &ramIn, 
+                                              const Cpu &cpuIn, 
+                                              const Cursor &cursorIn, 
+                                              const View &view);
 
   private:
     Printer printer;
     Ram ram;
     Cpu cpu;
     Cursor cursor;
+    View view;
     Renderer (const Printer &printerIn, const Ram &ramIn, const Cpu &cpuIn,
-              const Cursor &cursorIn)
+              const Cursor &cursorIn, const View &viewIn)
         : printer(printerIn),
           ram(ramIn),
           cpu(cpuIn),
-          cursor(cursorIn) { }
+          cursor(cursorIn),
+          view(viewIn) { }
     // Just a way to leave instruction uninitialized at Renderers creation, and
     // optionaly create it later (intended to hold only zero or one 
     // instruction).
@@ -75,7 +81,7 @@ class Renderer {
     string getDataBit(int i);
     string getCharAt(int i, vector<vector<bool>>* matrix);
     bool pcPointingToAddress(int adr);
-    string getLocationName(AddrSpace addrSpace, int index);
+    string getAdrIndicator(AddrSpace addrSpace, int index);
     string getFormattedOutput(int i);
     
     // GET INSTRUCTION

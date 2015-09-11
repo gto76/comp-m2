@@ -14,12 +14,14 @@
 #include "const.hpp"
 #include "cpu.hpp"
 #include "cursor.hpp"
-#include "drawing.hpp"
+#include "drawing2D.hpp"
+#include "drawing3D.hpp"
+#include "output.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
 #include "renderer.hpp"
 #include "util.hpp"
-#include "output.hpp"
+#include "view.hpp"
 
 using namespace std;
 
@@ -52,13 +54,23 @@ map<AddrSpace, vector<vector<bool>>> savedRamState;
 // Class for keeping track of and moving around cursor.
 Cursor cursor = Cursor(ram);
 
+// Two views.
+//View view3D = View({"-","-", "-"}, "*", "-"); // LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
+// View view3D = View(Drawing2D::getDrawing2D(), "*", "-"); // LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
+//View view2D; // = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
+//View &selectedView = view3D;// = view3D;
+
+View view3D = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
+View view2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
+View &selectedView = view3D;
+
 //////////////////////////
 /////// FUNCTIONS ////////
 //////////////////////////
 
 ///////////////////////
 void drawScreen() {
-  buffer = Renderer::renderState(printer, ram, cpu, cursor);
+  buffer = Renderer::renderState(printer, ram, cpu, cursor, selectedView);
   int i = 0;
   for (vector<string> line : buffer) {
     replaceLine(line, i++);
@@ -235,18 +247,18 @@ void userInput() {
 }
 
 /*
- * Initializes 'output.c' by sending dimensions of a 'drawing' and 
+ * Initializes 'output.cpp' by sending dimensions of a 'drawing' and 
  * a 'drawScreen' callback function, that output.c will use on every 
  * screen redraw.
  */
 void prepareOutput() {
-  size_t drawingWidth = 0;
-  size_t drawingHeight = 0;
-  for (vector<string> line : Util::splitIntoLines(drawing)) {
-    drawingWidth = std::max(drawingWidth, line.size());
-    drawingHeight++;
-  }
-  setOutput(&drawScreen, drawingWidth, drawingHeight);
+  // size_t drawingWidth = 0;
+  // size_t drawingHeight = 0;
+  // for (vector<string> line : Util::splitIntoLines(drawing)) {
+  //   drawingWidth = std::max(drawingWidth, line.size());
+  //   drawingHeight++;
+  // }
+  setOutput(&drawScreen, selectedView.width, selectedView.height);
 }
 
 bool getBool(char c) {
@@ -309,11 +321,19 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
   }
 }
 
+void setViews() {
+  // Two views.
+  // View view3D = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
+  // View view2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
+  // selectedView = view2D;
+}
+
 //////////////////////////
 ////////// MAIN //////////
 //////////////////////////
 
 void startInteractiveMode() {
+  setViews();
   setEnvironment();
   prepareOutput();
   clearScreen();
