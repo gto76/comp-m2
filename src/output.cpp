@@ -112,6 +112,7 @@ void printString(vector<string> s, int x, int y) {
   }
 }
 
+/////////////////////////////
 // NEW:
 void setLine(vector<string> line, int y) {
   int size = screenBuffer.size();
@@ -124,7 +125,6 @@ void setLine(vector<string> line, int y) {
 }
 
 // NEW:
-/////////////////////////////
 void replaceLine(vector<string> s, int y) {
   int x = 0;
   if (coordinatesOutOfBounds(x, y)) {

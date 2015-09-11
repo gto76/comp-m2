@@ -42,30 +42,32 @@ class Renderer {
     // RENDER STATE
     vector<string> insertActualValues(vector<string> lineIn);
     vector<string> insertEscSeqences(vector<string> lineWithoutEscapeSeqences,
-                             vector<bool> highlightedChars);
+                                     vector<bool> highlightedChars);
 
     // GET HIGHLIGHTED LOCATIONS
+    bool pcHighlighted = false;
+    bool cursorHighlighted = false;
     vector<bool> getHighlightedLocations(vector<string> lineIn);
-    vector<bool> highlightPc(vector<bool> highlightedLocations,
-                                       vector<string> lineIn);
-    vector<bool> highlightCursor(vector<bool> highlightedLocations,
-                                 vector<string> lineIn);
-    vector<bool> findCursor(vector<bool> highlightedLocations, vector<string> lineIn,
-                            string c);
-    vector<bool> highlightPointingInstructions(
-        vector<bool> highlightedLocations, vector<string> lineIn);
-    vector<bool> highlightOperators(vector<bool> highlightedLocations,
-                                    vector<string> lineIn, Instruction *inst);
-    vector<bool> highlightCodeWord(vector<bool> highlightedLocations,
-                                   vector<string> lineIn, Instruction *inst);
-    vector<bool> highlightDataWord(vector<bool> highlightedLocations,
-                                   vector<string> lineIn, Instruction *inst);
-    vector<bool> highlightWords(vector<bool> highlightedLocations,
-                                vector<string> lineIn, string indicator,
-                                AddrSpace addrSpace);
-    vector<bool> highlightLabel(vector<bool> highlightedLocations,
-                                vector<string> lineIn, vector<string> label, 
-                                vector<string> exclude);
+    void highlightPc(vector<bool> &highlightedLocations,
+                     vector<string> &lineIn);
+    void highlightCursor(vector<bool> &highlightedLocations,
+                         vector<string> &lineIn);
+    void findCursor(vector<bool> &highlightedLocations, vector<string> &lineIn,
+                    string c);
+    void highlightPointingInstructions(vector<bool> &highlightedLocations,
+                                       vector<string> &lineIn);
+    void highlightOperator(vector<bool> &highlightedLocations,
+                           vector<string> &lineIn, Instruction *inst);
+    void highlightCodeWord(vector<bool> &highlightedLocations,
+                           vector<string> &lineIn, Instruction *inst);
+    void highlightDataWord(vector<bool> &highlightedLocations,
+                           vector<string> &lineIn, Instruction *inst);
+    void highlightWord(vector<bool> &highlightedLocations,
+                       vector<string> &lineIn, string indicator,
+                       AddrSpace addrSpace);
+    void highlightLabel(vector<bool> &highlightedLocations, 
+                        vector<string> &lineIn, vector<string> label, 
+                        vector<string> exclude);
 
     // GET LIGHTBULB
     string getLightbulb(string cIn);
