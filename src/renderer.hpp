@@ -43,6 +43,7 @@ class Renderer {
     vector<string> insertActualValues(vector<string> lineIn);
     vector<string> insertEscSeqences(vector<string> lineWithoutEscapeSeqences,
                              vector<bool> highlightedChars);
+
     // GET HIGHLIGHTED LOCATIONS
     vector<bool> getHighlightedLocations(vector<string> lineIn);
     vector<bool> highlightPc(vector<bool> highlightedLocations,
@@ -65,23 +66,6 @@ class Renderer {
     vector<bool> highlightLabel(vector<bool> highlightedLocations,
                                 vector<string> lineIn, vector<string> label, 
                                 vector<string> exclude);
-    // GET BOLD LOCATIONS
-    vector<bool> getBoldLocations(string lineIn);
-    vector<bool> enboldenReferencedCodeIndicators(vector<bool> boldLocations, string lineIn);
-    vector<bool> enboldenReferencedDataIndicators(vector<bool> boldLocations, string lineIn);
-    vector<bool> enboldenIndicators(vector<bool> boldLocations, string lineIn,
-                               string indicator, AddrSpace addrSpace);
-    // GET DiM LOCATIONS
-    vector<bool> getDimLocations(string lineIn);
-    vector<bool> dimUnreferencedCodeIndicators(vector<bool> dimLocations, string lineIn);
-    vector<bool> dimUnreferencedDataIndicators(vector<bool> dimLocations, string lineIn);
-    vector<bool> dimIndicators(vector<bool> dimLocations, string lineIn,
-                               string indicator, AddrSpace addrSpace);
-
-    // vector<bool> enboldenCodeWords(vector<bool> boldLocations, string lineIn);
-    // vector<bool> enboldenDataWords(vector<bool> boldLocations, string lineIn);
-    // vector<bool> enboldenWords(vector<bool> boldLocations, string lineIn,
-    //                            char indicator, AddrSpace addrSpace);
 
     // GET LIGHTBULB
     string getLightbulb(string cIn);
@@ -91,6 +75,7 @@ class Renderer {
     bool pcPointingToAddress(int adr);
     string getLocationName(AddrSpace addrSpace, int index);
     string getFormattedOutput(int i);
+    
     // GET INSTRUCTION
     Instruction* getInstruction();
     bool machineActive();

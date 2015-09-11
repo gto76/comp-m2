@@ -59,40 +59,15 @@ Cursor cursor = Cursor(ram);
 ///////////////////////
 void drawScreen() {
   buffer = Renderer::renderState(printer, ram, cpu, cursor);
-  //buffer = Util::splitString(out);
   int i = 0;
   for (vector<string> line : buffer) {
     replaceLine(line, i++);
-    //printString(line.c_str(), 0, i++);
   }
 }
-
-// char getCharUnderCursor() {
-//   return buffer.at(cursor.getY()).at(cursor.getX());
-// }
-
-// void highlightCursor(bool highlight) {
-//   char c;
-//   try {
-//     c = getCharUnderCursor();
-//   } catch (int e) {
-//     cout << "Cursor out of bounds. Exception Nr. " << e << '\n';
-//     return;
-//   }
-//   if (highlight) {
-//     printf("\e[30m\e[47m");
-//   }
-//   printCharImediately(c, cursor.getX(), cursor.getY());
-//   if (highlight) {
-//     printf("\e[37m\e[40m");
-//   }
-//   fflush(stdout);
-// }
 
 void switchBitUnderCursor() {
   bool bitValue = cursor.getBit(); 
   cursor.setBit(!bitValue);
-  // buffer.at(cursor.getY()).at(cursor.getX()) = Util::getChar(!bitValue);
 }
 
 void eraseByteUnderCursor() {
@@ -110,9 +85,6 @@ char readStdin(bool drawCursor) {
       exit(0);
     }
     redrawScreen();
-    // if (drawCursor) {
-    //   highlightCursor(true);
-    // }
     return readStdin(drawCursor);
   }
   return c;
@@ -197,7 +169,6 @@ void saveRamToFile() {
 void userInput() {
   while(1) {
     char c = readStdin(true);
-    //highlightCursor(false);
     switch (c) {
       // UP
       case 107: // k
@@ -260,7 +231,6 @@ void userInput() {
         break;
     }
     redrawScreen();
-    //highlightCursor(true);
   }
 }
 
@@ -349,7 +319,6 @@ void startInteractiveMode() {
   clearScreen();
   clearScreen();
   redrawScreen();
-  //highlightCursor(true);
   userInput();
 }
 

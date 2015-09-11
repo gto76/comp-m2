@@ -25,7 +25,6 @@ void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
 int getLengthOfString(vector<string> s);
 void setLine(vector<string> line, int y);
-// void replaceLine(char const s[], int y);
 void printLine(vector<string> lineVec, int lineNo);
 
 ////////////////////////////
@@ -99,13 +98,6 @@ void printCharXY(string c, int x, int y) {
   setBuffer({ c }, x, y);
 }
 
-// void printCharImediately(char c, int x, int y) {
-//   if (coordinatesOutOfBounds(x, y)) {
-//     return;
-//   }
-//   printf("\033[%d;%dH%c", getAbsoluteY(y), getAbsoluteX(x), c);
-// }
-
 void printString(vector<string> s, int x, int y) {
   if (coordinatesOutOfBounds(x, y)) {
     return;
@@ -113,9 +105,6 @@ void printString(vector<string> s, int x, int y) {
   bool itDoesntFitTheScreen = getLengthOfString(s) + (unsigned) x > (unsigned) columns;
   if (itDoesntFitTheScreen) {
     int distanceToTheRightEdge = columns - x - 1;
-    // char subArray[distanceToTheRightEdge+2];
-    // copyArray(subArray, s, distanceToTheRightEdge+2);
-    // s = subArray;
     s.resize(distanceToTheRightEdge);
     setBuffer(s, x, y);
   } else {
@@ -175,7 +164,6 @@ int getLengthOfString(vector<string> s) {
 
 int getAbsoluteX(int x) {
   int absC = getAbsoluteCoordinate(x, columns, pictureWidth);
-  // cerr << absC << endl;
   return absC;
 }
 
@@ -205,8 +193,6 @@ void refresh() {
       onScreen.push_back({});
     }
     printLine(screenBuffer.at(i), i);
-    // printf("\033[%d;%dH%s", getAbsoluteY(i), getAbsoluteX(0),
-    //        screenBuffer.at(i).c_str());
     if (screenBuffer.at(i) != onScreen.at(i)) {
       onScreen.at(i) = screenBuffer.at(i);
     }
