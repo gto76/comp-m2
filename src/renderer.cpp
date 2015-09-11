@@ -459,7 +459,12 @@ bool Renderer::pcPointingToAddress(int adr) {
 }
 
 string Renderer::getLocationName(AddrSpace addrSpace, int index) {
-  return "-";
+  Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
+  if (isAddressReferenced(indicatorsAddress)) {
+    return string(1, '*');
+  } else {
+    return string(1, '-');
+  }
   // char name = ram.names[addrSpace][index];
   // if (name == DEFAULT_VAR_NAME) {
   //   Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
