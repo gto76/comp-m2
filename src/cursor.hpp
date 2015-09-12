@@ -29,6 +29,8 @@ class Cursor {
     void decreaseX();
     void decreaseY();
 
+    void setBitIndex(int bitIndex);
+
     /////////// RAM API ////////////
 
     bool getBit();
@@ -51,7 +53,6 @@ class Cursor {
 
     int getBitIndex();
     int getAddr();
-    void setBitIndex(int bitIndex);
     void setAddr(int addr);
     void moveByteFor(int delta);
     bool switchWordsInRam(int addr1, int addr2);

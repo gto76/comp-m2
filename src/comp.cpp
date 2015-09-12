@@ -266,37 +266,30 @@ void userInput() {
           cursor.decreaseX();
           break;
         // SWAP UP
-        case 115:  // s
-        // case 100: // d
+        case 75:  // K
         case 53:  // 5, part of escape seqence of page up
           cursor.moveByteUp();
           break;
         // SWAP DOWN
-        // case 102:  // f
-        case 103:  // g
+        case 74:  // J
         case 54:  // 6, part of escape seqence of page down
           cursor.moveByteDown();
           break;
         // SAVE
-        // case 115:  // s
         case 119:  // w
+        case 115:  // s
           saveRamToFile();
           break;
         // FLIP
         case 32:  // space
-        case 102:  // f
           switchBitUnderCursor();
           break;
         // DELETE
-        // case 97:  // a
-        case 100:  // d
         case 51:  // 3, part of escape seqence of delete key
           eraseByteUnderCursor();
           break;
         // SWITCH ADR SPACE
-        case 97:  // a
-        //case 115:  // s
-        //case 103:  // g
+        case 116:  // t
         case 9:  // tab
           cursor.switchAddressSpace();
           break;
@@ -313,6 +306,17 @@ void userInput() {
           }
           break;
         }
+        case 102:  // f
+          cursor.setBit(true);
+          cursor.increaseX();
+          break;
+        case 100:  // d
+          cursor.setBit(false);
+          cursor.increaseX();
+          break;
+        case 111:  // o
+          cursor.increaseY();
+          cursor.setBitIndex(0);
       }
     }
     redrawScreen();
