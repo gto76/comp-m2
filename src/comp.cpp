@@ -31,6 +31,27 @@ extern "C" {
   void resetEnvironment();
 }
 
+void startInteractiveMode();
+void drawScreen();
+void switchBitUnderCursor();
+void eraseByteUnderCursor();
+char readStdin(bool drawCursor);
+void sleepAndCheckForKey();
+void exec();
+void run();
+string getFreeFileName();
+void saveRamToFile();
+void switchDrawing();
+void userInput();
+void prepareOutput();
+bool getBool(char c);
+void writeInstructionBitToRam(int address, int bitIndex, bool bitValue);
+void writeDataBitToRam(int address, int bitIndex, bool bitValue);
+void writeLineToRam(string line, int address);
+void loadRamFromFileStream(ifstream* fileStream);
+void checkIfInputIsPiped();
+void loadRamIfFileSpecified(int argc, const char* argv[]);
+
 //////////////////////////
 ////////// VARS //////////
 //////////////////////////
@@ -55,22 +76,39 @@ map<AddrSpace, vector<vector<bool>>> savedRamState;
 Cursor cursor = Cursor(ram);
 
 // Two views.
-//View view3D = View({"-","-", "-"}, "*", "-"); // LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
-// View view3D = View(Drawing2D::getDrawing2D(), "*", "-"); // LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
-//View view2D; // = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
-//View &selectedView = view3D;// = view3D;
+View VIEW_2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
+View VIEW_3D = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
+View *selectedView = &VIEW_3D;
 
-View view3D = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
-View view2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
-View &selectedView = view3D;
+//////////////////////////
+////////// MAIN //////////
+//////////////////////////
+
+int main(int argc, const char* argv[]) {
+  srand(time(NULL));
+  checkIfInputIsPiped();
+  loadRamIfFileSpecified(argc, argv);
+  if (interactivieMode) {
+    startInteractiveMode();
+  } else {
+    exec();
+  }
+}
+
+void startInteractiveMode() {
+  setEnvironment();
+  prepareOutput();
+  clearScreen();
+  redrawScreen();
+  userInput();
+}
 
 //////////////////////////
 /////// FUNCTIONS ////////
 //////////////////////////
 
-///////////////////////
 void drawScreen() {
-  buffer = Renderer::renderState(printer, ram, cpu, cursor, selectedView);
+  buffer = Renderer::renderState(printer, ram, cpu, cursor, *selectedView);
   int i = 0;
   for (vector<string> line : buffer) {
     replaceLine(line, i++);
@@ -84,7 +122,6 @@ void switchBitUnderCursor() {
 
 void eraseByteUnderCursor() {
   cursor.setWord(Util::getBoolByte(0));
-  redrawScreen();
 }
 
 char readStdin(bool drawCursor) {
@@ -178,6 +215,26 @@ void saveRamToFile() {
   fileStream.close();
 }
 
+void switchDrawing() {
+  if (VIEW_3D.lightBulbOn == VIEW_2D.lightBulbOn)
+    cerr << "VIEW_3D.lightBulbOn == VIEW_2D.lightBulbOn";
+  if (VIEW_3D == VIEW_2D)
+    cerr << "VIEW_3D == VIEW_2D";
+  if (*selectedView == VIEW_3D) {
+    cerr << "curr view is 3d\n";
+    cerr << selectedView->lightBulbOn;
+    selectedView = &VIEW_2D;
+  } else {
+    cerr << "curr view is 2d\n";
+    cerr << selectedView->lightBulbOn;
+    selectedView = &VIEW_3D;
+  }
+  prepareOutput();
+  clearScreen();
+  redrawScreen();
+  userInput();
+}
+
 void userInput() {
   while(1) {
     char c = readStdin(true);
@@ -241,6 +298,9 @@ void userInput() {
       case 10:  // enter
         run();
         break;
+      case 122:  // z
+        switchDrawing();
+        break;
     }
     redrawScreen();
   }
@@ -252,13 +312,7 @@ void userInput() {
  * screen redraw.
  */
 void prepareOutput() {
-  // size_t drawingWidth = 0;
-  // size_t drawingHeight = 0;
-  // for (vector<string> line : Util::splitIntoLines(drawing)) {
-  //   drawingWidth = std::max(drawingWidth, line.size());
-  //   drawingHeight++;
-  // }
-  setOutput(&drawScreen, selectedView.width, selectedView.height);
+  setOutput(&drawScreen, selectedView->width, selectedView->height);
 }
 
 bool getBool(char c) {
@@ -321,36 +375,5 @@ void loadRamIfFileSpecified(int argc, const char* argv[]) {
   }
 }
 
-void setViews() {
-  // Two views.
-  // View view3D = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
-  // View view2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
-  // selectedView = view2D;
-}
-
-//////////////////////////
-////////// MAIN //////////
-//////////////////////////
-
-void startInteractiveMode() {
-  setViews();
-  setEnvironment();
-  prepareOutput();
-  clearScreen();
-  clearScreen();
-  redrawScreen();
-  userInput();
-}
-
-int main(int argc, const char* argv[]) {
-  srand(time(NULL));
-  checkIfInputIsPiped();
-  loadRamIfFileSpecified(argc, argv);
-  if (interactivieMode) {
-    startInteractiveMode();
-  } else {
-    exec();
-  }
-}
 
 

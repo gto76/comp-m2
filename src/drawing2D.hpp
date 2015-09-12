@@ -6,14 +6,10 @@
 
 using namespace std;
 
-class Drawing2D {
-  public:
-    static vector<string>& getDrawing2D();
-};
 // Automaticaly generated file from resources/drawing textfile.
 // Do not edit this line.
 
-    const vector<string> drawing2D = {u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", 
+const vector<string> drawing2D = {u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", 
 u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", 
 u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", 
 u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0020", u8"\u0043", 

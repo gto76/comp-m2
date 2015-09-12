@@ -23,8 +23,6 @@ class Cursor {
 
     //////// COORDINATES API /////////
 
-    int getX();
-    int getY();
     int getAbsoluteBitIndex();
     void increaseX();
     void increaseY();
@@ -44,8 +42,6 @@ class Cursor {
     Ram &ram;
     // Selected address space.
     AddrSpace addrSpace = CODE;
-    // Coordinates of first ram lightbulb in the ascii drawing.
-    map<AddrSpace, map<Axis, int>> ramPosition;
     // Selected bit with the cursor.
     map<AddrSpace, map<Axis, int>> cursorPosition;
 
@@ -53,8 +49,6 @@ class Cursor {
     void initCheck();
     void initialize();
 
-    int getRamPositionX();
-    int getRamPositionY();
     int getBitIndex();
     int getAddr();
     void setBitIndex(int bitIndex);

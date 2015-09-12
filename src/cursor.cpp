@@ -5,28 +5,16 @@
 #include <vector>
 
 #include "const.hpp"
-#include "drawing.hpp"
 
 ///////// CONSTRUCTOR ///////////
 
 /*
- * Constructor is ipmlemented as function, because on some
+ * Constructor is implemented as function, because on some
  * systems 'const string drawing' from drawing.hpp is not yet
  * initialized at this point. So instead this function is called
  * the first time any of this class variables are needed.
  */
 void Cursor::initialize() {
-  // Coordinates of first ram lightbulb in the ascii drawing. 
-  // One per address space.
-  tuple<int, int> codeRamPosition = 
-      Util::getCoordinatesOfFirstOccurance(drawing, CODE_INDICATOR);
-  tuple<int, int> dataRamPosition = 
-      Util::getCoordinatesOfFirstOccurance(drawing, DATA_INDICATOR);
-  ramPosition[CODE][X] = get<0>(codeRamPosition);
-  ramPosition[CODE][Y] = get<1>(codeRamPosition);
-  ramPosition[DATA][X] = get<0>(dataRamPosition);
-  ramPosition[DATA][Y] = get<1>(dataRamPosition);
-
   // Initializes selected bit with the cursor. One per address space.
   cursorPosition[CODE][X] = 0;
   cursorPosition[CODE][Y] = 0;
@@ -35,14 +23,6 @@ void Cursor::initialize() {
 }
 
 //////// COORDINATES API /////////
-
-int Cursor::getX() {
-  return getBitIndex() + getRamPositionX();
-}
-
-int Cursor::getY() {
-  return getAddr() + getRamPositionY();
-}
 
 int Cursor::getAbsoluteBitIndex() {
   initCheck(); 
@@ -156,16 +136,6 @@ void Cursor::initCheck() {
     initialize();
   }
   notInitialized = false;
-}
-
-int Cursor::getRamPositionX() {
-  initCheck(); 
-  return ramPosition[addrSpace][X];
-}
-
-int Cursor::getRamPositionY() {
-  initCheck(); 
-  return ramPosition[addrSpace][Y];
 }
 
 int Cursor::getBitIndex() {
