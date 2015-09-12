@@ -237,9 +237,12 @@ void userInput() {
   while(1) {
     char c = readStdin(true);
     if (insertChar) {
+      insertChar = false;
+      if (c == 27) {  // Esc
+        continue;
+      }
       cursor.setWord(Util::getBoolByte(c));
       cursor.increaseY();
-      insertChar = false;
     } else {
       switch (c) {
         // UP
