@@ -24,12 +24,15 @@ class Cursor {
     //////// COORDINATES API /////////
 
     int getAbsoluteBitIndex();
+    int getX();
+    int getY();
     void increaseX();
     void increaseY();
     void decreaseX();
     void decreaseY();
 
     void setBitIndex(int bitIndex);
+    void setByteIndex(int byteIndex);
 
     /////////// RAM API ////////////
 

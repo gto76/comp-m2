@@ -296,7 +296,6 @@ void userInput() {
           cursor.moveByteDown();
           break;
         // SAVE
-        case 119:  // w
         case 115:  // s
           saveRamToFile();
           break;
@@ -308,6 +307,23 @@ void userInput() {
         case 51:  // 3, part of escape seqence of delete key
           eraseByteUnderCursor();
           break;
+        case 120:  // x
+          eraseByteUnderCursor();
+          cursor.increaseY();
+          cursor.setBitIndex(0);
+          break;
+        // GO TO FIRST ROW
+        case 72:  // H (home)
+        case 103: // g
+          cursor.setByteIndex(0);
+          cursor.setBitIndex(0);
+          break;
+        // GO TO LAST ROW
+        case 70: // F (end)
+        case 71: // G
+          cursor.setByteIndex(RAM_SIZE-1);
+          cursor.setBitIndex(0);
+          break;
         // SWITCH ADR SPACE
         case 116:  // t
         case 9:  // tab
@@ -317,7 +333,7 @@ void userInput() {
         case 10:  // enter
           run();
           break;
-        case 122:  // z
+        case 118:  // v
           switchDrawing();
           break;
         case 105: { // i
@@ -337,6 +353,37 @@ void userInput() {
         case 111:  // o
           cursor.increaseY();
           cursor.setBitIndex(0);
+          break;
+        // GO TO END OF THE WORD
+        case 101: { // e
+          if (cursor.getX() == WORD_SIZE-1) {
+            cursor.increaseY();
+          }
+          cursor.setBitIndex(WORD_SIZE-1);
+          break;
+        }
+        // GO TO BEGINING OF THE WORD
+        case 98: { // b
+          if (cursor.getX() ==0) {
+            cursor.decreaseY();
+          }
+          cursor.setBitIndex(0);
+          break;
+        }
+        // GO TO BEGINING OF THE NEXT WORD
+        case 119: { // w
+          if (cursor.getY() == RAM_SIZE-1) {
+            cursor.setBitIndex(WORD_SIZE-1);
+          } else {
+            cursor.increaseY();
+            cursor.setBitIndex(0);
+          }
+          break;
+        }
+        // MOVE TO ADDRESS PART
+        case 97:   // a
+          cursor.setBitIndex(4);
+          break;
       }
     }
     redrawScreen();

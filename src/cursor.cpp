@@ -30,6 +30,14 @@ int Cursor::getAbsoluteBitIndex() {
          cursorPosition[addrSpace][X];
 }
 
+int Cursor::getX() {
+  return cursorPosition[addrSpace][X];
+}
+  
+int Cursor::getY() {
+  return cursorPosition[addrSpace][Y];
+}
+
 void Cursor::increaseX() {
   bool atRightmostBit = getBitIndex() >= WORD_SIZE-1;
   if (atRightmostBit) {
@@ -151,6 +159,11 @@ int Cursor::getAddr() {
 void Cursor::setBitIndex(int bitIndex) {
   initCheck(); 
   cursorPosition[addrSpace][X] = bitIndex;
+}
+
+void Cursor::setByteIndex(int byteIndex) {
+  initCheck(); 
+  cursorPosition[addrSpace][Y] = byteIndex;
 }
 
 void Cursor::setAddr(int addr) {
