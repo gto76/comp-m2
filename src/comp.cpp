@@ -216,17 +216,9 @@ void saveRamToFile() {
 }
 
 void switchDrawing() {
-  if (VIEW_3D.lightBulbOn == VIEW_2D.lightBulbOn)
-    cerr << "VIEW_3D.lightBulbOn == VIEW_2D.lightBulbOn";
-  if (VIEW_3D == VIEW_2D)
-    cerr << "VIEW_3D == VIEW_2D";
   if (*selectedView == VIEW_3D) {
-    cerr << "curr view is 3d\n";
-    cerr << selectedView->lightBulbOn;
     selectedView = &VIEW_2D;
   } else {
-    cerr << "curr view is 2d\n";
-    cerr << selectedView->lightBulbOn;
     selectedView = &VIEW_3D;
   }
   prepareOutput();
