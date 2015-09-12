@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -52,6 +54,7 @@ void writeLineToRam(string line, int address);
 void loadRamFromFileStream(ifstream* fileStream);
 void checkIfInputIsPiped();
 void loadRamIfFileSpecified(int argc, const char* argv[]);
+void selectView();
 
 //////////////////////////
 ////////// VARS //////////
@@ -104,6 +107,7 @@ int main(int argc, const char* argv[]) {
 }
 
 void startInteractiveMode() {
+  selectView();
   setEnvironment();
   prepareOutput();
   clearScreen();
@@ -114,6 +118,18 @@ void startInteractiveMode() {
 //////////////////////////
 /////// FUNCTIONS ////////
 //////////////////////////
+
+void selectView() {
+  const char* term = std::getenv("TERM");
+  if (strcmp(term, "linux") == 0) {
+    selectedView = &VIEW_3D_B;
+  } else if (strcmp(term, "rxvt") == 0) {
+    selectedView = &VIEW_2D;
+  }
+
+  // if(const char* env_p = std::getenv("PATH"))
+  //       std::cout << "Your PATH is: " << env_p << '\n';
+}
 
 void drawScreen() {
   buffer = Renderer::renderState(printer, ram, cpu, cursor, *selectedView);
