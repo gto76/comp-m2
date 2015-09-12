@@ -203,8 +203,9 @@ string ReadReg::getLabel() {
  * Copies value at the ningth address to the first address.
  */
 void InitializeFirstAddress::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
-  vector<bool> value = ram.get(Address(DATA, { true, false, false, false }));
+  vector<bool> value = ram.get(Address(DATA, Util::getBoolNibb(1)));
   ram.set(adr, value);
+  reg = value;
   increasePc(pc);
 }
 
@@ -287,7 +288,7 @@ void And::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 
 Address And::getAddress(vector<bool> val, const vector<bool> &reg,
                         const Ram &ram) {
-  return Address(DATA, Util::getBoolNibb(6));
+  return Address(DATA, Util::getBoolNibb(2));
 }
 
 string And::getLabel() {
@@ -306,7 +307,7 @@ void Or::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
 
 Address Or::getAddress(vector<bool> val, const vector<bool> &reg,
                        const Ram &ram) {
-  return Address(DATA, Util::getBoolNibb(7));
+  return Address(DATA, Util::getBoolNibb(3));
 }
 
 string Or::getLabel() {

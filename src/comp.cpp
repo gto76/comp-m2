@@ -60,25 +60,31 @@ void loadRamIfFileSpecified(int argc, const char* argv[]);
 bool interactivieMode;
 bool executionCanceled = false;
 
+// Main components.
 Printer printer;
 Ram ram = Ram(printer);
 Cpu cpu = Cpu(&ram);
 
-// Graphic representation of the computer state.
+// Graphic representation of the computer's state.
 vector<vector<string>> buffer;
 
+// Cycle counter.
 int executionCounter = 0;
 
-// Saved state of a ram.
+// Saved state of a ram. Loaded after execution ends.
 map<AddrSpace, vector<vector<bool>>> savedRamState;
 
-// Class for keeping track of and moving around cursor.
+// Object for keeping track of, and moving around cursor.
 Cursor cursor = Cursor(ram);
 
 // Two views.
 View VIEW_2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
 View VIEW_3D = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
 View *selectedView = &VIEW_3D;
+
+// Whether next key should be read as a char whose value shall thence be
+// inserted into ram.
+bool insertChar = false;
 
 //////////////////////////
 ////////// MAIN //////////
@@ -230,69 +236,81 @@ void switchDrawing() {
 void userInput() {
   while(1) {
     char c = readStdin(true);
-    switch (c) {
-      // UP
-      case 107: // k
-      case 65:  // A, part of escape seqence of up arrow
-        cursor.decreaseY();
-        break;
-      // DOWN
-      case 106: // j
-      case 66:  // B, part of escape seqence of down arrow
-        cursor.increaseY();
-        break;
-      // RIGHT
-      case 108: // l
-      case 67:  // C, part of escape seqence of rigth arrow
-        cursor.increaseX();
-        break;
-      // LEFT
-      case 104: // h
-      case 68:  // D, part of escape seqence of left arrow
-        cursor.decreaseX();
-        break;
-      // SWAP UP
-      case 115:  // s
-      // case 100: // d
-      case 53:  // 5, part of escape seqence of page up
-        cursor.moveByteUp();
-        break;
-      // SWAP DOWN
-      // case 102:  // f
-      case 103:  // g
-      case 54:  // 6, part of escape seqence of page down
-        cursor.moveByteDown();
-        break;
-      // SAVE
-      // case 115:  // s
-      case 119:  // w
-        saveRamToFile();
-        break;
-      // FLIP
-      case 32:  // space
-      case 102:  // f
-        switchBitUnderCursor();
-        break;
-      // DELETE
-      // case 97:  // a
-      case 100:  // d
-      case 51:  // 3, part of escape seqence of delete key
-        eraseByteUnderCursor();
-        break;
-      // SWITCH ADR SPACE
-      case 97:  // a
-      //case 115:  // s
-      //case 103:  // g
-      case 9:  // tab
-        cursor.switchAddressSpace();
-        break;
-      // RUN
-      case 10:  // enter
-        run();
-        break;
-      case 122:  // z
-        switchDrawing();
-        break;
+    if (insertChar) {
+      cursor.setWord(Util::getBoolByte(c));
+      cursor.increaseY();
+      insertChar = false;
+    } else {
+      switch (c) {
+        // UP
+        case 107: // k
+        case 65:  // A, part of escape seqence of up arrow
+          cursor.decreaseY();
+          break;
+        // DOWN
+        case 106: // j
+        case 66:  // B, part of escape seqence of down arrow
+          cursor.increaseY();
+          break;
+        // RIGHT
+        case 108: // l
+        case 67:  // C, part of escape seqence of rigth arrow
+          cursor.increaseX();
+          break;
+        // LEFT
+        case 104: // h
+        case 68:  // D, part of escape seqence of left arrow
+          cursor.decreaseX();
+          break;
+        // SWAP UP
+        case 115:  // s
+        // case 100: // d
+        case 53:  // 5, part of escape seqence of page up
+          cursor.moveByteUp();
+          break;
+        // SWAP DOWN
+        // case 102:  // f
+        case 103:  // g
+        case 54:  // 6, part of escape seqence of page down
+          cursor.moveByteDown();
+          break;
+        // SAVE
+        // case 115:  // s
+        case 119:  // w
+          saveRamToFile();
+          break;
+        // FLIP
+        case 32:  // space
+        case 102:  // f
+          switchBitUnderCursor();
+          break;
+        // DELETE
+        // case 97:  // a
+        case 100:  // d
+        case 51:  // 3, part of escape seqence of delete key
+          eraseByteUnderCursor();
+          break;
+        // SWITCH ADR SPACE
+        case 97:  // a
+        //case 115:  // s
+        //case 103:  // g
+        case 9:  // tab
+          cursor.switchAddressSpace();
+          break;
+        // RUN
+        case 10:  // enter
+          run();
+          break;
+        case 122:  // z
+          switchDrawing();
+          break;
+        case 105: { // i
+          if (cursor.getAddressSpace() == DATA) {
+            insertChar = true;
+          }
+          break;
+        }
+      }
     }
     redrawScreen();
   }
