@@ -206,7 +206,7 @@ void Renderer::highlightWord(vector<bool> &highlightedLocations,
       int addressValue = switchIndex[indicator] / WORD_SIZE;
       Address adr = Address(addrSpace, Util::getBoolNibb(addressValue));
       if (instructionPointingToAddress(adr)) {
-        highlightedLocations[i] = true;
+        highlightedLocations[i] = !highlightedLocations[i];
       }
     }
   }
