@@ -45,6 +45,12 @@ src/drawing3D.hpp: src/resources/drawing3D
 
 # Convert a drawing textfile to a drawing.hpp, containing
 # that textfile in a string constant.
+src/drawing3Db.hpp: src/resources/drawing3Db
+	./tools/parseDrawing drawing3Db > /tmp/drawing.hpp
+	mv -f /tmp/drawing.hpp src/drawing3Db.hpp
+
+# Convert a drawing textfile to a drawing.hpp, containing
+# that textfile in a string constant.
 src/drawing2D.hpp: src/resources/drawing2D
 	./tools/parseDrawing drawing2D > /tmp/drawing.hpp
 	mv -f /tmp/drawing.hpp src/drawing2D.hpp

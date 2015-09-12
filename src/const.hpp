@@ -12,10 +12,12 @@ const int FQ = 333;
 
 const string SAVE_FILE_NAME = "saved-ram-";
 
-const string LIGHTBULB_ON_2D = "*";
-const string LIGHTBULB_OFF_2D = "-";
 const string LIGHTBULB_ON_3D = u8"\u2737";
 const string LIGHTBULB_OFF_3D = u8"\u00b7"; 
+const string LIGHTBULB_ON_3D_B = u8"\u2666";
+const string LIGHTBULB_OFF_3D_B = u8"\u00b7"; 
+const string LIGHTBULB_ON_2D = "*";
+const string LIGHTBULB_OFF_2D = "-";
 
 const int WORD_SIZE = 8;
 const int ADDR_SIZE = 4;

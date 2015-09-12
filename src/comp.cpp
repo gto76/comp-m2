@@ -14,8 +14,9 @@
 #include "const.hpp"
 #include "cpu.hpp"
 #include "cursor.hpp"
-#include "drawing2D.hpp"
 #include "drawing3D.hpp"
+#include "drawing3Db.hpp"
+#include "drawing2D.hpp"
 #include "output.hpp"
 #include "printer.hpp"
 #include "ram.hpp"
@@ -78,8 +79,9 @@ map<AddrSpace, vector<vector<bool>>> savedRamState;
 Cursor cursor = Cursor(ram);
 
 // Two views.
-View VIEW_2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
 View VIEW_3D = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
+View VIEW_3D_B = View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B);
+View VIEW_2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
 View *selectedView = &VIEW_3D;
 
 // Whether next key should be read as a char whose value shall thence be
@@ -223,6 +225,8 @@ void saveRamToFile() {
 
 void switchDrawing() {
   if (*selectedView == VIEW_3D) {
+    selectedView = &VIEW_3D_B;
+  } else if (*selectedView == VIEW_3D_B) {
     selectedView = &VIEW_2D;
   } else {
     selectedView = &VIEW_3D;
