@@ -341,8 +341,7 @@ string Xor::getLabel() {
  */
 void ReadPointer::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
                        Ram &ram) {
-  vector<bool> pointer = ram.get(adr);
-  reg = ram.get(Address(DATA, pointer));
+  reg = ram.get(adr);
   increasePc(pc);
 }
 
@@ -363,8 +362,7 @@ string ReadPointer::getLabel() {
  */
 void WritePointer::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
                         Ram &ram) {
-  vector<bool> pointer = ram.get(adr);
-  ram.set(Address(DATA, pointer), reg);
+  ram.set(adr, reg);
   increasePc(pc);
 }
 
