@@ -25,7 +25,7 @@ void Printer::print(vector<bool> wordIn) {
     } else {
       if (outputChars) {
         char c = (char)Util::getInt(wordIn);
-        cerr << "outputing: " << c << "\n";
+        //cerr << "outputing: " << c << "\n";
         cout << c;
       } else {
         cout << Util::getStringWithFormatedInt(wordIn);

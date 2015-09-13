@@ -516,20 +516,19 @@ void checkIfInputIsPiped() {
   interactivieMode = !Util::inputIsPiped();
 }
 
-
 void checkArguments(int argc, const char* argv[]) {
   if (argc <= 1) {
     return;
   }
   if (strcmp(argv[1], "-c") == 0) {
-    cerr << "first option is -c\n";
+    //cerr << "first option is -c\n";
     outputChars = true;
     if (argc == 3) {
-      cerr << "two parameters, second one is " << argv[2] << "\n";
+      //cerr << "two parameters, second one is " << argv[2] << "\n";
       loadRamFile(argv[2]);
     }
   } else {
-    cerr << "only one parameter " << argv[1] << "\n";
+    //cerr << "only one parameter " << argv[1] << "\n";
     loadRamFile(argv[1]);
   }
 }

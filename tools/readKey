@@ -2,10 +2,9 @@
 # or exits if any other key is pressed.
 
 while true; do
-	read -n 1 -s key
-	case "$key" in        
-		'a') echo '255';;
-		'd') echo '0';; 
-		*) break
-	esac
+  read -n 1 -s key
+  case "$key" in        
+    'q') break;;
+  esac
+  printf '%d\n' "'$key"
 done
