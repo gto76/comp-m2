@@ -35,6 +35,10 @@ class Cursor {
     void setByteIndex(int byteIndex);
 
     void goToAddress(Address adr);
+    void goToEndOfWord();
+    void goToBeginningOfWord();
+    void goToBeginningOfNextWord();
+    void goToInstructionsAddress();
 
     /////////// RAM API ////////////
 

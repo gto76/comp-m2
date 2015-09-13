@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "const.hpp"
+#include "instruction.hpp"
 
 ///////// CONSTRUCTOR ///////////
 
@@ -70,6 +71,40 @@ void Cursor::decreaseY() {
     return;
   }
   setAddr(getAddr() - 1);
+}
+
+void Cursor::goToEndOfWord() {
+  if (getX() == WORD_SIZE-1) {
+    increaseY();
+  }
+  setBitIndex(WORD_SIZE-1);
+}
+
+void Cursor::goToBeginningOfWord() {
+  if (getX() ==0) {
+    decreaseY();
+  }
+  setBitIndex(0);
+}
+
+void Cursor::goToBeginningOfNextWord() {
+  if (getY() == RAM_SIZE-1) {
+    setBitIndex(WORD_SIZE-1);
+  } else {
+    increaseY();
+    setBitIndex(0);
+  }
+}
+
+void Cursor::goToInstructionsAddress() {
+  if (getAddressSpace() == DATA) {
+    return;
+  }
+  Instruction inst = Instruction(getWord(), EMPTY_WORD, ram);
+  if (inst.adr.space == NONE) {
+    return;
+  }
+  goToAddress(inst.adr);
 }
 
 /////// ADDR SPACE API ////////

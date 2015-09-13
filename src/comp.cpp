@@ -59,6 +59,8 @@ void selectView();
 void isertCharIntoRam(char c);
 bool insertNumberIntoRam(char c);
 void processInputWithShift(char c);
+void engageInsertCharMode();
+void engageInsertNumberMode();
 
 //////////////////////////
 ////////// VARS //////////
@@ -296,6 +298,34 @@ void processInputWithShift(char c) {
   }
 }
 
+void saveRamToCurrentFile() {
+  string fileName;
+  if (loadedFilename == "") {
+    fileName = getFreeFileName();
+  } else {
+    fileName = loadedFilename;
+  }
+  saveRamToFile(fileName);
+}
+
+void saveRamToNewFile() {
+  string fileName = getFreeFileName();
+  saveRamToFile(fileName);
+  loadedFilename = fileName;
+}
+
+void engageInsertCharMode() {
+  if (cursor.getAddressSpace() == DATA) {
+    insertChar = true;
+  }
+}
+
+void engageInsertNumberMode() {
+  if (cursor.getAddressSpace() == DATA) {
+    insertNumber = true;
+  }
+}
+
 void userInput() {
   while(1) {
     char c = readStdin(true);
@@ -310,103 +340,72 @@ void userInput() {
         }
       }
       switch (c) {
-        // UP
         case 107: // k
         case 65:  // A, part of escape seqence of up arrow
           cursor.decreaseY();
           break;
-        // DOWN
         case 106: // j
         case 66:  // B, part of escape seqence of down arrow
           cursor.increaseY();
           break;
-        // RIGHT
         case 108: // l
         case 67:  // C, part of escape seqence of rigth arrow
           cursor.increaseX();
           break;
-        // LEFT
         case 104: // h
         case 68:  // D, part of escape seqence of left arrow
           cursor.decreaseX();
           break;
-        // SWAP UP
         case 75:  // K
         case 53:  // 5, part of escape seqence of page up
           cursor.moveByteUp();
           break;
-        // SWAP DOWN
         case 74:  // J
         case 54:  // 6, part of escape seqence of page down
           cursor.moveByteDown();
           break;
-        // SAVE TO NEW FILE
         case 115: { // s
-          string fileName = getFreeFileName();
-          saveRamToFile(fileName);
-          loadedFilename = fileName;
+          saveRamToNewFile();
           break;
         }
-        // SAVE
         case 83: {  // S
-          string fileName;
-          if (loadedFilename == "") {
-            fileName = getFreeFileName();
-          } else {
-            fileName = loadedFilename;
-          }
-          saveRamToFile(fileName);
+          saveRamToCurrentFile();
           break;
         }
-        // FLIP
         case 32:  // space
           switchBitUnderCursor();
           break;
-        // DELETE
         case 51:  // 3, part of escape seqence of delete key
           eraseByteUnderCursor();
           break;
         case 120:  // x
           eraseByteUnderCursor();
-          // cursor.increaseY();
           cursor.setBitIndex(0);
           break;
-        // GO TO FIRST ROW
         case 72:  // H (home)
         case 103: // g
-          //cursor.setByteIndex(0);
           cursor.setBitIndex(0);
           break;
-        // GO TO LAST ROW
         case 70: // F (end)
         case 71: // G
-          //cursor.setByteIndex(RAM_SIZE-1);
           cursor.setBitIndex(WORD_SIZE-1);
           break;
-        // SWITCH ADR SPACE
         case 116:  // t
         case 9:  // tab
           cursor.switchAddressSpace();
           break;
-        // RUN
         case 10:  // enter
           run();
           break;
         case 118:  // v
           switchDrawing();
           break;
-        case 105: { // i
-          if (cursor.getAddressSpace() == DATA) {
-            insertChar = true;
-          }
+        case 105: // i
+          engageInsertCharMode();
           break;
-        }
-        case 73: { // I
-          if (cursor.getAddressSpace() == DATA) {
-            insertNumber = true;
-          }
+        case 73: // I
+          engageInsertNumberMode();
           break;
-        }
         case 102:  // f
           cursor.setBit(true);
           cursor.increaseX();
@@ -419,33 +418,15 @@ void userInput() {
           cursor.increaseY();
           cursor.setBitIndex(0);
           break;
-        // GO TO END OF THE WORD
-        case 101: { // e
-          if (cursor.getX() == WORD_SIZE-1) {
-            cursor.increaseY();
-          }
-          cursor.setBitIndex(WORD_SIZE-1);
+        case 101:  // e
+          cursor.goToEndOfWord();
           break;
-        }
-        // GO TO BEGINING OF THE WORD
-        case 98: { // b
-          if (cursor.getX() ==0) {
-            cursor.decreaseY();
-          }
-          cursor.setBitIndex(0);
+        case 98:  // b
+          cursor.goToBeginningOfWord();
           break;
-        }
-        // GO TO BEGINING OF THE NEXT WORD
-        case 119: { // w
-          if (cursor.getY() == RAM_SIZE-1) {
-            cursor.setBitIndex(WORD_SIZE-1);
-          } else {
-            cursor.increaseY();
-            cursor.setBitIndex(0);
-          }
+        case 119:  // w
+          cursor.goToBeginningOfNextWord();
           break;
-        }
-        // MOVE TO ADDRESS PART
         case 97:   // a
           cursor.setBitIndex(4);
           break;
@@ -461,14 +442,15 @@ void userInput() {
         case 122:  // z
         case 90:  // shift + tab
         case 84: { // T
-          if (cursor.getAddressSpace() == DATA) {
-            continue;
-          }
-          Instruction inst = Instruction(cursor.getWord(), EMPTY_WORD, ram);
-          if (inst.adr.space == NONE) {
-            continue;
-          }
-          cursor.goToAddress(inst.adr);
+          cursor.goToInstructionsAddress();
+          // if (cursor.getAddressSpace() == DATA) {
+          //   continue;
+          // }
+          // Instruction inst = Instruction(cursor.getWord(), EMPTY_WORD, ram);
+          // if (inst.adr.space == NONE) {
+          //   continue;
+          // }
+          // cursor.goToAddress(inst.adr);
           break;
         }
       }
@@ -537,14 +519,11 @@ void checkArguments(int argc, const char* argv[]) {
     return;
   }
   if (strcmp(argv[1], "-c") == 0) {
-    //cerr << "first option is -c\n";
     outputChars = true;
     if (argc == 3) {
-      //cerr << "two parameters, second one is " << argv[2] << "\n";
       loadRamFile(argv[2]);
     }
   } else {
-    //cerr << "only one parameter " << argv[1] << "\n";
     loadRamFile(argv[1]);
   }
 }
