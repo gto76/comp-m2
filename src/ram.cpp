@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include "comp.hpp"
 #include "const.hpp"
 #include "util.hpp"
 

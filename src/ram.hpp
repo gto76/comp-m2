@@ -13,7 +13,9 @@ using namespace std;
 
 class Ram {
   public:
-    Ram(Printer &printerIn) : printer(printerIn) {
+    Ram(Printer &printerIn, bool interactiveModeIn) 
+        : printer(printerIn),
+          interactiveMode(interactiveModeIn) {
       // Initializes the state, one per address space.
       state[CODE] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
       state[DATA] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE)); 
@@ -28,6 +30,7 @@ class Ram {
 
   private:
     Printer &printer;
+    const bool interactiveMode;
     vector<bool> getLastAddress(AddrSpace addrSpace) const;
     vector<bool> getInput() const;
     void saveWord(AddrSpace addrSpace, int address, vector<bool> wordIn);

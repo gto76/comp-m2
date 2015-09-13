@@ -7,7 +7,6 @@
 
 #include "addr_space.hpp"
 #include "axis.hpp"
-#include "comp.hpp"
 #include "ram.hpp"
 #include "util.hpp"
 

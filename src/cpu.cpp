@@ -6,7 +6,6 @@
 #include <set>
 
 #include "address.hpp"
-#include "comp.hpp"
 #include "instruction.hpp"
 #include "util.hpp"
 

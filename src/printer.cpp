@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#include "comp.hpp"
 #include "util.hpp"
 
 using namespace std;

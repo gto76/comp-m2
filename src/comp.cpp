@@ -72,7 +72,6 @@ char readStdin(bool drawCursor);
 //////// VARS ////////
 //////////////////////
 
-// Two global variables.
 bool interactivieMode;
 bool executionCanceled = false;
 bool outputChars = false;
