@@ -443,6 +443,19 @@ void userInput() {
         case 94:  // ^
           cursor.setBitIndex(0);
           break;
+        case 122:  // z
+        case 90:  // shift + tab
+        case 84: { // T
+          if (cursor.getAddressSpace() == DATA) {
+            continue;
+          }
+          Instruction inst = Instruction(cursor.getWord(), EMPTY_WORD, ram);
+          if (inst.adr.space == NONE) {
+            continue;
+          }
+          cursor.goToAddress(inst.adr);
+          break;
+        }
       }
     }
     redrawScreen();

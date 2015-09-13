@@ -34,6 +34,8 @@ class Cursor {
     void setBitIndex(int bitIndex);
     void setByteIndex(int byteIndex);
 
+    void goToAddress(Address adr);
+
     /////////// RAM API ////////////
 
     bool getBit();

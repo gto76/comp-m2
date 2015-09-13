@@ -137,6 +137,12 @@ void Cursor::moveByteDown() {
   increaseY();
 }
 
+void Cursor::goToAddress(Address adr) {
+  addrSpace = adr.space;
+  setBitIndex(0);
+  setByteIndex(Util::getInt(adr.val));
+}
+
 /////////// PRIVATE //////////
 
 void Cursor::initCheck() {
