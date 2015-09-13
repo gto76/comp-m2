@@ -8,9 +8,13 @@
 
 using namespace std;
 
-Address Instruction::getAddress(vector<bool> val, const vector<bool> &reg,
+vector<Address> Instruction::getFirstOrderAdr(vector<bool> val) {
+  return inst->getFirstOrderAdr(val);
+}
+
+Address Instruction::getAddress(Address firstOrderAdr, const vector<bool> &reg,
                                 const Ram &ram) {
-  return inst->getAddress(val, reg, ram);
+  return inst->getAddress(firstOrderAdr, reg, ram);
 }
 
 void Instruction::exec(vector<bool> &pc, vector<bool> &reg, Ram &ram) {

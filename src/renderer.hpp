@@ -93,7 +93,7 @@ class Renderer {
     set<int>* getIndexesOfPointingInstructions();
     set<int> generatePointingInstructions();
     vector<Instruction>* getAllInstructions();
-    bool isAddressReferenced(Address adr);
+    bool isAddressReferencedFirstOrder(Address adr);
 };
 
 #endif

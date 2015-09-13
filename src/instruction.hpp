@@ -16,6 +16,7 @@ class Instruction {
     int const index;
     int const logicIndex;
     SpecificInstruction * const inst;
+    vector<Address> const firstOrderAdr;
     Address const adr;
     string const label;
     Instruction(vector<bool> valIn, const vector<bool> &regIn, const Ram &ramIn)
@@ -23,12 +24,14 @@ class Instruction {
           index(Util::getInt(Util::getFirstNibble(valIn))),
           logicIndex(Util::getInt(Util::getSecondNibble(valIn))),
           inst(getInstruction()),
-          adr(getAddress(valIn, regIn, ramIn)),
+          firstOrderAdr(getFirstOrderAdr(valIn)),
+          adr(getAddress(firstOrderAdr[0], regIn, ramIn)),
           label(inst->getLabel()) { }
     void exec(vector<bool> &pc, vector<bool> &reg, Ram &ram);
     bool isLogic();
   private:
-    Address getAddress(vector<bool> val, const vector<bool> &reg,
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg,
                        const Ram &ram);
     SpecificInstruction * getInstruction();
     SpecificInstruction * getLogicInstruction();

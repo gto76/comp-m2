@@ -284,7 +284,7 @@ bool Renderer::pcPointingToAddress(int adr) {
 
 string Renderer::getAdrIndicator(AddrSpace addrSpace, int index) {
   Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
-  bool addressReferenced = isAddressReferenced(indicatorsAddress);
+  bool addressReferenced = isAddressReferencedFirstOrder(indicatorsAddress);
   return view.getLightbulb(addressReferenced);
 }
 
@@ -378,10 +378,12 @@ vector<Instruction>* Renderer::getAllInstructions() {
   return &allInstructions;
 }
 
-bool Renderer::isAddressReferenced(Address adr) {
+bool Renderer::isAddressReferencedFirstOrder(Address adr) {
   vector<Instruction> *instructions = getAllInstructions();
   for (Instruction inst : *instructions) {
-    if (inst.adr == adr) {
+    vector<Address> aaa = inst.firstOrderAdr;
+    bool isReferenced = find(aaa.begin(), aaa.end(), adr) != aaa.end();
+    if (isReferenced) {
       return true;
     }
   }

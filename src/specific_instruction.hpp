@@ -12,7 +12,8 @@ class SpecificInstruction {
   public:
     virtual void exec(Address adr, vector<bool> &pc, 
                       vector<bool> &reg, Ram &ram) = 0;
-    virtual Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    virtual vector<Address> getFirstOrderAdr(vector<bool> val) = 0;
+    virtual Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                                const Ram &ram) = 0;
     virtual string getLabel() = 0;
 };
@@ -20,7 +21,8 @@ class SpecificInstruction {
 class Read : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -28,7 +30,8 @@ class Read : public SpecificInstruction {
 class Write : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -36,7 +39,8 @@ class Write : public SpecificInstruction {
 class Add : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -44,7 +48,8 @@ class Add : public SpecificInstruction {
 class Sub : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -52,7 +57,8 @@ class Sub : public SpecificInstruction {
 class Jump : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -60,7 +66,8 @@ class Jump : public SpecificInstruction {
 class IfMax : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -68,7 +75,8 @@ class IfMax : public SpecificInstruction {
 class IfMin : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -76,7 +84,8 @@ class IfMin : public SpecificInstruction {
 class JumpReg : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -84,7 +93,8 @@ class JumpReg : public SpecificInstruction {
 class ReadReg : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -92,7 +102,8 @@ class ReadReg : public SpecificInstruction {
 class InitializeFirstAddress : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -100,7 +111,8 @@ class InitializeFirstAddress : public SpecificInstruction {
 class Not : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -108,7 +120,8 @@ class Not : public SpecificInstruction {
 class ShiftLeft : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -116,7 +129,8 @@ class ShiftLeft : public SpecificInstruction {
 class ShiftRight : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -124,7 +138,8 @@ class ShiftRight : public SpecificInstruction {
 class And : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -132,7 +147,8 @@ class And : public SpecificInstruction {
 class Or : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -140,7 +156,8 @@ class Or : public SpecificInstruction {
 class Xor : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -148,7 +165,8 @@ class Xor : public SpecificInstruction {
 class ReadPointer : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -156,7 +174,8 @@ class ReadPointer : public SpecificInstruction {
 class WritePointer : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -164,7 +183,8 @@ class WritePointer : public SpecificInstruction {
 class Increase : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -172,7 +192,8 @@ class Increase : public SpecificInstruction {
 class Decrease : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -180,7 +201,8 @@ class Decrease : public SpecificInstruction {
 class Print : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -188,7 +210,8 @@ class Print : public SpecificInstruction {
 class IfNotMax : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
@@ -196,7 +219,8 @@ class IfNotMax : public SpecificInstruction {
 class IfNotMin : public SpecificInstruction {
   public:
     void exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram);
-    Address getAddress(vector<bool> val, const vector<bool> &reg, 
+    vector<Address> getFirstOrderAdr(vector<bool> val);
+    Address getAddress(Address firstOrderAdr, const vector<bool> &reg, 
                        const Ram &ram);
     string getLabel();
 };
