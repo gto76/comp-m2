@@ -43,7 +43,7 @@ void sleepAndCheckForKey();
 void exec();
 void run();
 string getFreeFileName();
-void saveRamToFile();
+void saveRamToFile(string filename);
 void switchDrawing();
 void userInput();
 void prepareOutput();
@@ -68,6 +68,9 @@ void processInputWithShift(char c);
 bool interactivieMode;
 bool executionCanceled = false;
 bool outputChars = false;
+
+// Filename.
+string loadedFilename;
 
 // Main components.
 Printer printer;
@@ -237,8 +240,7 @@ string getFreeFileName() {
   return SAVE_FILE_NAME + to_string(i);
 }
 
-void saveRamToFile() {
-  string fileName = getFreeFileName();
+void saveRamToFile(string fileName) {
   ofstream fileStream(fileName);
   fileStream << ram.getString();
   fileStream.close();
@@ -338,10 +340,23 @@ void userInput() {
         case 54:  // 6, part of escape seqence of page down
           cursor.moveByteDown();
           break;
-        // SAVE
-        case 115:  // s
-          saveRamToFile();
+        // SAVE TO NEW FILE
+        case 115: { // s
+          string fileName = getFreeFileName();
+          saveRamToFile(fileName);
           break;
+        }
+        // SAVE
+        case 83: {  // S
+          string fileName;
+          if (loadedFilename == "") {
+            fileName = getFreeFileName();
+          } else {
+            fileName = loadedFilename;
+          }
+          saveRamToFile(fileName);
+          break;
+        }
         // FLIP
         case 32:  // space
           switchBitUnderCursor();
@@ -539,6 +554,7 @@ void loadRamFile(const char* name) {
   if (fileStream.fail()) {
     fprintf(stderr, "Invalid filename '%s'. Aborting ram load.", name);
   } else {
+    loadedFilename = name;
     loadRamFromFileStream(&fileStream);
     fileStream.close();  
   }
