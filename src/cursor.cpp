@@ -31,10 +31,12 @@ int Cursor::getAbsoluteBitIndex() {
 }
 
 int Cursor::getX() {
+  initCheck(); 
   return cursorPosition[addrSpace][X];
 }
   
 int Cursor::getY() {
+  initCheck(); 
   return cursorPosition[addrSpace][Y];
 }
 
@@ -73,6 +75,7 @@ void Cursor::decreaseY() {
 /////// ADDR SPACE API ////////
 
 void Cursor::switchAddressSpace() {
+  initCheck(); 
   if (addrSpace == CODE) {
     addrSpace = DATA;
   } else {
@@ -81,10 +84,12 @@ void Cursor::switchAddressSpace() {
 }
 
 AddrSpace Cursor::getAddressSpace() {
+  initCheck(); 
   return addrSpace;
 }
 
 Address Cursor::getAddress() {
+  initCheck(); 
   vector<bool> adrVal = Util::getBoolNibb(cursorPosition.at(addrSpace).at(Y));
   return Address(addrSpace, adrVal);
 }
@@ -92,19 +97,23 @@ Address Cursor::getAddress() {
 /////////// RAM API ////////////
 
 bool Cursor::getBit() {
+  initCheck(); 
   return ram.state.at(addrSpace).at(getAddr()).at(getBitIndex());
 }
 
 void Cursor::setBit(bool bit) {
+  initCheck(); 
   ram.state[addrSpace].at(getAddr()).at(getBitIndex()) = bit;
 }
 
 vector<bool> Cursor::getWord() {
+  initCheck(); 
   Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
   return ram.get(adr);
 }
 
 void Cursor::setWord(vector<bool> word) {
+  initCheck(); 
   Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
   ram.set(adr, word);
 }
@@ -138,6 +147,7 @@ void Cursor::moveByteDown() {
 }
 
 void Cursor::goToAddress(Address adr) {
+  initCheck(); 
   addrSpace = adr.space;
   setBitIndex(0);
   setByteIndex(Util::getInt(adr.val));
