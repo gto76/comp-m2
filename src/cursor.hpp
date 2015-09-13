@@ -44,6 +44,8 @@ class Cursor {
 
     bool getBit();
     void setBit(bool bit);
+    void switchBit();
+    void eraseByte();
     vector<bool> getWord();
     void setWord(vector<bool> word);
     void moveByteUp();

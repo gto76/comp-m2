@@ -141,6 +141,15 @@ void Cursor::setBit(bool bit) {
   ram.state[addrSpace].at(getAddr()).at(getBitIndex()) = bit;
 }
 
+void Cursor::switchBit() {
+  bool bitValue = getBit(); 
+  setBit(!bitValue);
+}
+
+void Cursor::eraseByte() {
+  setWord(EMPTY_WORD);
+}
+
 vector<bool> Cursor::getWord() {
   initCheck(); 
   Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
