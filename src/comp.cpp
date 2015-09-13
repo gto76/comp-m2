@@ -344,6 +344,7 @@ void userInput() {
         case 115: { // s
           string fileName = getFreeFileName();
           saveRamToFile(fileName);
+          loadedFilename = fileName;
           break;
         }
         // SAVE
