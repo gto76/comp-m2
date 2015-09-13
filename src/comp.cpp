@@ -55,6 +55,9 @@ void loadRamFromFileStream(ifstream* fileStream);
 void checkIfInputIsPiped();
 void loadRamIfFileSpecified(int argc, const char* argv[]);
 void selectView();
+void isertCharIntoRam(char c);
+bool insertNumberIntoRam(char c);
+void processInputWithShift(char c);
 
 //////////////////////////
 ////////// VARS //////////
@@ -90,6 +93,9 @@ View *selectedView = &VIEW_3D;
 // Whether next key should be read as a char whose value shall thence be
 // inserted into ram.
 bool insertChar = false;
+bool insertNumber = false;
+vector<int> digits;
+bool shiftPressed = false;
 
 //////////////////////////
 ////////// MAIN //////////
@@ -253,17 +259,55 @@ void switchDrawing() {
   userInput();
 }
 
+void isertCharIntoRam(char c) {
+  insertChar = false;
+  if (c == 27) {  // Esc
+    return;
+  }
+  cursor.setWord(Util::getBoolByte(c));
+  cursor.increaseY();
+}
+
+// Returns whether the loop should continue.
+bool insertNumberIntoRam(char c) {
+  if (c < 48 || c > 57) {
+    digits = vector<int>();
+    insertNumber = false;
+    return false;
+  }
+  digits.insert(digits.begin(), c - 48);
+  int numbersValue = 0;
+  int i = 0;
+  for (int digit : digits) {
+    numbersValue += digit * pow(10, i++);
+  }
+  cursor.setWord(Util::getBoolByte(numbersValue));
+  redrawScreen();
+  return true;
+}
+
+void processInputWithShift(char c) {
+  shiftPressed = false;
+  if (c == 65) {
+    cursor.moveByteUp();
+  } else if (c == 66) {
+    cursor.moveByteDown();
+  }
+}
+
 void userInput() {
   while(1) {
     char c = readStdin(true);
     if (insertChar) {
-      insertChar = false;
-      if (c == 27) {  // Esc
-        continue;
-      }
-      cursor.setWord(Util::getBoolByte(c));
-      cursor.increaseY();
+      isertCharIntoRam(c);
+    } else if (shiftPressed) {
+      processInputWithShift(c);
     } else {
+      if (insertNumber) {
+        if (insertNumberIntoRam(c)) {
+          continue;
+        }
+      }
       switch (c) {
         // UP
         case 107: // k
@@ -309,20 +353,20 @@ void userInput() {
           break;
         case 120:  // x
           eraseByteUnderCursor();
-          cursor.increaseY();
+          // cursor.increaseY();
           cursor.setBitIndex(0);
           break;
         // GO TO FIRST ROW
         case 72:  // H (home)
         case 103: // g
-          cursor.setByteIndex(0);
+          //cursor.setByteIndex(0);
           cursor.setBitIndex(0);
           break;
         // GO TO LAST ROW
         case 70: // F (end)
         case 71: // G
-          cursor.setByteIndex(RAM_SIZE-1);
-          cursor.setBitIndex(0);
+          //cursor.setByteIndex(RAM_SIZE-1);
+          cursor.setBitIndex(WORD_SIZE-1);
           break;
         // SWITCH ADR SPACE
         case 116:  // t
@@ -339,6 +383,12 @@ void userInput() {
         case 105: { // i
           if (cursor.getAddressSpace() == DATA) {
             insertChar = true;
+          }
+          break;
+        }
+        case 73: { // I
+          if (cursor.getAddressSpace() == DATA) {
+            insertNumber = true;
           }
           break;
         }
@@ -383,6 +433,15 @@ void userInput() {
         // MOVE TO ADDRESS PART
         case 97:   // a
           cursor.setBitIndex(4);
+          break;
+        case 50:  // 2
+          shiftPressed = true;
+          break;
+        case 36:  // $
+          cursor.setBitIndex(WORD_SIZE-1);
+          break;
+        case 94:  // ^
+          cursor.setBitIndex(0);
           break;
       }
     }
