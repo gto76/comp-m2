@@ -23,7 +23,13 @@ void Printer::print(vector<bool> wordIn) {
     if (Util::outputIsPiped()) {
       cout << Util::getString(wordIn) + "\n";
     } else {
-      cout << Util::getStringWithFormatedInt(wordIn);
+      if (outputChars) {
+        char c = (char)Util::getInt(wordIn);
+        cerr << "outputing: " << c << "\n";
+        cout << c;
+      } else {
+        cout << Util::getStringWithFormatedInt(wordIn);
+      }
     }
   }
 }

@@ -53,7 +53,8 @@ void writeDataBitToRam(int address, int bitIndex, bool bitValue);
 void writeLineToRam(string line, int address);
 void loadRamFromFileStream(ifstream* fileStream);
 void checkIfInputIsPiped();
-void loadRamIfFileSpecified(int argc, const char* argv[]);
+void checkArguments(int argc, const char* argv[]);
+void loadRamFile(const char* name);
 void selectView();
 void isertCharIntoRam(char c);
 bool insertNumberIntoRam(char c);
@@ -66,6 +67,7 @@ void processInputWithShift(char c);
 // Two global variables.
 bool interactivieMode;
 bool executionCanceled = false;
+bool outputChars = false;
 
 // Main components.
 Printer printer;
@@ -104,7 +106,7 @@ bool shiftPressed = false;
 int main(int argc, const char* argv[]) {
   srand(time(NULL));
   checkIfInputIsPiped();
-  loadRamIfFileSpecified(argc, argv);
+  checkArguments(argc, argv);
   if (interactivieMode) {
     startInteractiveMode();
   } else {
@@ -132,9 +134,6 @@ void selectView() {
   } else if (strcmp(term, "rxvt") == 0) {
     selectedView = &VIEW_2D;
   }
-
-  // if(const char* env_p = std::getenv("PATH"))
-  //       std::cout << "Your PATH is: " << env_p << '\n';
 }
 
 void drawScreen() {
@@ -517,14 +516,29 @@ void checkIfInputIsPiped() {
   interactivieMode = !Util::inputIsPiped();
 }
 
-void loadRamIfFileSpecified(int argc, const char* argv[]) {
+
+void checkArguments(int argc, const char* argv[]) {
   if (argc <= 1) {
     return;
   }
+  if (strcmp(argv[1], "-c") == 0) {
+    cerr << "first option is -c\n";
+    outputChars = true;
+    if (argc == 3) {
+      cerr << "two parameters, second one is " << argv[2] << "\n";
+      loadRamFile(argv[2]);
+    }
+  } else {
+    cerr << "only one parameter " << argv[1] << "\n";
+    loadRamFile(argv[1]);
+  }
+}
+
+void loadRamFile(const char* name) {
   ifstream fileStream;    
-  fileStream.open(argv[1]);   
+  fileStream.open(name);   
   if (fileStream.fail()) {
-    fprintf(stderr, "Invalid filename '%s'. Aborting ram load.", argv[1]);
+    fprintf(stderr, "Invalid filename '%s'. Aborting ram load.", name);
   } else {
     loadRamFromFileStream(&fileStream);
     fileStream.close();  

@@ -3,5 +3,6 @@
 
 extern bool interactivieMode;
 extern bool executionCanceled;
+extern bool outputChars;
 
 #endif
