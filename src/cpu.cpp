@@ -58,3 +58,11 @@ bool Cpu::step() {
   inst.exec(pc, reg, *ram);
   return true;
 }
+
+void Cpu::reset() {
+  reg = vector<bool>(WORD_SIZE);
+  pc = vector<bool>(ADDR_SIZE);
+  cycle = 0;
+}
+
+

@@ -25,6 +25,7 @@ class Cpu {
     int getInstructionCodeInt();
     int getCycle();
     Instruction getInstruction();
+    void reset();
 
   private:
     Ram *ram;

@@ -8,6 +8,18 @@
 
 using namespace std;
 
+void Printer::run() {
+  while (1) {
+    vector<bool> out = input.getOutput();
+    if (out == { }) {
+      printEmptyLine();
+      return;
+    } else {
+      print(out);
+    }
+  }
+}
+
 /*
  * If in interactive mode, then prints word together with decimal
  * representation on the printer. If not in interactive mode,
@@ -67,3 +79,4 @@ string Printer::renderPrinterOutput() {
   outputLines.push_back("|0|______________|0|");
   return Util::makeString(outputLines);
 }
+

@@ -33,7 +33,7 @@ vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
             "invalid address");
     exit(4);
   } else {
-    return Ram::getInput();
+    return input.getOutput(); //Ram::getInput();
   }
 }
 
@@ -41,13 +41,13 @@ vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
  * Returns random value if last address is passed (reserved for output),
  * or reads from pipe if also input is piped in.
  */
-vector<bool> Ram::getInput() const {
-  if (interactivieMode) {
-    return Util::getRandomWord();  
-  } else {
-    return Util::readWordFromPipe();
-  }
-}
+// vector<bool> Ram::getInput() const {
+//   if (interactivieMode) {
+//     return Util::getRandomWord();  
+//   } else {
+//     return Util::readWordFromPipe();
+//   }
+// }
 
 ////// SET //////
 
@@ -78,7 +78,9 @@ void Ram::assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn) {
             "Trying to write to last address of code address space.");
     exit(5);
   } else {
-    printer.print(wordIn);
+    output = wordIn;
+    outputPending = true;
+    //printer.print(wordIn);
   }
 }
 

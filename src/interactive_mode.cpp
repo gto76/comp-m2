@@ -1,204 +1,56 @@
-#include <signal.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <algorithm>
-#include <cmath>
-#include <cstdlib>
-#include <cstring>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <streambuf>
-#include <string>
-#include <tuple>
-#include <vector>
+#include "interactive_mode.hpp"
 
-#include "const.hpp"
-#include "cpu.hpp"
-#include "cursor.hpp"
-#include "drawing3D.hpp"
-#include "drawing3Db.hpp"
-#include "drawing2D.hpp"
-#include "key_input.hpp"
-#include "output.hpp"
-#include "printer.hpp"
+#include <string>
+
+#include "computer.hpp"
+#include "load.hpp"
 #include "ram.hpp"
-#include "renderer.hpp"
-#include "util.hpp"
-#include "view.hpp"
 
 using namespace std;
 
-extern "C" {
-  extern volatile sig_atomic_t pleaseExit;
-  void setEnvironment();
-  void resetEnvironment();
+Computer InteractiveMode::getComputer(string filename) {
+  Ram ram = Ram(input);
+  Load::fillRamWithFile(filename, ram);
+  return Computer(0, ram, redrawScreen, sleepAndCheckForKey);
 }
 
-// MAIN
-void checkIfInputIsPiped();
-void checkArguments(int argc, const char* argv[]);
-void startInteractiveMode();
-void selectView();
-void prepareOutput();
-void drawScreen();
-// EXECUTION MODE
-void run();
-void exec();
-void sleepAndCheckForKey();
-// EDIT MODE
-void userInput();
-void isertCharIntoRam(char c);
-void processInputWithShift(char c);
-bool insertNumberIntoRam(char c);
-void engageInsertCharMode();
-void engageInsertNumberMode();
-void switchDrawing();
-// SAVE
-void saveRamToNewFile();
-void saveRamToCurrentFile();
-string getFreeFileName();
-void saveRamToFile(string filename);
-// LOAD
-void loadRamFile(const char* name);
-void loadRamFromFileStream(ifstream* fileStream);
-void writeLineToRam(string line, int address);
-void writeInstructionBitToRam(int address, int bitIndex, bool bitValue);
-void writeDataBitToRam(int address, int bitIndex, bool bitValue);
-bool getBool(char c);
-// KEY READER
-char readStdin(bool drawCursor);
+////////////////////
 
-//////////////////////
-//////// VARS ////////
-//////////////////////
+void InteractiveMode::start() {
+  selectView();
+  setEnvironment();
+  prepareOutput();
+  clearScreen();
+  redrawScreen();
+  userInput();
+  // printer.run();
+}
 
-// bool interactivieMode;
-// bool outputChars = false;
-
-// Main components.
-// Printer printer;
-// Ram ram = Ram(printer);
-// Cpu cpu = Cpu(&ram);
-
-
-bool executionCanceled = false;
-
-// Filename.
-string loadedFilename;
-
-// Graphic representation of the computer's state.
-vector<vector<string>> buffer;
-
-// Cycle counter.
-int executionCounter = 0;
-
-// Saved state of a ram. Loaded after execution ends.
-map<AddrSpace, vector<vector<bool>>> savedRamState;
-
-// Object for keeping track of, and moving around cursor.
-Cursor cursor = Cursor(ram);
-
-// Two views.
-View VIEW_3D = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
-View VIEW_3D_B = View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B);
-View VIEW_2D = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
-View *selectedView = &VIEW_3D;
-
-// Whether next key should be read as a char whose value shall thence be
-// inserted into ram.
-bool insertChar = false;
-bool insertNumber = false;
-vector<int> digits;
-bool shiftPressed = false;
-
-//////////////////////
-//////// MAIN ////////
-//////////////////////
-
-/// NEW
-
-vector<ProvidesOutput> computerChain;
-ProvidesOutput keyInput;
-
-int main(int argc, const char* argv[]) {
-  srand(time(NULL));
-  checkIfInputIsPiped();
-  processArguments(argc, argv);
-  if (interactivieMode) {
-    startInteractiveMode();
-  } else {
-    exec();
+void InteractiveMode::selectView() {
+  const char* term = std::getenv("TERM");
+  if (strcmp(term, "linux") == 0) {
+    selectedView = &VIEW_3D_B;
+  } else if (strcmp(term, "rxvt") == 0) {
+    selectedView = &VIEW_2D;
   }
 }
-
-void checkIfInputIsPiped() {
-  interactivieMode = !Util::inputIsPiped();
-}
-
-void processArguments(int argc, const char* argv[]) {
-  if (argc <= 1) {
-    return;
-  }
-  // if (strcmp(argv[1], "-c") == 0) {
-  //   outputChars = true;
-  //   if (argc == 3) {
-  //     loadRamFile(argv[2]);
-  //   }
-  // } else {
-  //   loadRamFile(argv[1]);
-  // }
-
-  bool compId = 0;
-  for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-c") == 0) {
-      outputChars = true;
-    } else {
-      if (compId == 0) {
-        Computer comp = getComputerFromFile(argv[i], keyInput, compId++);
-        computerChain.push_back(comp);
-      } else {
-        Computer comp = getComputerFromFile(argv[i], computerChain.back(), 
-                                            compId++);
-        computerChain.push_back(comp);
-    }
-  }
-}
-
-// void startInteractiveMode() {
-//   selectView();
-//   setEnvironment();
-//   prepareOutput();
-//   clearScreen();
-//   redrawScreen();
-//   userInput();
-// }
-
-// void selectView() {
-//   const char* term = std::getenv("TERM");
-//   if (strcmp(term, "linux") == 0) {
-//     selectedView = &VIEW_3D_B;
-//   } else if (strcmp(term, "rxvt") == 0) {
-//     selectedView = &VIEW_2D;
-//   }
-// }
 
 /*
  * Initializes 'output.cpp' by sending dimensions of a 'drawing' and 
  * a 'drawScreen' callback function, that output.c will use on every 
  * screen redraw.
  */
-// void prepareOutput() {
-//   setOutput(&drawScreen, selectedView->width, selectedView->height);
-// }
+void InteractiveMode::prepareOutput() {
+  setOutput(&drawScreen, selectedView->width, selectedView->height);
+}
 
-// void drawScreen() {
-//   buffer = Renderer::renderState(printer, ram, cpu, cursor, *selectedView);
-//   int i = 0;
-//   for (vector<string> line : buffer) {
-//     replaceLine(line, i++);
-//   }
-// }
+void InteractiveMode::drawScreen() {
+  buffer = Renderer::renderState(printer, ram, cpu, cursor, *selectedView);
+  int i = 0;
+  for (vector<string> line : buffer) {
+    replaceLine(line, i++);
+  }
+}
 
 //////////////////////
 /// EXECUTION MODE ///
@@ -209,43 +61,28 @@ void processArguments(int argc, const char* argv[]) {
  * When execution stops, due to it reaching last address or user pressing 
  * 'esc', it loads back the saved state of the ram, and resets the cpu.
  */
-void run() { 
-  if (executionCounter > 0) {
-    printer.printEmptyLine();
-  }
+void InteractiveMode::run() {
+  // if (executionCounter > 0) {
+  //   printer.printEmptyLine();
+  // }
   savedRamState = ram.state;
-  exec();
+  printer.run()
   // If 'esc' was pressed then it doesn't wait for keypress at the end.
   if (executionCanceled) {
     executionCanceled = false;
   } else {
     readStdin(false);
   }
-  ram.state = savedRamState;
-  cpu = Cpu(&ram);
+  computer.ram.state = savedRamState;
+  cpu.reset();
   redrawScreen();
   executionCounter++;
-}
-
-void exec() {
-  while(!executionCanceled) {
-    bool shouldContinue = cpu.step();
-    if (interactivieMode) {
-      redrawScreen();
-    }
-    if (!shouldContinue) {
-      return;
-    }
-    if (interactivieMode) {
-      sleepAndCheckForKey();
-    }
-  }
 }
 
 /*
  * Runs every cycle.
  */
-void sleepAndCheckForKey() {
+void InteractiveMode::sleepAndCheckForKey() {
   usleep(FQ*1000);
   // Exits if ctrl-c was pressed.
   if (pleaseExit) {
@@ -271,7 +108,7 @@ void sleepAndCheckForKey() {
 /// EDITING MODE ///
 ////////////////////
 
-void userInput() {
+void InteractiveMode::userInput() {
   while(1) {
     char c = readStdin(true);
     if (insertChar) {
@@ -409,7 +246,7 @@ void userInput() {
   }
 }
 
-void isertCharIntoRam(char c) {
+void InteractiveMode::isertCharIntoRam(char c) {
   insertChar = false;
   if (c == 27) {  // Esc
     return;
@@ -418,7 +255,7 @@ void isertCharIntoRam(char c) {
   cursor.increaseY();
 }
 
-void processInputWithShift(char c) {
+void InteractiveMode::processInputWithShift(char c) {
   shiftPressed = false;
   if (c == 65) {
     cursor.moveByteUp();
@@ -428,7 +265,7 @@ void processInputWithShift(char c) {
 }
 
 // Returns whether the loop should continue.
-bool insertNumberIntoRam(char c) {
+bool InteractiveMode::insertNumberIntoRam(char c) {
   if (c < 48 || c > 57) {
     digits = vector<int>();
     insertNumber = false;
@@ -445,19 +282,19 @@ bool insertNumberIntoRam(char c) {
   return true;
 }
 
-void engageInsertCharMode() {
+void InteractiveMode::engageInsertCharMode() {
   if (cursor.getAddressSpace() == DATA) {
     insertChar = true;
   }
 }
 
-void engageInsertNumberMode() {
+void InteractiveMode::engageInsertNumberMode() {
   if (cursor.getAddressSpace() == DATA) {
     insertNumber = true;
   }
 }
 
-void switchDrawing() {
+void InteractiveMode::switchDrawing() {
   if (*selectedView == VIEW_3D) {
     selectedView = &VIEW_3D_B;
   } else if (*selectedView == VIEW_3D_B) {
@@ -474,13 +311,13 @@ void switchDrawing() {
 /// SAVE ///
 ////////////
 
-void saveRamToNewFile() {
+void InteractiveMode::saveRamToNewFile() {
   string fileName = getFreeFileName();
   saveRamToFile(fileName);
   loadedFilename = fileName;
 }
 
-void saveRamToCurrentFile() {
+void InteractiveMode::saveRamToCurrentFile() {
   string fileName;
   if (loadedFilename == "") {
     fileName = getFreeFileName();
@@ -490,13 +327,13 @@ void saveRamToCurrentFile() {
   saveRamToFile(fileName);
 }
 
-string getFreeFileName() {
+string InteractiveMode::getFreeFileName() {
   int i = 0;
   while (Util::fileExists(SAVE_FILE_NAME + to_string(++i)));
   return SAVE_FILE_NAME + to_string(i);
 }
 
-void saveRamToFile(string fileName) {
+void InteractiveMode::saveRamToFile(string fileName) {
   ofstream fileStream(fileName);
   fileStream << ram.getString();
   fileStream.close();
@@ -506,7 +343,7 @@ void saveRamToFile(string fileName) {
 /// KEY READER ///
 //////////////////
 
-char readStdin(bool drawCursor) {
+char InteractiveMode::readStdin(bool drawCursor) {
   char c = 0;
   errno = 0;
   ssize_t num = read(0, &c, 1);
@@ -520,6 +357,4 @@ char readStdin(bool drawCursor) {
   }
   return c;
 }
-
-
 
