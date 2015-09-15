@@ -23,7 +23,7 @@ class NoninteractiveMode {
     StandardOutput output;
 
     vector<Computer> getComputerChain(vector<string> filenames);
-    Ram getRamFor(bool firstComputer);
+    Computer getComputer(int id);
     StandardOutput getStandardOutput(bool outputCharsIn);
 };
 

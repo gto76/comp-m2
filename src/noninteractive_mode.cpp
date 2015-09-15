@@ -16,22 +16,20 @@ void NoninteractiveMode::run() {
 vector<Computer> NoninteractiveMode::getComputerChain(vector<string> filenames) {
   vector<Computer> computerChain;
   int i = 0;
-  // for all filenames
   for (string filename : filenames) {
-    Ram ram = getRamFor(i == 0);
-    Load::fillRamWithFile(filename.c_str(), ram);  
-    Computer computer = Computer(i, ram, NULL, NULL);
+    Computer computer = getComputer(i);
+    Load::fillRamWithFile(filename.c_str(), computer.ram);  
     computerChain.push_back(computer);
   }
   return computerChain;
 }
 
-Ram NoninteractiveMode::getRamFor(bool firstComputer) {
-  if (firstComputer) {
-    return Ram(input);
+Computer NoninteractiveMode::getComputer(int id) {
+  if (id == 0) {
+    return Computer(id, input, NULL, NULL);
   } else {
     Computer predecesor = computerChain.back();
-    return Ram(predecesor);
+    return Computer(id, predecesor, NULL, NULL);
   }
 }
 

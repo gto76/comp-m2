@@ -1,7 +1,10 @@
 #ifndef LOAD_H
 #define LOAD_H
 
+#include <fstream>
 #include <string>
+
+#include "ram.hpp"
 
 using namespace std;
 

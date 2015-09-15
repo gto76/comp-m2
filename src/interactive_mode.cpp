@@ -1,12 +1,24 @@
 #include "interactive_mode.hpp"
 
+#include <unistd.h>
+#include <cmath>
 #include <cstring>
+#include <fstream>
 #include <string>
+#include <vector>
 
 #include "computer.hpp"
+#include "cursor.hpp"
+#include "drawing3D.hpp"
+#include "drawing3Db.hpp"
+#include "drawing2D.hpp"
 #include "load.hpp"
 #include "output.hpp"
+#include "printer.hpp"
 #include "ram.hpp"
+#include "random_input.hpp"
+#include "renderer.hpp"
+#include "view.hpp"
 
 using namespace std;
 
@@ -15,15 +27,69 @@ extern "C" {
   void setEnvironment();
 }
 
-// Computer InteractiveMode::getComputer(string filename) {
-//   Ram ram = Ram(input);
-//   Load::fillRamWithFile(filename.c_str(), ram);
-//   return Computer(0, ram, redrawScreen, sleepAndCheckForKey);
-// }
+// MAIN
+void start();
+void selectView();
+void prepareOutput();
+void drawScreen();
+// EXECUTION MODE
+void run();
+void exec();
+void sleepAndCheckForKey();
+// EDIT MODE
+void userInput();
+void isertCharIntoRam(char c);
+void processInputWithShift(char c);
+bool insertNumberIntoRam(char c);
+void engageInsertCharMode();
+void engageInsertNumberMode();
+void switchDrawing();
+// SAVE
+void saveRamToNewFile();
+void saveRamToCurrentFile();
+string getFreeFileName();
+void saveRamToFile(string filename);
+// KEY READER
+char readStdin(bool drawCursor);
 
-////////////////////
+//////////////////////
+//////// VARS ////////
+//////////////////////
 
-void InteractiveMode::start() {
+View view3d = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
+View view3db = View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B); 
+View view2d = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
+View *selectedView = &view3d;
+RandomInput input;
+Computer computer = Computer(0, input, redrawScreen, sleepAndCheckForKey);
+Printer printer = Printer(computer);
+Cursor cursor = Cursor(computer.ram);
+
+// Whether esc was pressed during execution.
+// executionCanceled= false;
+// Filename.
+string loadedFilename;
+// Number of executions.
+int executionCounter = 0;
+// Saved state of a ram. Loaded after execution ends.
+map<AddrSpace, vector<vector<bool>>> savedRamState;
+// Whether next key should be read as a char whose value shall thence be
+// inserted into ram.
+bool insertChar = false;
+bool insertNumber = false;
+vector<int> digits;
+bool shiftPressed = false;
+
+//////////////////////
+//////// MAIN ////////
+//////////////////////
+
+void start(string filename) {
+  executionCanceled = false;
+  if (filename != "") {
+    Load::fillRamWithFile(filename.c_str(), computer.ram);
+    loadedFilename = filename;
+  }
   selectView();
   setEnvironment();
   prepareOutput();
@@ -33,7 +99,7 @@ void InteractiveMode::start() {
   // printer.run();
 }
 
-void InteractiveMode::selectView() {
+void selectView() {
   const char* term = std::getenv("TERM");
   if (strcmp(term, "linux") == 0) {
     selectedView = &view3db;
@@ -47,12 +113,12 @@ void InteractiveMode::selectView() {
  * a 'drawScreen' callback function, that output.c will use on every 
  * screen redraw.
  */
-void InteractiveMode::prepareOutput() {
+void prepareOutput() {
   setOutput(&drawScreen, selectedView->width, selectedView->height);
 }
 
-void InteractiveMode::drawScreen() {
-  vector<vector<string>> buffer = Renderer::renderState(printer, ram, cpu, 
+void drawScreen() {
+  vector<vector<string>> buffer = Renderer::renderState(printer, computer.ram, computer.cpu, 
                                                         cursor, *selectedView);
   int i = 0;
   for (vector<string> line : buffer) {
@@ -69,12 +135,12 @@ void InteractiveMode::drawScreen() {
  * When execution stops, due to it reaching last address or user pressing 
  * 'esc', it loads back the saved state of the ram, and resets the cpu.
  */
-void InteractiveMode::run() {
+void run() {
   // if (executionCounter > 0) {
   //   printer.printEmptyLine();
   // }
-  savedRamState = ram.state;
-  printer.run()
+  savedRamState = computer.ram.state;
+  printer.run();
   // If 'esc' was pressed then it doesn't wait for keypress at the end.
   if (executionCanceled) {
     executionCanceled = false;
@@ -82,7 +148,7 @@ void InteractiveMode::run() {
     readStdin(false);
   }
   computer.ram.state = savedRamState;
-  cpu.reset();
+  computer.cpu.reset();
   redrawScreen();
   executionCounter++;
 }
@@ -90,7 +156,7 @@ void InteractiveMode::run() {
 /*
  * Runs every cycle.
  */
-void InteractiveMode::sleepAndCheckForKey() {
+void sleepAndCheckForKey() {
   usleep(FQ*1000);
   // Exits if ctrl-c was pressed.
   if (pleaseExit) {
@@ -116,7 +182,7 @@ void InteractiveMode::sleepAndCheckForKey() {
 /// EDITING MODE ///
 ////////////////////
 
-void InteractiveMode::userInput() {
+void userInput() {
   while(1) {
     char c = readStdin(true);
     if (insertChar) {
@@ -254,7 +320,7 @@ void InteractiveMode::userInput() {
   }
 }
 
-void InteractiveMode::isertCharIntoRam(char c) {
+void isertCharIntoRam(char c) {
   insertChar = false;
   if (c == 27) {  // Esc
     return;
@@ -263,7 +329,7 @@ void InteractiveMode::isertCharIntoRam(char c) {
   cursor.increaseY();
 }
 
-void InteractiveMode::processInputWithShift(char c) {
+void processInputWithShift(char c) {
   shiftPressed = false;
   if (c == 65) {
     cursor.moveByteUp();
@@ -273,7 +339,7 @@ void InteractiveMode::processInputWithShift(char c) {
 }
 
 // Returns whether the loop should continue.
-bool InteractiveMode::insertNumberIntoRam(char c) {
+bool insertNumberIntoRam(char c) {
   if (c < 48 || c > 57) {
     digits = vector<int>();
     insertNumber = false;
@@ -290,19 +356,19 @@ bool InteractiveMode::insertNumberIntoRam(char c) {
   return true;
 }
 
-void InteractiveMode::engageInsertCharMode() {
+void engageInsertCharMode() {
   if (cursor.getAddressSpace() == DATA) {
     insertChar = true;
   }
 }
 
-void InteractiveMode::engageInsertNumberMode() {
+void engageInsertNumberMode() {
   if (cursor.getAddressSpace() == DATA) {
     insertNumber = true;
   }
 }
 
-void InteractiveMode::switchDrawing() {
+void switchDrawing() {
   if (*selectedView == view3d) {
     selectedView = &view3db;
   } else if (*selectedView == view3db) {
@@ -319,13 +385,13 @@ void InteractiveMode::switchDrawing() {
 /// SAVE ///
 ////////////
 
-void InteractiveMode::saveRamToNewFile() {
+void saveRamToNewFile() {
   string fileName = getFreeFileName();
   saveRamToFile(fileName);
   loadedFilename = fileName;
 }
 
-void InteractiveMode::saveRamToCurrentFile() {
+void saveRamToCurrentFile() {
   string fileName;
   if (loadedFilename == "") {
     fileName = getFreeFileName();
@@ -335,15 +401,15 @@ void InteractiveMode::saveRamToCurrentFile() {
   saveRamToFile(fileName);
 }
 
-string InteractiveMode::getFreeFileName() {
+string getFreeFileName() {
   int i = 0;
   while (Util::fileExists(SAVE_FILE_NAME + to_string(++i)));
   return SAVE_FILE_NAME + to_string(i);
 }
 
-void InteractiveMode::saveRamToFile(string fileName) {
+void saveRamToFile(string fileName) {
   ofstream fileStream(fileName);
-  fileStream << ram.getString();
+  fileStream << computer.ram.getString();
   fileStream.close();
 }
 
@@ -351,7 +417,7 @@ void InteractiveMode::saveRamToFile(string fileName) {
 /// KEY READER ///
 //////////////////
 
-char InteractiveMode::readStdin(bool drawCursor) {
+char readStdin(bool drawCursor) {
   char c = 0;
   errno = 0;
   ssize_t num = read(0, &c, 1);

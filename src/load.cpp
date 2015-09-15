@@ -8,7 +8,6 @@ void Load::fillRamWithFile(const char* filename, Ram &ram) {
   if (fileStream.fail()) {
     fprintf(stderr, "Invalid filename '%s'. Aborting ram load.", filename);
   } else {
-    loadedFilename = filename;
     fillRamWithFilestream(&fileStream, ram);
     fileStream.close();  
   }

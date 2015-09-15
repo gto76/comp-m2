@@ -11,10 +11,10 @@ using namespace std;
 
 class Computer : public ProvidesOutput {
   public:
-    Computer(int idIn, Ram ramIn, void (*printStateIn)(void),
+    Computer(int idIn, ProvidesOutput &inputIn, void (*printStateIn)(void),
              void (*sleepAndCheckForKeyIn)(void))
         : id(idIn),
-          ram(ramIn), 
+          ram(Ram(inputIn)), 
           cpu(Cpu(&ram)),
           printState(printStateIn),
           sleepAndCheckForKey(sleepAndCheckForKeyIn) { }
