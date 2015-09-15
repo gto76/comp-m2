@@ -34,6 +34,6 @@ Computer NoninteractiveMode::getComputer(int id) {
 }
 
 StandardOutput NoninteractiveMode::getStandardOutput(bool outputCharsIn) {    
-  Computer lastComp = computerChain.back();
-  return StandardOutput(computerChain.back(), outputCharsIn);
+  Computer &lastComp = computerChain.back();
+  return StandardOutput(lastComp, outputCharsIn);
 }

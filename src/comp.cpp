@@ -1,4 +1,5 @@
 #include <cstring>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -21,6 +22,10 @@ int main(int argc, const char* argv[]) {
   if (interactivieMode) {
     InteractiveMode::startInteractiveMode(getFirstFilename());
   } else {
+    if (filenames.empty()) {
+      cout << "There were no files specified. Aborting.";
+      exit(1);
+    }
     NoninteractiveMode mode = NoninteractiveMode(filenames, outputChars);
     mode.run();
   }

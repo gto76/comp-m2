@@ -16,24 +16,19 @@ using namespace std;
 
 class Cpu {
   public:
-    Cpu(Ram *ramIn) : ram(ramIn) { }
-    // INTERFACE
+    Cpu(Ram &ramIn) : ram(ramIn) { }
     bool step();
+    void reset();
+    Instruction getInstruction();
     vector<bool> getRegister();
     vector<bool> getPc();
-    vector<bool> getInstructionCode();
-    int getInstructionCodeInt();
     int getCycle();
-    Instruction getInstruction();
-    void reset();
 
   private:
-    Ram *ram;
-    // STATE
+    Ram &ram;
     vector<bool> reg = vector<bool>(WORD_SIZE);
     vector<bool> pc = vector<bool>(ADDR_SIZE);
     int cycle = 0;
-    vector<bool> getInstructionWord();
 };
 
 #endif

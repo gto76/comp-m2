@@ -15,7 +15,7 @@ class Computer : public ProvidesOutput {
              void (*sleepAndCheckForKeyIn)(void))
         : id(idIn),
           ram(Ram(inputIn)), 
-          cpu(Cpu(&ram)),
+          cpu(Cpu(ram)),
           printState(printStateIn),
           sleepAndCheckForKey(sleepAndCheckForKeyIn) { }
     vector<bool> getOutput();
