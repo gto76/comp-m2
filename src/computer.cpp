@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "comp.hpp"
 #include "cpu.hpp"
 #include "ram.hpp"
 

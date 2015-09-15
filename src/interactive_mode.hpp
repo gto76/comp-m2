@@ -6,11 +6,12 @@
 using namespace std;
 
 // Whether esc was pressed during execution.
-extern bool executionCanceled;
+//extern bool executionCanceled;
 
 class InteractiveMode {
   public:
     static void startInteractiveMode(string filename);
+    // static bool executionCanceled;
 };
 
 #endif

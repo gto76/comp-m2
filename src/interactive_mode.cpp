@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "comp.hpp"
 #include "computer.hpp"
 #include "cursor.hpp"
 #include "drawing3D.hpp"
@@ -66,7 +67,7 @@ Printer printer = Printer(computer);
 Cursor cursor = Cursor(computer.ram);
 
 // Whether esc was pressed during execution.
-// executionCanceled= false;
+bool executionCanceled = false;
 // Filename.
 string loadedFilename;
 // Number of executions.

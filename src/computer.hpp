@@ -25,7 +25,7 @@ class Computer : public ProvidesOutput {
     Ram ram;
     Cpu cpu;
     // Cycle counter.
-    bool executionCanceled = false;
+    // bool executionCanceled = false;
     int executionCounter = 0;
 
   private:
