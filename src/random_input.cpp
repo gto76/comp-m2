@@ -2,6 +2,6 @@
 
 using namespace std;
 
-string RandomInput::getOutput() {
+vector<bool> RandomInput::getOutput() {
   return Util::getRandomWord();  
 }

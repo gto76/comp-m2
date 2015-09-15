@@ -4,72 +4,107 @@
 #include <string>
 #include <vector>
 
+#include "computer.hpp"
+#include "cursor.hpp"
+#include "drawing3D.hpp"
+#include "drawing3Db.hpp"
+#include "drawing2D.hpp"
+#include "load.hpp"
+#include "output.hpp"
+#include "printer.hpp"
+#include "random_input.hpp"
+#include "renderer.hpp"
+#include "view.hpp"
+
 using namespace std;
 
 class InteractiveMode {
   public:
-    InteractiveMode(string filenameIn) 
-        : view3d(View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D)),
-          view3db(View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B)),
-          view2d(View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D)),
-          selectedView(&view3d),
-          computer(getComputer(filenameIn)),
-          printer(Printer(computer)),
-          cursor(Cursor(computer.ram)),
-          renderer(printer, computer.ram, computer.cpu, cursor, selectedView) { }
-    void start();
+    InteractiveMode(string filenameIn) {
+        // : view3d(View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D)),
+        //   // view3db(View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B)),
+        //   view2d(View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D)),
+        //   selectedView(&view3d),
+        //   computer(getComputer(filenameIn)),
+        //   printer(Printer(computer)),
+        //   cursor(Cursor(computer.ram)) {  
+        view3d = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
+        view3db = View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B); 
+        view2d = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
+        selectedView = &view3d;
+
+        static Ram ram = Ram(input);
+        Load::fillRamWithFile(filenameIn.c_str(), ram);
+        computer = Computer(0, ram, redrawScreen, sleepAndCheckForKey);
+
+        // computer = getComputer(filenameIn);
+        printer = Printer(computer);
+        cursor = Cursor(computer.ram);
+
+        // Whether esc was pressed during execution.
+        executionCanceled = false;
+        // Filename.
+        loadedFilename = filenameIn;
+        // Number of executions.
+        executionCounter = 0;
+        // Whether next key should be read as a char whose value shall thence be
+        // inserted into ram.
+        insertChar = false;
+        insertNumber = false;
+        shiftPressed = false;
+    }
+    static void start();
 
   private:
-    const View view3d;
-    const View view3db;
-    const View view2d;
-    View *selectedView;
-    const RandomInput input;
-    const Computer computer;
-    const Printer printer;
-    const Cursor cursor;
-    const Renderer renderer;
+    static View view3d;
+    static View view3db;
+    static View view2d;
+    static View *selectedView;
+    static RandomInput input;
+    static Computer computer;
+    static Printer printer;
+    static Cursor cursor;
 
     // Whether esc was pressed during execution.
-    bool executionCanceled = false;
+    static bool executionCanceled;
     // Filename.
-    string loadedFilename;
+    static string loadedFilename;
     // Number of executions.
-    int executionCounter = 0;
+    static int executionCounter;
     // Saved state of a ram. Loaded after execution ends.
-    map<AddrSpace, vector<vector<bool>>> savedRamState;
+    static map<AddrSpace, vector<vector<bool>>> savedRamState;
     // Whether next key should be read as a char whose value shall thence be
     // inserted into ram.
-    bool insertChar = false;
-    bool insertNumber = false;
-    vector<int> digits;
-    bool shiftPressed = false;
+    static bool insertChar;
+    static bool insertNumber;
+    static vector<int> digits;
+    static bool shiftPressed ;
 
-    Computer getComputer(string filename);
+    //static Computer getComputer(string filename);
 
     // MAIN
-    void selectView();
-    void prepareOutput();
-    void drawScreen();
+    static void selectView();
+    static void prepareOutput();
+    static void drawScreen();
     // EXECUTION MODE
-    void run();
-    void exec();
-    void sleepAndCheckForKey();
+    static void run();
+    static void exec();
+    static void sleepAndCheckForKey();
     // EDIT MODE
-    void userInput();
-    void isertCharIntoRam(char c);
-    void processInputWithShift(char c);
-    bool insertNumberIntoRam(char c);
-    void engageInsertCharMode();
-    void engageInsertNumberMode();
-    void switchDrawing();
+    static void userInput();
+    static void isertCharIntoRam(char c);
+    static void processInputWithShift(char c);
+    static bool insertNumberIntoRam(char c);
+    static void engageInsertCharMode();
+    static void engageInsertNumberMode();
+    static void switchDrawing();
     // SAVE
-    void saveRamToNewFile();
-    void saveRamToCurrentFile();
-    string getFreeFileName();
-    void saveRamToFile(string filename);
+    static void saveRamToNewFile();
+    static void saveRamToCurrentFile();
+    static string getFreeFileName();
+    static void saveRamToFile(string filename);
     // KEY READER
-    char readStdin(bool drawCursor);
+    static char readStdin(bool drawCursor);
 };
 
 #endif

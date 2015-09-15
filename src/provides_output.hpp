@@ -2,12 +2,14 @@
 #define PROVIDES_OUTPUT_H
 
 #include <string>
+#include <vector>
 
 using namespace std;
 
 class ProvidesOutput {
-  virtual ~ProvidesOutput() {}
-  virtual string getOutput() const = 0;
+  public:
+    virtual ~ProvidesOutput() {}
+    virtual vector<bool> getOutput() = 0;  // const = 0;
 };
 
 #endif

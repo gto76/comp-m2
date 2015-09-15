@@ -5,9 +5,9 @@
 
 using namespace std;
 
-class PipeInput : public virtual ProvidesOutput {
+class PipeInput : public ProvidesOutput {
   public:
-    virtual string getOutput() const;
+    vector<bool> getOutput();
 };
 
 #endif

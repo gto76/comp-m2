@@ -1,18 +1,25 @@
 #include "interactive_mode.hpp"
 
+#include <cstring>
 #include <string>
 
 #include "computer.hpp"
 #include "load.hpp"
+#include "output.hpp"
 #include "ram.hpp"
 
 using namespace std;
 
-Computer InteractiveMode::getComputer(string filename) {
-  Ram ram = Ram(input);
-  Load::fillRamWithFile(filename, ram);
-  return Computer(0, ram, redrawScreen, sleepAndCheckForKey);
+extern "C" {
+  extern volatile sig_atomic_t pleaseExit;
+  void setEnvironment();
 }
+
+// Computer InteractiveMode::getComputer(string filename) {
+//   Ram ram = Ram(input);
+//   Load::fillRamWithFile(filename.c_str(), ram);
+//   return Computer(0, ram, redrawScreen, sleepAndCheckForKey);
+// }
 
 ////////////////////
 
@@ -29,9 +36,9 @@ void InteractiveMode::start() {
 void InteractiveMode::selectView() {
   const char* term = std::getenv("TERM");
   if (strcmp(term, "linux") == 0) {
-    selectedView = &VIEW_3D_B;
+    selectedView = &view3db;
   } else if (strcmp(term, "rxvt") == 0) {
-    selectedView = &VIEW_2D;
+    selectedView = &view2d;
   }
 }
 
@@ -45,7 +52,8 @@ void InteractiveMode::prepareOutput() {
 }
 
 void InteractiveMode::drawScreen() {
-  buffer = Renderer::renderState(printer, ram, cpu, cursor, *selectedView);
+  vector<vector<string>> buffer = Renderer::renderState(printer, ram, cpu, 
+                                                        cursor, *selectedView);
   int i = 0;
   for (vector<string> line : buffer) {
     replaceLine(line, i++);
@@ -295,12 +303,12 @@ void InteractiveMode::engageInsertNumberMode() {
 }
 
 void InteractiveMode::switchDrawing() {
-  if (*selectedView == VIEW_3D) {
-    selectedView = &VIEW_3D_B;
-  } else if (*selectedView == VIEW_3D_B) {
-    selectedView = &VIEW_2D;
+  if (*selectedView == view3d) {
+    selectedView = &view3db;
+  } else if (*selectedView == view3db) {
+    selectedView = &view2d;
   } else {
-    selectedView = &VIEW_3D;
+    selectedView = &view3d;
   }
   prepareOutput();
   clearScreen();

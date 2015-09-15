@@ -4,17 +4,18 @@
 #include <string>
 #include <vector>
 
+#include "provides_output.hpp"
+
 using namespace std;
 
 class Printer {
   public:
-    Printer(ProvidesOutput inputIn) 
-        : input(inputIn) { }
+    Printer(ProvidesOutput &inputIn) : input(inputIn) { }
     void run();
+    string getPrinterOutput();
+
   private:
-    // const bool interactiveMode;
-    // const bool outputChars;
-    const ProvidesOutput input;
+    ProvidesOutput &input;
     string output = "";
     string printerOutput;
     bool printerOutputUpdated = false;
@@ -22,7 +23,6 @@ class Printer {
     void print(vector<bool> sIn);
     void printEmptyLine();
     string getOutput();
-    string getPrinterOutput();
     void clear();
     string renderPrinterOutput();
 };

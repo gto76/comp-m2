@@ -18,17 +18,24 @@ vector<Computer> NoninteractiveMode::getComputerChain(vector<string> filenames) 
   int i = 0;
   // for all filenames
   for (string filename : filenames) {
-    ProvidesOutput predecesor;
-    // if computer is first
-    if (i == 0) {
-      predecesor = input;
-    } else {
-      predecesor = computerChain.back();
-    }
-    Ram ram = Ram(predecesor);
-    Load::fillRamWithFile(filename, ram);  
+    Ram ram = getRamFor(i == 0);
+    Load::fillRamWithFile(filename.c_str(), ram);  
     Computer computer = Computer(i, ram, NULL, NULL);
     computerChain.push_back(computer);
   }
   return computerChain;
+}
+
+Ram NoninteractiveMode::getRamFor(bool firstComputer) {
+  if (firstComputer) {
+    return Ram(input);
+  } else {
+    Computer predecesor = computerChain.back();
+    return Ram(predecesor);
+  }
+}
+
+StandardOutput NoninteractiveMode::getStandardOutput(bool outputCharsIn) {    
+  Computer lastComp = computerChain.back();
+  return StandardOutput(computerChain.back(), outputCharsIn);
 }

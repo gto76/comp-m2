@@ -9,20 +9,21 @@
 
 using namespace std;
 
-class Computer : public virtual ProvidesOutput {
+class Computer : public ProvidesOutput {
   public:
     Computer(int idIn, Ram ramIn, void (*printStateIn)(void),
              void (*sleepAndCheckForKeyIn)(void))
-        : ram(ramIn), 
-          id(idIn),
-          cpu(Cpu(&ram))
+        : id(idIn),
+          ram(ramIn), 
+          cpu(Cpu(&ram)),
           printState(printStateIn),
           sleepAndCheckForKey(sleepAndCheckForKeyIn) { }
-    virtual vector<bool> getOutput() const;
-    const int id;
+    vector<bool> getOutput();
+
+    int id;
     // Main components.
-    const Ram ram;
-    const Cpu cpu;
+    Ram ram;
+    Cpu cpu;
     // Cycle counter.
     bool executionCanceled = false;
     int executionCounter = 0;

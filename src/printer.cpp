@@ -11,7 +11,7 @@ using namespace std;
 void Printer::run() {
   while (1) {
     vector<bool> out = input.getOutput();
-    if (out == { }) {
+    if (out.empty()) {
       printEmptyLine();
       return;
     } else {
@@ -27,22 +27,8 @@ void Printer::run() {
  * add the decimal representation.
  */
 void Printer::print(vector<bool> wordIn) {
-  if (interactivieMode) {
-    output += Util::getStringWithFormatedInt(wordIn);
-    printerOutputUpdated = false;
-  } else {
-    if (Util::outputIsPiped()) {
-      cout << Util::getString(wordIn) + "\n";
-    } else {
-      if (outputChars) {
-        char c = (char)Util::getInt(wordIn);
-        //cerr << "outputing: " << c << "\n";
-        cout << c;
-      } else {
-        cout << Util::getStringWithFormatedInt(wordIn);
-      }
-    }
-  }
+  output += Util::getStringWithFormatedInt(wordIn);
+  printerOutputUpdated = false;
 }
 
 void Printer::printEmptyLine() {

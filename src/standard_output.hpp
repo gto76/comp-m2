@@ -8,12 +8,12 @@ using namespace std;
 
 class StandardOutput {
   public:
-    StandardOutput(ProvidesOutput inputIn, bool outputCharsIn) 
+    StandardOutput(ProvidesOutput &inputIn, bool outputCharsIn) 
         : input(inputIn),
           outputChars(outputCharsIn) { }
     void run();
   private:
-    const ProvidesOutput input;
+    const ProvidesOutput &input;
     const bool outputChars;
 };
 

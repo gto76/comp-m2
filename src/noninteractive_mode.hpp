@@ -4,21 +4,27 @@
 #include <string>
 #include <vector>
 
+#include "computer.hpp"
+#include "pipe_input.hpp"
+#include "standard_output.hpp"
+
 using namespace std;
 
 class NoninteractiveMode {
   public:
     NoninteractiveMode(vector<string> filenamesIn, bool outputCharsIn) 
-        : computerChain(getComputerChain(filenamesIn),
-          output(computerChain.back(), outputCharsIn) { }
+        : computerChain(getComputerChain(filenamesIn)),
+          output(getStandardOutput(outputCharsIn)) { }
     void run();
 
   private:
-    const PipeInput input;
-    const vector<computer> computerChain;
-    const StandardOutput output;
+    PipeInput input;
+    vector<Computer> computerChain;
+    StandardOutput output;
 
     vector<Computer> getComputerChain(vector<string> filenames);
+    Ram getRamFor(bool firstComputer);
+    StandardOutput getStandardOutput(bool outputCharsIn);
 };
 
 #endif

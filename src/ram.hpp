@@ -7,12 +7,13 @@
 #include "addr_space.hpp"
 #include "address.hpp"
 #include "const.hpp"
+#include "provides_output.hpp"
 
 using namespace std;
 
 class Ram {
   public:
-    Ram(ProvidesOutput inputIn) 
+    Ram(ProvidesOutput &inputIn) 
         : input(inputIn) {
       // Initializes the state, one per address space.
       state[CODE] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
@@ -28,7 +29,7 @@ class Ram {
     string getString() const;
 
   private:
-    const ProvidesOutput input;
+    ProvidesOutput &input;
 
     vector<bool> getLastAddress(AddrSpace addrSpace) const;
     vector<bool> getInput() const;
