@@ -17,7 +17,7 @@ vector<bool> Computer::getOutput() {
       sleepAndCheckForKey();
     }
     if (!shouldContinue) {
-      exit(id);
+      exit(0);
     }
     if (ram.outputPending) {
       ram.outputPending = false;

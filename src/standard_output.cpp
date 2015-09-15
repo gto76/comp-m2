@@ -9,7 +9,7 @@ using namespace std;
 
 void StandardOutput::run() {
   while (1) {
-    vector<bool> out = input.getOutput();
+    vector<bool> out = input->getOutput();
     if (out.empty()) {
       return;
     } else {

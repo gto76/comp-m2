@@ -17,6 +17,7 @@ using namespace std;
 class Cpu {
   public:
     Cpu(Ram &ramIn) : ram(ramIn) { }
+    
     bool step();
     void reset();
     Instruction getInstruction();

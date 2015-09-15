@@ -11,21 +11,23 @@ using namespace std;
 
 class Computer : public ProvidesOutput {
   public:
-    Computer(int idIn, ProvidesOutput &inputIn, void (*printStateIn)(void),
-             void (*sleepAndCheckForKeyIn)(void))
-        : id(idIn),
-          ram(Ram(inputIn)), 
+    Computer()
+        : ram(Ram()),
+          cpu(Cpu(ram)),
+          printState(NULL),
+          sleepAndCheckForKey(NULL) { }
+    Computer(void (*printStateIn)(void), void (*sleepAndCheckForKeyIn)(void))
+        : ram(Ram()), 
           cpu(Cpu(ram)),
           printState(printStateIn),
           sleepAndCheckForKey(sleepAndCheckForKeyIn) { }
+    
     vector<bool> getOutput();
 
-    int id;
     // Main components.
     Ram ram;
     Cpu cpu;
     // Cycle counter.
-    // bool executionCanceled = false;
     int executionCounter = 0;
 
   private:

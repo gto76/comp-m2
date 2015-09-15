@@ -62,7 +62,7 @@ View view3db = View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B);
 View view2d = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
 View *selectedView = &view3d;
 RandomInput input;
-Computer computer = Computer(0, input, redrawScreen, sleepAndCheckForKey);
+Computer computer = Computer(redrawScreen, sleepAndCheckForKey);
 Printer printer = Printer(computer);
 Cursor cursor = Cursor(computer.ram);
 
@@ -86,6 +86,8 @@ bool shiftPressed = false;
 //////////////////////
 
 void InteractiveMode::startInteractiveMode(string filename) {
+  // TODO cleanup
+  computer.ram.input = &input;
   executionCanceled = false;
   if (filename != "") {
     Load::fillRamWithFile(filename.c_str(), computer.ram);

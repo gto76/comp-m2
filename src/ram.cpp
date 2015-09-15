@@ -33,7 +33,7 @@ vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
             "invalid address");
     exit(4);
   } else {
-    return input.getOutput(); //Ram::getInput();
+    return input->getOutput();
   }
 }
 

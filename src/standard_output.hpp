@@ -10,12 +10,13 @@ using namespace std;
 
 class StandardOutput {
   public:
-    StandardOutput(ProvidesOutput &inputIn, bool outputCharsIn) 
-        : input(inputIn),
-          outputChars(outputCharsIn) { }
+    StandardOutput(bool outputCharsIn) 
+        : outputChars(outputCharsIn) { }
     void run();
+
+    ProvidesOutput *input = NULL;
+    
   private:
-    ProvidesOutput &input;
     const bool outputChars;
     void printBool(vector<bool> wordIn);
 };
