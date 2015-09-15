@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "provides_output.hpp"
+
 using namespace std;
 
 class StandardOutput {
@@ -13,8 +15,9 @@ class StandardOutput {
           outputChars(outputCharsIn) { }
     void run();
   private:
-    const ProvidesOutput &input;
+    ProvidesOutput &input;
     const bool outputChars;
+    void printBool(vector<bool> wordIn);
 };
 
 #endif

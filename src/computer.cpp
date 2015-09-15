@@ -19,8 +19,9 @@ vector<bool> Computer::getOutput() {
       exit(id);
     }
     if (ram.outputPending) {
-      ram.outputPendint = false;
+      ram.outputPending = false;
       return ram.output;
     }
   }
+  return { };
 }

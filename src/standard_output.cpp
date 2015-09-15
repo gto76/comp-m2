@@ -7,7 +7,18 @@
 
 using namespace std;
 
-void printBool(vecot<bool> word) {
+void StandardOutput::run() {
+  while (1) {
+    vector<bool> out = input.getOutput();
+    if (out.empty()) {
+      return;
+    } else {
+      printBool(out);
+    }
+  }
+}
+
+void StandardOutput::printBool(vector<bool> wordIn) {
   if (Util::outputIsPiped()) {
     cout << Util::getString(wordIn) + "\n";
   } else {
@@ -16,17 +27,6 @@ void printBool(vecot<bool> word) {
       cout << c;
     } else {
       cout << Util::getStringWithFormatedInt(wordIn);
-    }
-  }
-}
-
-void StandardOutput::run() {
-  while (1) {
-    vector<bool> out = input.getOutput();
-    if (out == { }) {
-      return;
-    } else {
-      printBool(out);
     }
   }
 }

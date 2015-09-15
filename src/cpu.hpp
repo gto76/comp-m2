@@ -16,7 +16,7 @@ using namespace std;
 
 class Cpu {
   public:
-    Cpu(const Ram *ramIn) : ram(ramIn) { }
+    Cpu(Ram *ramIn) : ram(ramIn) { }
     // INTERFACE
     bool step();
     vector<bool> getRegister();
@@ -28,7 +28,7 @@ class Cpu {
     void reset();
 
   private:
-    const Ram *ram;
+    Ram *ram;
     // STATE
     vector<bool> reg = vector<bool>(WORD_SIZE);
     vector<bool> pc = vector<bool>(ADDR_SIZE);

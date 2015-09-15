@@ -28,7 +28,7 @@ extern "C" {
 }
 
 // MAIN
-void start();
+void startInteractiveMode(string filename);
 void selectView();
 void prepareOutput();
 void drawScreen();
@@ -84,7 +84,7 @@ bool shiftPressed = false;
 //////// MAIN ////////
 //////////////////////
 
-void start(string filename) {
+void InteractiveMode::startInteractiveMode(string filename) {
   executionCanceled = false;
   if (filename != "") {
     Load::fillRamWithFile(filename.c_str(), computer.ram);
