@@ -1,5 +1,6 @@
 #include "computer.hpp"
 
+#include <stdlib.h>
 #include <vector>
 
 #include "comp.hpp"

@@ -1,5 +1,6 @@
 #include "ram.hpp"
 
+#include <stdlib.h>
 #include <string>
 
 #include "const.hpp"
