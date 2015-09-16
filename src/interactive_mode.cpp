@@ -230,6 +230,15 @@ void userInput() {
           saveRamToCurrentFile();
           break;
 
+        // QUIT
+        case 81:   // Q
+          exit(0);
+          break;
+        case 113:  // q
+          saveRamToNewFile();
+          exit(0);
+          break;          
+
         // BASIC MOVEMENT
         case 107:  // k
         case 65:   // A, part of escape seqence of up arrow
