@@ -433,7 +433,13 @@ string getFreeFileName() {
 }
 
 string getGenericFileName(int index) {
-  return SAVE_FILE_NAME + to_string(index) + '.' + FILE_EXTENSION;
+  string fileNumber;
+  if (index > 9) {
+    fileNumber = to_string(index);
+  } else {
+    fileNumber = "0" + to_string(index);
+  }
+  return SAVE_FILE_NAME + fileNumber + '.' + FILE_EXTENSION;
 }
 
 void saveRamToFile(string fileName) {

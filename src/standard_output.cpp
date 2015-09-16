@@ -43,7 +43,7 @@ void StandardOutput::printChar(char c) {
 void StandardOutput::checkBuffer() {
   if (buffer.back() == '\n') {
     string line = string(buffer.begin(), buffer.end());
-    cout << "BUF" << line;
+    cout << line;
     buffer = { };
   }
 }

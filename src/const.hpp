@@ -10,7 +10,7 @@ using namespace std;
 // Miliseconds between cycles (when run in interactive mode).
 const int FQ = 333;
 
-const string SAVE_FILE_NAME = "saved-ram-";
+const string SAVE_FILE_NAME = "punchcard-";
 const string FILE_EXTENSION = "cm2";
 
 const string LIGHTBULB_ON_3D = u8"\u2737";
