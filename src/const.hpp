@@ -11,6 +11,7 @@ using namespace std;
 const int FQ = 333;
 
 const string SAVE_FILE_NAME = "saved-ram-";
+const string FILE_EXTENSION = "cm2";
 
 const string LIGHTBULB_ON_3D = u8"\u2737";
 const string LIGHTBULB_OFF_3D = u8"\u00b7"; 

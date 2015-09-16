@@ -49,6 +49,7 @@ void switchDrawing();
 void saveRamToNewFile();
 void saveRamToCurrentFile();
 string getFreeFileName();
+string getGenericFileName(int index);
 void saveRamToFile(string filename);
 // KEY READER
 char readStdin(bool drawCursor);
@@ -331,7 +332,7 @@ void userInput() {
         case 120:  // x
           clipboard = cursor.getWord();
           cursor.eraseByte();
-          cursor.setBitIndex(0);
+          // cursor.setBitIndex(0);
           break;
         case 121:  // y
         case 99:   // c
@@ -427,8 +428,12 @@ void saveRamToCurrentFile() {
 
 string getFreeFileName() {
   int i = 0;
-  while (Util::fileExists(SAVE_FILE_NAME + to_string(++i)));
-  return SAVE_FILE_NAME + to_string(i);
+  while (Util::fileExists(getGenericFileName(++i)));
+  return getGenericFileName(i);
+}
+
+string getGenericFileName(int index) {
+  return SAVE_FILE_NAME + to_string(index) + '.' + FILE_EXTENSION;
 }
 
 void saveRamToFile(string fileName) {

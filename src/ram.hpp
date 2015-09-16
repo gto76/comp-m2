@@ -35,7 +35,6 @@ class Ram {
     vector<bool> getInput() const;
     void saveWord(AddrSpace addrSpace, int address, vector<bool> wordIn);
     void assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn);
-    // string getString(AddrSpace addrSpace) const;
 };
 
 #endif

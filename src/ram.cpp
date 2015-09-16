@@ -71,21 +71,6 @@ void Ram::assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn) {
 string Ram::getString() const {
   return stateToString(state);
 }
-//   string out;
-//   out += "# Code:\n";
-//   out += getString(CODE);
-//   out += "\n# Data:\n";
-//   out += getString(DATA);
-//   return out;
-// }
-
-// string Ram::getString(AddrSpace addrSpace) const {
-//   string out;
-//   for (vector<bool> word : state.at(addrSpace)) {
-//     out += Util::getString(word) + '\n';
-//   }
-//   return out;
-// }
 
 string Ram::stateToString(map<AddrSpace, vector<vector<bool>>> state) {
   string out;
