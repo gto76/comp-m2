@@ -10,6 +10,8 @@ using namespace std;
 
 bool inputIsNotPiped();
 void processArguments(int argc, const char* argv[]);
+void processFilename(string filename);
+void loadAllFilesFromDir(string dirname);
 string getFirstFilename();
 
 vector<string> filenames;
@@ -43,7 +45,24 @@ void processArguments(int argc, const char* argv[]) {
     if (strcmp(argv[i], "-c") == 0) {
       outputChars = true;
     } else {
-      filenames.push_back(argv[i]);
+      processFilename(argv[i]);
+    }
+  }
+}
+
+void processFilename(string filename) {
+  if (Util::isADir(filename)) {
+    loadAllFilesFromDir(filename);
+  } else {
+    filenames.push_back(filename);
+  }
+}
+
+void loadAllFilesFromDir(string dirname) {
+  vector<string> filesInDir = Util::getFilesInDirectory(dirname);
+  for (string file : filesInDir) {
+    if (Util::endsWith(file, ".cm2")) {
+      filenames.push_back(file);
     }
   }
 }

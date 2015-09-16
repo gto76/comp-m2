@@ -1,11 +1,14 @@
 #include "util.hpp"
 
+#include <dirent.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -343,6 +346,55 @@ size_t Util::getSizeOfLargestElement(vector<vector<string>> lines) {
     maxSize = std::max(maxSize, line.size());
   }
   return maxSize;
+}
+
+/* 
+ * Returns a list of files in a directory (except the ones that begin with a
+ * dot)
+ */
+vector<string> Util::getFilesInDirectory(const string &directory) {
+  DIR *dir;
+  class dirent *ent;
+  class stat st;
+  vector<string> out;
+  dir = opendir(directory.c_str());
+  while ((ent = readdir(dir)) != NULL) {
+    const string file_name = ent->d_name;
+    const string full_file_name = directory + "/" + file_name;
+    if (file_name[0] == '.') {
+      continue;
+    }
+    if (stat(full_file_name.c_str(), &st) == -1) {
+      continue;
+    }
+    const bool is_directory = (st.st_mode & S_IFDIR) != 0;
+    if (is_directory) {
+      continue;
+    }
+    out.push_back(full_file_name);
+  }
+  closedir(dir);
+  sort(out.begin(), out.end());
+  return out;
+}
+
+bool Util::endsWith(string const &fullString, string const &ending) {
+  if (fullString.length() >= ending.length()) {
+    int lengthDelta = fullString.length() - ending.length();
+    return fullString.compare(lengthDelta, ending.length(), ending) == 0;
+  } else {
+    return false;
+  }
+}
+
+bool Util::isADir(string filename) {
+  struct stat s;
+  if (stat(filename.c_str(), &s) == 0) {
+    return s.st_mode & S_IFDIR;
+  } else {
+    cout << "Could not open file " << filename << "." << endl;
+    exit(1);
+  }
 }
 
 

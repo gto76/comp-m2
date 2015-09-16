@@ -47,6 +47,9 @@ class Util {
     static vector<bool> bitwiseNot(vector<bool> val);
     static vector<string> stringToVecOfString(string stringIn);
     static size_t getSizeOfLargestElement(vector<vector<string>> lines);
+    static vector<string> getFilesInDirectory(const string &directory);
+    static bool endsWith(string const &fullString, string const &ending);
+    static bool isADir(string filename);
 
   private:
     static vector<bool> getBool(int num, int length);
