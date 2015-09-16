@@ -63,7 +63,7 @@ View view2d = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
 View *selectedView = &view3d;
 RandomInput input;
 Computer computer = Computer(redrawScreen, sleepAndCheckForKey);
-Printer printer = Printer(computer);
+Printer printer = Printer(computer, redrawScreen, sleepAndCheckForKey);
 Cursor cursor = Cursor(computer.ram);
 
 // Whether esc was pressed during execution.

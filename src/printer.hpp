@@ -10,12 +10,18 @@ using namespace std;
 
 class Printer {
   public:
-    Printer(ProvidesOutput &inputIn) : input(inputIn) { }
+    Printer(ProvidesOutput &inputIn, void (*printStateIn)(void),
+            void (*sleepAndCheckForKeyIn)(void)) 
+        : input(inputIn),
+          printState(printStateIn),
+          sleepAndCheckForKey(sleepAndCheckForKeyIn) { }
     void run();
     string getPrinterOutput();
 
   private:
     ProvidesOutput &input;
+    void (*printState)(void);
+    void (*sleepAndCheckForKey)(void);
     string output = "";
     string printerOutput;
     bool printerOutputUpdated = false;

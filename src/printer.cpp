@@ -16,6 +16,8 @@ void Printer::run() {
       return;
     } else {
       print(out);
+      printState();
+      sleepAndCheckForKey();
     }
   }
 }

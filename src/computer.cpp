@@ -10,6 +10,10 @@
 vector<bool> Computer::getOutput() {
   while(!executionCanceled) {
     bool shouldContinue = cpu.step();
+    if (ram.outputPending) {
+      ram.outputPending = false;
+      return ram.output;
+    }
     if (printState != NULL) {
       printState();
       if (!shouldContinue) {
@@ -19,10 +23,6 @@ vector<bool> Computer::getOutput() {
     }
     if (!shouldContinue) {
       exit(0);
-    }
-    if (ram.outputPending) {
-      ram.outputPending = false;
-      return ram.output;
     }
   }
   return { };
