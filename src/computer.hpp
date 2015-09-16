@@ -27,8 +27,6 @@ class Computer : public ProvidesOutput {
     // Main components.
     Ram ram;
     Cpu cpu;
-    // Cycle counter.
-    int executionCounter = 0;
 
   private:
     // Print state function pointer.

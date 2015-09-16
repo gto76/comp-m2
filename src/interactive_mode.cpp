@@ -88,7 +88,6 @@ vector<bool> clipboard = EMPTY_WORD;
 //////////////////////
 
 void InteractiveMode::startInteractiveMode(string filename) {
-  // TODO cleanup
   computer.ram.input = &input;
   executionCanceled = false;
   if (filename != "") {
@@ -101,7 +100,6 @@ void InteractiveMode::startInteractiveMode(string filename) {
   clearScreen();
   redrawScreen();
   userInput();
-  // printer.run();
 }
 
 void selectView() {
@@ -141,9 +139,6 @@ void drawScreen() {
  * 'esc', it loads back the saved state of the ram, and resets the cpu.
  */
 void run() {
-  // if (executionCounter > 0) {
-  //   printer.printEmptyLine();
-  // }
   savedRamState = computer.ram.state;
   printer.run();
   // If 'esc' was pressed then it doesn't wait for keypress at the end.
@@ -178,6 +173,15 @@ void sleepAndCheckForKey() {
     keyCode = readStdin(false);
     // If esc key was pressed.
     if (keyCode == 27) {
+      executionCanceled = true;
+    }
+    // If s or S was pressed saves to file.
+    if (keyCode == 115) {
+      saveRamToNewFile();
+      executionCanceled = true;
+    }
+    if (keyCode == 83) {
+      saveRamToCurrentFile();
       executionCanceled = true;
     }
   }
@@ -429,7 +433,12 @@ string getFreeFileName() {
 
 void saveRamToFile(string fileName) {
   ofstream fileStream(fileName);
-  fileStream << computer.ram.getString();
+  bool computerRunning = computer.cpu.getCycle() != 0;
+  if (computerRunning) {
+    fileStream << Ram::stateToString(savedRamState);
+  } else {
+    fileStream << computer.ram.getString();
+  }
   fileStream.close();
 }
 

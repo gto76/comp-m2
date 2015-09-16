@@ -8,12 +8,6 @@
 
 using namespace std;
 
-// Ram::Ram() {
-//   // Initializes the state, one per address space.
-//   state[CODE] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
-//   state[DATA] = vector<vector<bool>>(RAM_SIZE, vector<bool>(WORD_SIZE));
-// }
-
 ////// GET //////
 
 vector<bool> Ram::get(Address adr) const {
@@ -37,18 +31,6 @@ vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
     return input->getOutput();
   }
 }
-
-/*
- * Returns random value if last address is passed (reserved for output),
- * or reads from pipe if also input is piped in.
- */
-// vector<bool> Ram::getInput() const {
-//   if (interactivieMode) {
-//     return Util::getRandomWord();  
-//   } else {
-//     return Util::readWordFromPipe();
-//   }
-// }
 
 ////// SET //////
 
@@ -81,25 +63,44 @@ void Ram::assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn) {
   } else {
     output = wordIn;
     outputPending = true;
-    //printer.print(wordIn);
   }
 }
 
 //// GET STRING ////
 
 string Ram::getString() const {
+  return stateToString(state);
+}
+//   string out;
+//   out += "# Code:\n";
+//   out += getString(CODE);
+//   out += "\n# Data:\n";
+//   out += getString(DATA);
+//   return out;
+// }
+
+// string Ram::getString(AddrSpace addrSpace) const {
+//   string out;
+//   for (vector<bool> word : state.at(addrSpace)) {
+//     out += Util::getString(word) + '\n';
+//   }
+//   return out;
+// }
+
+string Ram::stateToString(map<AddrSpace, vector<vector<bool>>> state) {
   string out;
   out += "# Code:\n";
-  out += getString(CODE);
+  out += spaceToString(state.at(CODE));
   out += "\n# Data:\n";
-  out += getString(DATA);
+  out += spaceToString(state.at(DATA));
   return out;
 }
 
-string Ram::getString(AddrSpace addrSpace) const {
+string Ram::spaceToString(vector<vector<bool>> space) {
   string out;
-  for (vector<bool> word : state.at(addrSpace)) {
+  for (vector<bool> word : space) {
     out += Util::getString(word) + '\n';
   }
   return out;
 }
+
