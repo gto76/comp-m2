@@ -646,11 +646,19 @@ void andOrOr(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
 void incOrDec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
               bool isInc) {
   vector<bool> value = ram.get(adr);
-  int intValue;
+  int intValue = Util::getInt(value);
   if (isInc) {
-    intValue = Util::getInt(value) + 1;
+    if (intValue == MAX_VALUE) {
+      intValue = 0;
+    } else {
+      intValue++;
+    }
   } else {
-    intValue = Util::getInt(value) - 1;
+    if (intValue == 0) {
+      intValue = MAX_VALUE;
+    } else {
+      intValue--;
+    }
   }
   ram.set(adr, Util::getBoolByte(intValue));
   reg = Util::getBoolByte(intValue);
