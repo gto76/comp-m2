@@ -80,6 +80,8 @@ bool insertChar = false;
 bool insertNumber = false;
 vector<int> digits;
 bool shiftPressed = false;
+// Copy/paste.
+vector<bool> clipboard = EMPTY_WORD;
 
 //////////////////////
 //////// MAIN ////////
@@ -314,9 +316,15 @@ void userInput() {
           cursor.increaseX();
           break;
         case 120:  // x
+          clipboard = cursor.getWord();
           cursor.eraseByte();
           cursor.setBitIndex(0);
           break;
+        case 121:  // y
+        case 99:   // c
+          clipboard = cursor.getWord();
+        case 112:  // p
+          cursor.setWord(clipboard);
       }
     }
     redrawScreen();
