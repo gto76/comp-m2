@@ -14,9 +14,10 @@ using namespace std;
 
 class NoninteractiveMode {
   public:
-    NoninteractiveMode(vector<string> filenamesIn, bool outputCharsIn) 
+    NoninteractiveMode(vector<string> filenamesIn, bool outputCharsIn,
+                       bool bufferOutput) 
         : computerChain(vector<Computer>(filenamesIn.size())),
-          output(StandardOutput(outputCharsIn)) 
+          output(StandardOutput(outputCharsIn, bufferOutput)) 
     { 
       // Fills rams with contents of files.
       for (size_t i = 0; i < filenamesIn.size(); i++) {

@@ -21,12 +21,29 @@ void StandardOutput::run() {
 void StandardOutput::printBool(vector<bool> wordIn) {
   if (Util::outputIsPiped()) {
     cout << Util::getString(wordIn) + "\n";
+    return;
+  } 
+  if (!outputChars) {
+    cout << Util::getStringWithFormatedInt(wordIn);
+    return;
+  }
+  char c = (char)Util::getInt(wordIn);
+  printChar(c);
+}
+
+void StandardOutput::printChar(char c) {
+  if (bufferOutput) {
+    buffer.push_back(c);
+    checkBuffer();
   } else {
-    if (outputChars) {
-      char c = (char)Util::getInt(wordIn);
-      cout << c;
-    } else {
-      cout << Util::getStringWithFormatedInt(wordIn);
-    }
+    cout << c;
+  }
+}
+
+void StandardOutput::checkBuffer() {
+  if (buffer.back() == '\n') {
+    string line = string(buffer.begin(), buffer.end());
+    cout << "BUF" << line;
+    buffer = { };
   }
 }
