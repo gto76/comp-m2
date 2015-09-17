@@ -1,5 +1,6 @@
 #include "cursor.hpp"
 
+#include <algorithm>
 #include <map>
 #include <tuple>
 #include <vector>
@@ -71,6 +72,13 @@ void Cursor::decreaseY() {
     return;
   }
   setAddr(getAddr() - 1);
+}
+
+void Cursor::goToAddress(Address adr) {
+  initCheck(); 
+  addrSpace = adr.space;
+  setBitIndex(0);
+  setByteIndex(Util::getInt(adr.val));
 }
 
 void Cursor::goToEndOfWord() {
@@ -190,14 +198,84 @@ void Cursor::moveByteDown() {
   increaseY();
 }
 
-void Cursor::goToAddress(Address adr) {
+/*
+ * Retruns whether the operation was successful.
+ */
+bool Cursor::insertByteAndMoveRestDown() {
   initCheck(); 
-  addrSpace = adr.space;
-  setBitIndex(0);
-  setByteIndex(Util::getInt(adr.val));
+  if (addrSpace != CODE) {
+    return false;
+  }
+  bool lastWordIsNotEmpty = ram.state[CODE][RAM_SIZE-1] != EMPTY_WORD;
+  if (lastWordIsNotEmpty) {
+    return false;
+  }
+  vector<Address> addresses = getAddressesOfAllInstructions();
+  Address lastCodeAddress = Address(CODE, Util::getBoolNibb(RAM_SIZE-1));
+  bool includesLastAddress = 
+      find(addresses.begin(), addresses.end(), lastCodeAddress) != 
+      addresses.end();
+  if (includesLastAddress) {
+    return false;
+  }
+  incOrDecAddressesPastTheIndex(getY(), 1);
+  for (int i = RAM_SIZE-1; i > getY(); i--) {
+    ram.state[CODE][i] = ram.state[CODE][i-1];
+  }
+  ram.state[CODE][getY()] = EMPTY_WORD;
+  return true;
+}
+
+/*
+ * Retruns whether the operation was successful.
+ */
+bool Cursor::deleteByteAndMoveRestUp() {
+  initCheck(); 
+  vector<Address> addresses = getAddressesOfAllInstructions();
+  bool includesCurrentAddress = 
+      find(addresses.begin(), addresses.end(), getAddress()) != 
+      addresses.end();
+  if (includesCurrentAddress) {
+    return false;
+  }
+  incOrDecAddressesPastTheIndex(getY(), -1);
+  for (int i = getY(); i < RAM_SIZE-1; i++) {
+    ram.state[CODE][i] = ram.state[CODE][i+1];
+  }
+  ram.state[CODE][RAM_SIZE-1] = EMPTY_WORD;
+  return true;
 }
 
 /////////// PRIVATE //////////
+
+vector<Address> Cursor::getAddressesOfAllInstructions() {
+  vector<Address> out;
+  for (vector<bool> word : ram.state[CODE]) {
+    Instruction inst = Instruction(word, EMPTY_WORD, ram);
+    out.push_back(inst.firstOrderAdr[0]);
+  }
+  return out;
+}
+
+void Cursor::incOrDecAddressesPastTheIndex(int index, int delta) {
+  for (vector<bool> &word : ram.state[CODE]) {
+    Instruction inst = Instruction(word, EMPTY_WORD, ram);
+    Address adr = inst.firstOrderAdr[0];
+    int intVal = Util::getInt(adr.val);
+    if (adr.space == CODE && intVal >= index) {
+      int newVal = intVal + delta;
+      setAddress(word, newVal);
+    }
+  }
+}
+
+void Cursor::setAddress(vector<bool> &word, int val) {
+  vector<bool> boolVal = Util::getBoolNibb(val);
+  word[4] = boolVal[0];
+  word[5] = boolVal[1];
+  word[6] = boolVal[2];
+  word[7] = boolVal[3];
+}
 
 void Cursor::initCheck() {
   if (notInitialized) {

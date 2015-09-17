@@ -29,10 +29,8 @@ class Cursor {
     void increaseY();
     void decreaseX();
     void decreaseY();
-
     void setBitIndex(int bitIndex);
     void setByteIndex(int byteIndex);
-
     void goToAddress(Address adr);
     void goToEndOfWord();
     void goToBeginningOfWord();
@@ -49,6 +47,8 @@ class Cursor {
     void setWord(vector<bool> word);
     void moveByteUp();
     void moveByteDown();
+    bool insertByteAndMoveRestDown();
+    bool deleteByteAndMoveRestUp();
 
   private:
     Ram &ram;
@@ -56,11 +56,13 @@ class Cursor {
     AddrSpace addrSpace = CODE;
     // Selected bit with the cursor.
     map<AddrSpace, map<Axis, int>> cursorPosition;
-
     bool notInitialized = true;
+
+    vector<Address> getAddressesOfAllInstructions();
+    void incOrDecAddressesPastTheIndex(int index, int delta);
+    static void setAddress(vector<bool> &word, int val);
     void initCheck();
     void initialize();
-
     int getBitIndex();
     int getAddr();
     void setAddr(int addr);

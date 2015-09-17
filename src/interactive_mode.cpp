@@ -266,7 +266,7 @@ void userInput() {
           cursor.switchAddressSpace();
           break;
 
-        // ADVANCED MOVEMENT
+        // VIM MOVEMENT
         case 72:   // H (home)
         case 103:  // g
           cursor.setBitIndex(0);
@@ -276,10 +276,16 @@ void userInput() {
           cursor.setBitIndex(WORD_SIZE-1);
           break; 
           break;
-        case 111:  // o
+        case 111: { // o
           cursor.increaseY();
-          cursor.setBitIndex(0);
+          bool success = cursor.insertByteAndMoveRestDown();
+          if (success) {
+            cursor.setBitIndex(0);
+          } else {
+            cursor.decreaseY();
+          }
           break;
+        }
         case 101:  // e
           cursor.goToEndOfWord();
           break;
@@ -308,9 +314,14 @@ void userInput() {
         case 32:   // space
           cursor.switchBit();
           break;
-        case 51:   // 3, part of escape seqence of delete key
-          cursor.eraseByte();
-          break;        
+        case 51: { // 3, part of escape seqence of delete key
+          vector<bool> temp = cursor.getWord();
+          bool success = cursor.deleteByteAndMoveRestUp();
+          if (success) {
+            clipboard = temp;
+          }
+          break;  
+        }      
         case 75:   // K
         case 53:   // 5, part of escape seqence of page up
           cursor.moveByteUp();
@@ -320,7 +331,7 @@ void userInput() {
           cursor.moveByteDown();
           break;
 
-        // ADVANCED MANIPULATION
+        // VIM MANIPULATION
         case 102:  // f
           cursor.setBit(true);
           cursor.increaseX();
@@ -334,11 +345,28 @@ void userInput() {
           cursor.eraseByte();
           // cursor.setBitIndex(0);
           break;
+        case 88: { // X
+          vector<bool> temp = cursor.getWord();
+          bool success = cursor.deleteByteAndMoveRestUp();
+          if (success) {
+            clipboard = temp;
+          }
+          break; 
+        }
         case 121:  // y
         case 99:   // c
           clipboard = cursor.getWord();
+          break;
         case 112:  // p
           cursor.setWord(clipboard);
+          break;
+        case 80: { // P
+          bool success = cursor.insertByteAndMoveRestDown();
+          if (success) {
+            cursor.setWord(clipboard);
+          }
+          break;
+        }
       }
     }
     redrawScreen();
@@ -356,10 +384,12 @@ void isertCharIntoRam(char c) {
 
 void processInputWithShift(char c) {
   shiftPressed = false;
-  if (c == 65) {
+  if (c == 65) {           // A, part of up arrow
     cursor.moveByteUp();
-  } else if (c == 66) {
+  } else if (c == 66) {    // B, part of down arrow
     cursor.moveByteDown();
+  } else if (c == 126) {   // ~, part of insert key (also is 2)
+    cursor.insertByteAndMoveRestDown();
   }
 }
 
