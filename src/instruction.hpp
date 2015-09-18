@@ -17,7 +17,7 @@ class Instruction {
     int const logicIndex;
     SpecificInstruction * const inst;
     vector<Address> const firstOrderAdr;
-    Address const adr;
+    Address adr;
     string const label;
     Instruction(vector<bool> valIn, const vector<bool> &regIn, const Ram &ramIn)
         : val(valIn),

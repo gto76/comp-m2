@@ -10,13 +10,13 @@
 using namespace std;
 
 static void increasePc(vector<bool> &pc);
-static Address getThreeBitAddress(vector<bool> val);
-static void addOrSubtract(Address adr, vector<bool> &reg, Ram &ram, bool add);
+static Address getThreeBitAddress(vector<bool> &val);
+static void addOrSubtract(Address &adr, vector<bool> &reg, Ram &ram, bool add);
 static void shift(vector<bool> &pc, vector<bool> &reg, int delta);
 static bool getRegBit(vector<bool> &reg, int index);
-static void andOrOr(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
+static void andOrOr(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
                     bool isAnd);
-static void incOrDec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
+static void incOrDec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
                      bool isInc);
 
 // READ
@@ -24,16 +24,16 @@ static void incOrDec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
 /*
  * Copies value at the passed address to the register.
  */
-void Read::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Read::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   reg = ram.get(adr);
   increasePc(pc);
 }
 
-vector<Address> Read::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Read::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getSecondNibble(val)) };
 }
 
-Address Read::getAddress(Address firstOrderAdr, const vector<bool> &reg, 
+Address Read::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
                         const Ram &ram) {
   return firstOrderAdr;
 }
@@ -47,16 +47,16 @@ string Read::getLabel() {
 /*
  * Copies value of the register to the passed address.
  */
-void Write::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Write::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   ram.set(adr, reg);
   increasePc(pc);
 }
 
-vector<Address> Write::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Write::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getSecondNibble(val)) };
 }
 
-Address Write::getAddress(Address firstOrderAdr, const vector<bool> &reg, 
+Address Write::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
                           const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -71,16 +71,16 @@ string Write::getLabel() {
  * Adds value at the passed address to the register, and
  * stores result in the register.
  */
-void Add::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Add::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   addOrSubtract(adr, reg, ram, true);
   increasePc(pc);
 }
 
-vector<Address> Add::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Add::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getSecondNibble(val)) };
 }
 
-Address Add::getAddress(Address firstOrderAdr, const vector<bool> &reg, 
+Address Add::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
                         const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -95,16 +95,16 @@ string Add::getLabel() {
  * Subtracts value at the passed address from the register, and
  * stores result in the register.
  */
-void Sub::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Sub::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   addOrSubtract(adr, reg, ram, false);
   increasePc(pc);
 }
 
-vector<Address> Sub::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Sub::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getSecondNibble(val)) };
 }
 
-Address Sub::getAddress(Address firstOrderAdr, const vector<bool> &reg, 
+Address Sub::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
                         const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -118,15 +118,15 @@ string Sub::getLabel() {
 /*
  * Jumps to the passed address.
  */
-void Jump::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Jump::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   pc = adr.val;
 }
 
-vector<Address> Jump::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Jump::getFirstOrderAdr(vector<bool> &val) {
   return { Address(CODE, Util::getSecondNibble(val)) };
 }
 
-Address Jump::getAddress(Address firstOrderAdr, const vector<bool> &reg, 
+Address Jump::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
                          const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -140,7 +140,7 @@ string Jump::getLabel() {
 /*
  * Jumps to passed address if value of the register is 'max'.
  */
-void IfMax::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void IfMax::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   if (Util::getInt(reg) >= MAX_VALUE) {
     pc = adr.val;
   } else {
@@ -148,11 +148,11 @@ void IfMax::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   }
 }
 
-vector<Address> IfMax::getFirstOrderAdr(vector<bool> val) {
+vector<Address> IfMax::getFirstOrderAdr(vector<bool> &val) {
   return { Address(CODE, Util::getSecondNibble(val)) };
 }
 
-Address IfMax::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address IfMax::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                           const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -166,7 +166,7 @@ string IfMax::getLabel() {
 /*
  * Jumps to passed address if value of the register is 'min'.
  */
-void IfMin::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void IfMin::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   if (Util::getInt(reg) <= 0) {
     pc = adr.val;
   } else {
@@ -174,11 +174,11 @@ void IfMin::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   }
 }
 
-vector<Address> IfMin::getFirstOrderAdr(vector<bool> val) {
+vector<Address> IfMin::getFirstOrderAdr(vector<bool> &val) {
   return { Address(CODE, Util::getSecondNibble(val)) };
 }
 
-Address IfMin::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address IfMin::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                           const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -192,15 +192,15 @@ string IfMin::getLabel() {
 /*
  * Jumps to the address stored in register.
  */
-void JumpReg::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void JumpReg::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   pc = adr.val;
 }
 
-vector<Address> JumpReg::getFirstOrderAdr(vector<bool> val) {
+vector<Address> JumpReg::getFirstOrderAdr(vector<bool> &val) {
   return { Address(NONE, FIRST_ADDRESS) };
 }
 
-Address JumpReg::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address JumpReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                             const Ram &ram) {
   return Address(CODE, Util::getSecondNibble(reg));
 }
@@ -215,16 +215,16 @@ string JumpReg::getLabel() {
  * Copies value at the address that is stored in register
  * to the register.
  */
-void ReadReg::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void ReadReg::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   reg = ram.get(adr);
   increasePc(pc);
 }
 
-vector<Address> ReadReg::getFirstOrderAdr(vector<bool> val) {
+vector<Address> ReadReg::getFirstOrderAdr(vector<bool> &val) {
   return { Address(NONE, FIRST_ADDRESS) };
 }
 
-Address ReadReg::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address ReadReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                             const Ram &ram) {
   return Address(DATA, Util::getSecondNibble(reg));
 }
@@ -238,18 +238,18 @@ string ReadReg::getLabel() {
 /*
  * Copies value at the ningth address to the first address.
  */
-void InitializeFirstAddress::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void InitializeFirstAddress::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   vector<bool> value = ram.get(Address(DATA, Util::getBoolNibb(1)));
   ram.set(adr, value);
   reg = value;
   increasePc(pc);
 }
 
-vector<Address> InitializeFirstAddress::getFirstOrderAdr(vector<bool> val) {
+vector<Address> InitializeFirstAddress::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, FIRST_ADDRESS), Address(DATA, Util::getBoolNibb(1)) };
 }
 
-Address InitializeFirstAddress::getAddress(Address firstOrderAdr,
+Address InitializeFirstAddress::getAddress(Address &firstOrderAdr,
                                            const vector<bool> &reg,
                                            const Ram &ram) {
   return firstOrderAdr;  
@@ -264,16 +264,16 @@ string InitializeFirstAddress::getLabel() {
 /*
  * Executes 'not' operation on the value of the register.
  */
-void Not::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Not::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   reg = Util::bitwiseNot(reg);
   increasePc(pc);
 }
 
-vector<Address> Not::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Not::getFirstOrderAdr(vector<bool> &val) {
   return { Address(NONE, FIRST_ADDRESS) };
 }
 
-Address Not::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address Not::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                         const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -287,16 +287,16 @@ string Not::getLabel() {
 /*
  * Shifts bits in the register one spot to the left.
  */
-void ShiftLeft::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
+void ShiftLeft::exec(Address &adr, vector<bool> &pc, vector<bool> &reg,
                      Ram &ram) {
   shift(pc, reg, 1);
 }
 
-vector<Address> ShiftLeft::getFirstOrderAdr(vector<bool> val) {
+vector<Address> ShiftLeft::getFirstOrderAdr(vector<bool> &val) {
   return { Address(NONE, FIRST_ADDRESS) };
 }
 
-Address ShiftLeft::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address ShiftLeft::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                               const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -310,16 +310,16 @@ string ShiftLeft::getLabel() {
 /*
  * Shifts bits in the register one spot to the right.
  */
-void ShiftRight::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
+void ShiftRight::exec(Address &adr, vector<bool> &pc, vector<bool> &reg,
                       Ram &ram) {
   shift(pc, reg, -1);
 }
 
-vector<Address> ShiftRight::getFirstOrderAdr(vector<bool> val) {
+vector<Address> ShiftRight::getFirstOrderAdr(vector<bool> &val) {
   return { Address(NONE, FIRST_ADDRESS) };
 }
 
-Address ShiftRight::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address ShiftRight::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                                const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -334,15 +334,15 @@ string ShiftRight::getLabel() {
  * Executes 'and' operation between register value, and
  * value at first address and writes the result to register.
  */
-void And::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void And::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   andOrOr(adr, pc, reg, ram, true);
 }
 
-vector<Address> And::getFirstOrderAdr(vector<bool> val) {
+vector<Address> And::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getBoolNibb(2)) };
 }
 
-Address And::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address And::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                         const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -357,15 +357,15 @@ string And::getLabel() {
  * Executes 'or' operation between register value, and
  * value at first address and writes the result to register.
  */
-void Or::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Or::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   andOrOr(adr, pc, reg, ram, false);
 }
 
-vector<Address> Or::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Or::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getBoolNibb(3)) };
 }
 
-Address Or::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address Or::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                        const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -380,17 +380,17 @@ string Or::getLabel() {
  * Executes 'xor' operation between register value, and
  * value at the specified address (0-7) and writes the result to register.
  */
-void Xor::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Xor::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   vector<bool> ramValue = ram.get(adr);
   reg = Util::bitwiseXor(reg, ramValue);
   increasePc(pc);
 }
 
-vector<Address> Xor::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Xor::getFirstOrderAdr(vector<bool> &val) {
   return { getThreeBitAddress(val) };
 }
 
-Address Xor::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address Xor::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                         const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -404,17 +404,17 @@ string Xor::getLabel() {
 /*
  * Reads from the address that is stored at passed address.
  */
-void ReadPointer::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
+void ReadPointer::exec(Address &adr, vector<bool> &pc, vector<bool> &reg,
                        Ram &ram) {
   reg = ram.get(adr);
   increasePc(pc);
 }
 
-vector<Address> ReadPointer::getFirstOrderAdr(vector<bool> val) {
+vector<Address> ReadPointer::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getSecondNibble(val)) };
 }
 
-Address ReadPointer::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address ReadPointer::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                                 const Ram &ram) {
   vector<bool> pointer = ram.get(firstOrderAdr);
   return Address(DATA, Util::getSecondNibble(pointer));
@@ -429,17 +429,17 @@ string ReadPointer::getLabel() {
 /*
  * Writes 'reg' to the address that is stored at passed address.
  */
-void WritePointer::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
+void WritePointer::exec(Address &adr, vector<bool> &pc, vector<bool> &reg,
                         Ram &ram) {
   ram.set(adr, reg);
   increasePc(pc);
 }
 
-vector<Address> WritePointer::getFirstOrderAdr(vector<bool> val) {
+vector<Address> WritePointer::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getSecondNibble(val)) };
 }
 
-Address WritePointer::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address WritePointer::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                                  const Ram &ram) {
   vector<bool> pointer = ram.get(firstOrderAdr);
   return Address(DATA, Util::getSecondNibble(pointer));
@@ -455,16 +455,16 @@ string WritePointer::getLabel() {
  * Increases value at the passed address, and copies
  * it to the register.
  */
-void Increase::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
+void Increase::exec(Address &adr, vector<bool> &pc, vector<bool> &reg,
                     Ram &ram) {
   incOrDec(adr, pc, reg, ram, true);
 }
 
-vector<Address> Increase::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Increase::getFirstOrderAdr(vector<bool> &val) {
   return { getThreeBitAddress(val) };
 }
 
-Address Increase::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address Increase::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                              const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -479,16 +479,16 @@ string Increase::getLabel() {
  * Decreases value at the passed address, and copies
  * it to the register.
  */
-void Decrease::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
+void Decrease::exec(Address &adr, vector<bool> &pc, vector<bool> &reg,
                     Ram &ram) {
   incOrDec(adr, pc, reg, ram, false);
 }
 
-vector<Address> Decrease::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Decrease::getFirstOrderAdr(vector<bool> &val) {
   return { getThreeBitAddress(val) };
 }
 
-Address Decrease::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address Decrease::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                              const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -503,17 +503,17 @@ string Decrease::getLabel() {
  * Copies value at the passed address to the last address and thus
  * sends it to the printer.
  */
-void Print::exec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
+void Print::exec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   vector<bool> val = ram.get(adr);
   ram.set(Address(DATA, LAST_ADDRESS), val);
   increasePc(pc);
 }
 
-vector<Address> Print::getFirstOrderAdr(vector<bool> val) {
+vector<Address> Print::getFirstOrderAdr(vector<bool> &val) {
   return { Address(DATA, Util::getSecondNibble(val)) };
 }
 
-Address Print::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address Print::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                           const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -527,7 +527,7 @@ string Print::getLabel() {
 /*
  * Jumps to passed address if value of the register is not 'max'.
  */
-void IfNotMax::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
+void IfNotMax::exec(Address &adr, vector<bool> &pc, vector<bool> &reg,
                     Ram &ram) {
   if (Util::getInt(reg) >= MAX_VALUE) {
     increasePc(pc);
@@ -536,11 +536,11 @@ void IfNotMax::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
   }
 }
 
-vector<Address> IfNotMax::getFirstOrderAdr(vector<bool> val) {
+vector<Address> IfNotMax::getFirstOrderAdr(vector<bool> &val) {
   return { Address(CODE, Util::getSecondNibble(val)) };
 }
 
-Address IfNotMax::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address IfNotMax::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                              const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -554,7 +554,7 @@ string IfNotMax::getLabel() {
 /*
  * Jumps to passed address if value of the register is not 'min'.
  */
-void IfNotMin::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
+void IfNotMin::exec(Address &adr, vector<bool> &pc, vector<bool> &reg,
                     Ram &ram) {
   if (Util::getInt(reg) <= 0) {
     increasePc(pc);
@@ -563,11 +563,11 @@ void IfNotMin::exec(Address adr, vector<bool> &pc, vector<bool> &reg,
   }
 }
 
-vector<Address> IfNotMin::getFirstOrderAdr(vector<bool> val) {
+vector<Address> IfNotMin::getFirstOrderAdr(vector<bool> &val) {
   return { Address(CODE, Util::getSecondNibble(val)) };
 }
 
-Address IfNotMin::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+Address IfNotMin::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
                              const Ram &ram) {
   return firstOrderAdr;  
 }
@@ -584,7 +584,7 @@ void increasePc(vector<bool> &pc) {
   pc = Util::getBoolNibb(Util::getInt(pc) + 1);
 }
 
-Address getThreeBitAddress(vector<bool> val) {
+Address getThreeBitAddress(vector<bool> &val) {
   vector<bool> adr = Util::getSecondNibble(val);
   adr[0] = false;
   return Address(DATA, adr);
@@ -594,7 +594,7 @@ Address getThreeBitAddress(vector<bool> val) {
  * Adds or subtracts value at passed address from register,
  * and stores result in the register.
  */
-void addOrSubtract(Address adr, vector<bool> &reg, Ram &ram, bool add) {
+void addOrSubtract(Address &adr, vector<bool> &reg, Ram &ram, bool add) {
   int regValue = Util::getInt(reg);
   int ramValue = Util::getInt(ram.get(adr));
   if (add) {
@@ -632,7 +632,7 @@ bool getRegBit(vector<bool> &reg, int index) {
  * Executes 'and' operation between register value, and
  * value at passed address and writes the result to register.
  */
-void andOrOr(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
+void andOrOr(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
              bool isAnd) {
   vector<bool> ramValue = ram.get(adr);
   reg = Util::bitwiseAndOrOr(reg, ramValue, isAnd);
@@ -643,7 +643,7 @@ void andOrOr(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
  * Increases or decreases value at the passed address, and copies
  * it to register.
  */
-void incOrDec(Address adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
+void incOrDec(Address &adr, vector<bool> &pc, vector<bool> &reg, Ram &ram,
               bool isInc) {
   vector<bool> value = ram.get(adr);
   int intValue = Util::getInt(value);
