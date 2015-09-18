@@ -20,7 +20,7 @@ bool Cpu::step() {
   if (reachedLastAddress) {
     return false;
   }
-  Instruction inst = getInstruction(); //Instruction(getInstructionWord(), reg, ram);
+  Instruction inst = getInstruction();
   inst.exec(pc, reg, ram);
   return true;
 }

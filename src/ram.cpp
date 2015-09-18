@@ -34,7 +34,7 @@ vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
 
 ////// SET //////
 
-void Ram::set(const Address &adr, vector<bool> wordIn) {
+void Ram::set(const Address &adr, const vector<bool> &wordIn) {
   AddrSpace space = adr.space;
   vector<bool> value = adr.val;
   if (wordIn.size() != WORD_SIZE) {
@@ -51,11 +51,11 @@ void Ram::set(const Address &adr, vector<bool> wordIn) {
   }
 }
 
-void Ram::saveWord(AddrSpace addrSpace, int address, vector<bool> wordIn) {
+void Ram::saveWord(AddrSpace addrSpace, int address, const vector<bool> &wordIn) {
   state[addrSpace][address] = wordIn;
 }
 
-void Ram::assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn) {
+void Ram::assignToLastAddress(AddrSpace addrSpace, const vector<bool> &wordIn) {
   if (addrSpace == CODE) {
     fprintf(stderr, "Error in function Ram::setInstruction, "
             "Trying to write to last address of code address space.");

@@ -11,8 +11,6 @@
 #include "const.hpp"
 #include "cpu.hpp"
 #include "cursor.hpp"
-#include "drawing2D.hpp"
-#include "drawing3D.hpp"
 #include "instruction.hpp"
 #include "printer.hpp"
 #include "ram.hpp"

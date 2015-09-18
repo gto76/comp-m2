@@ -25,7 +25,7 @@ class Ram {
     ProvidesOutput *input = NULL;
 
     vector<bool> get(const Address &adr) const;
-    void set(const Address &adr, vector<bool> wordIn);
+    void set(const Address &adr, const vector<bool> &wordIn);
     string getString() const;
     static string stateToString(map<AddrSpace, vector<vector<bool>>> state);
     static string spaceToString(vector<vector<bool>> space);
@@ -33,8 +33,8 @@ class Ram {
   private:
     vector<bool> getLastAddress(AddrSpace addrSpace) const;
     vector<bool> getInput() const;
-    void saveWord(AddrSpace addrSpace, int address, vector<bool> wordIn);
-    void assignToLastAddress(AddrSpace addrSpace, vector<bool> wordIn);
+    void saveWord(AddrSpace addrSpace, int address, const vector<bool> &wordIn);
+    void assignToLastAddress(AddrSpace addrSpace, const vector<bool> &wordIn);
 };
 
 #endif
