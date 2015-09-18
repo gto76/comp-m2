@@ -12,7 +12,10 @@ View::View(vector<string> drawingIn, string lightBulbOnIn, string lightBulbOffIn
   width = Util::getSizeOfLargestElement(lines);
 }
 
-string View::getLightbulb(bool value) {
+/*
+ * Returns the character that represents lightbulb, either on or off.
+ */
+string View::getLightbulb(bool value) const {
   if (value) {
     return lightBulbOn;
   } else {

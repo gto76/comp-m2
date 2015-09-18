@@ -20,10 +20,10 @@ class Cpu {
     
     bool step();
     void reset();
-    Instruction getInstruction();
-    vector<bool> getRegister();
-    vector<bool> getPc();
-    int getCycle();
+    Instruction getInstruction() const;
+    vector<bool> getRegister() const;
+    vector<bool> getPc() const;
+    int getCycle() const;
 
   private:
     Ram &ram;

@@ -25,10 +25,10 @@ class Renderer {
 
   private:
     Printer printer;
-    Ram ram;
-    Cpu cpu;
+    const Ram &ram;
+    const Cpu &cpu;
     Cursor cursor;
-    View view;
+    const View &view;
     Renderer (const Printer &printerIn, const Ram &ramIn, const Cpu &cpuIn,
               const Cursor &cursorIn, const View &viewIn)
         : printer(printerIn),
@@ -79,7 +79,8 @@ class Renderer {
     string getLightbulb(string cIn);
     string getCodeBit(int i);
     string getDataBit(int i);
-    string getCharAt(int i, vector<vector<bool>>* matrix);
+    string getBit(AddrSpace space, int i);
+    static pair<int, int> convertIndexToCoordinates(int index);
     bool pcPointingToAddress(int adr);
     string getAdrIndicator(AddrSpace addrSpace, int index);
     string getFormattedOutput(int i);

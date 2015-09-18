@@ -16,7 +16,7 @@ class View {
     size_t height;
     size_t width;
     View(vector<string> drawingIn, string lightBulbOnIn, string lightBulbOffIn);
-    string getLightbulb(bool value);
+    string getLightbulb(bool value) const ;
     bool operator == (const View& v) const {
       return lines == v.lines && 
              lightBulbOn == v.lightBulbOn && 

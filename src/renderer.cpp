@@ -259,17 +259,23 @@ string Renderer::getLightbulb(string cIn) {
 }
 
 string Renderer::getCodeBit(int i) {
-  return getCharAt(i, &ram.state[CODE]);
+  return getBit(CODE, i);
 }
 
 string Renderer::getDataBit(int i) {
-  return getCharAt(i, &ram.state[DATA]);
+  return getBit(DATA, i);
 }
 
-string Renderer::getCharAt(int i, vector<vector<bool>>* matrix) {
-  int j = i / WORD_SIZE;
-  i = i % WORD_SIZE;
-  return view.getLightbulb((*matrix).at(j).at(i));
+string Renderer::getBit(AddrSpace space, int i) {
+  pair<int, int> coord = convertIndexToCoordinates(i);
+  bool state = ram.state.at(space).at(coord.second).at(coord.first);
+  return view.getLightbulb(state);
+}
+
+pair<int, int> Renderer::convertIndexToCoordinates(int index) {
+  int y = index / WORD_SIZE;
+  int x = index % WORD_SIZE;
+  return pair<int, int>(x, y);
 }
 
 bool Renderer::pcPointingToAddress(int adr) {

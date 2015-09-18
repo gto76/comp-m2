@@ -31,21 +31,21 @@ void Cpu::reset() {
   cycle = 0;
 }
 
-Instruction Cpu::getInstruction() {
+Instruction Cpu::getInstruction() const {
   Address adr = Address(CODE, pc);
   vector<bool> instructionWord = ram.get(adr);
   return Instruction(instructionWord, reg, ram);
 }
 
-vector<bool> Cpu::getRegister() {
+vector<bool> Cpu::getRegister() const {
   return reg;
 }
 
-vector<bool> Cpu::getPc() {
+vector<bool> Cpu::getPc() const {
   return pc;
 }
 
-int Cpu::getCycle() {
+int Cpu::getCycle() const {
   return cycle;
 }
 
