@@ -1,5 +1,6 @@
 CFLAGS=-std=gnu11 -Wall -g -O0
-CPPFLAGS=-std=c++11 -Wall -g -O0
+all: CPPFLAGS=-std=c++11 -Wall -g -O0
+optimize: CPPFLAGS=-std=c++11 -Wall -g -O1
 
 SOURCES_CPP=$(wildcard src/*.cpp) 
 SOURCES_C=$(wildcard src/*.c)
@@ -11,6 +12,8 @@ EXECUTABLE=comp
 
 all: $(OBJDIR) $(SOURCES_CPP) $(SOURCES_C) $(EXECUTABLE) 
     
+optimize: $(OBJDIR) $(SOURCES_CPP) $(SOURCES_C) $(EXECUTABLE) 
+
 $(EXECUTABLE): $(OBJECTS) 
 	g++ -o $@ $^
 
