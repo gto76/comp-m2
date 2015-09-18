@@ -199,8 +199,8 @@ void refresh() {
 }
 
 void clearScreen(void) {
-  onScreen = {};
-  screenBuffer = {};
+  onScreen = vector<vector<string>>();
+  screenBuffer = vector<vector<string>>();
   printf("\e[1;1H\e[2J");
 }
 
