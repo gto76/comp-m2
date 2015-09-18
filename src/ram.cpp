@@ -10,7 +10,7 @@ using namespace std;
 
 ////// GET //////
 
-vector<bool> Ram::get(Address adr) const {
+vector<bool> Ram::get(const Address &adr) const {
   AddrSpace space = adr.space;
   vector<bool> value = adr.val;
   // Only looks at last 4 bits of passed address.   
@@ -34,7 +34,7 @@ vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
 
 ////// SET //////
 
-void Ram::set(Address adr, vector<bool> wordIn) {
+void Ram::set(const Address &adr, vector<bool> wordIn) {
   AddrSpace space = adr.space;
   vector<bool> value = adr.val;
   if (wordIn.size() != WORD_SIZE) {

@@ -24,8 +24,8 @@ class Ram {
     bool outputPending = false;
     ProvidesOutput *input = NULL;
 
-    vector<bool> get(Address adr) const;
-    void set(Address adr, vector<bool> wordIn);
+    vector<bool> get(const Address &adr) const;
+    void set(const Address &adr, vector<bool> wordIn);
     string getString() const;
     static string stateToString(map<AddrSpace, vector<vector<bool>>> state);
     static string spaceToString(vector<vector<bool>> space);

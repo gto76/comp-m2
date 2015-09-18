@@ -12,13 +12,13 @@ using namespace std;
 
 class Instruction {
   public:
-    vector<bool> const val;
-    int const index;
-    int const logicIndex;
+    const vector<bool> val;
+    const int index;
+    const int logicIndex;
     SpecificInstruction * const inst;
-    vector<Address> const firstOrderAdr;
-    Address adr;
-    string const label;
+    const vector<Address> firstOrderAdr;
+    const Address adr;
+    const string label;
     Instruction(vector<bool> valIn, const vector<bool> &regIn, const Ram &ramIn)
         : val(valIn),
           index(Util::getInt(Util::getFirstNibble(valIn))),
