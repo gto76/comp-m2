@@ -59,4 +59,9 @@ const string NEW_LINE_SECOND = u8"\u000A";
 const string ESCAPE = u8"\u001B";
 const string LOWERCASE_M = u8"\u006D";
 
+const string SOURCE_HEADER = "#include <stdio.h>\n\nmain() {\n}";
+const string SOURCE_FOOTER = "";
+const string SOURCE_FUNCTION_HEADER = "function() {\n  reg = 0;\n  pc = 0;";
+const string SOURCE_FUNCTION_FOOTER = "}";
+
 #endif

@@ -10,7 +10,7 @@
 using namespace std;
 
 static void increasePc(vector<bool> &pc);
-static Address getThreeBitAddress(vector<bool> &val);
+static Address getThreeBitAddress(const vector<bool> &val);
 static void addOrSubtract(const Address &adr, vector<bool> &reg, Ram &ram, bool add);
 static void shift(vector<bool> &pc, vector<bool> &reg, int delta);
 static bool getRegBit(vector<bool> &reg, int index);
@@ -42,6 +42,10 @@ string Read::getLabel() {
   return "READ  ";
 }
 
+string Read::getCode(const vector<bool> &val) {
+  return "reg = data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
+}
+
 // WRITE
 
 /*
@@ -63,6 +67,11 @@ Address Write::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string Write::getLabel() {
   return "WRITE  ";
+}
+
+// TODO out
+string Write::getCode(const vector<bool> &val) {
+  return "data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"] = reg;";
 }
 
 // ADD
@@ -89,6 +98,10 @@ string Add::getLabel() {
   return "ADD";
 }
 
+string Add::getCode(const vector<bool> &val) {
+  return "reg = sadd(reg, data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"]);";
+}
+
 // SUB
 
 /*
@@ -113,6 +126,10 @@ string Sub::getLabel() {
   return "SUB";
 }
 
+string Sub::getCode(const vector<bool> &val) {
+  return "reg = ssub(reg, data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"]);";
+}
+
 // JUMP
 
 /*
@@ -133,6 +150,10 @@ Address Jump::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string Jump::getLabel() {
   return "JUMP";
+}
+
+string Jump::getCode(const vector<bool> &val) {
+  return "goto *labels["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
 }
 
 // IF MAX
@@ -161,6 +182,10 @@ string IfMax::getLabel() {
   return "IF MAX";
 }
 
+string IfMax::getCode(const vector<bool> &val) {
+  return "if (reg == "+to_string(MAX_VALUE)+") goto *labels["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
+}
+
 // IF MIN
 
 /*
@@ -187,6 +212,10 @@ string IfMin::getLabel() {
   return "IF MIN";
 }
 
+string IfMin::getCode(const vector<bool> &val) {
+  return "if (reg == 0) goto *labels["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
+}
+
 // JUMP REG
 
 /*
@@ -207,6 +236,10 @@ Address JumpReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string JumpReg::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+string JumpReg::getCode(const vector<bool> &val) {
+  return "goto *labels[reg&"+ to_string(RAM_SIZE) +"];";
 }
 
 // READ REG
@@ -231,6 +264,10 @@ Address ReadReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string ReadReg::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+string ReadReg::getCode(const vector<bool> &val) {
+  return "reg = data[reg&"+ to_string(RAM_SIZE) +"];";
 }
 
 // INITIALIZE FIRST ADDRESS
@@ -259,6 +296,10 @@ string InitializeFirstAddress::getLabel() {
   return LOGIC_OPS_INDICATOR;
 }
 
+string InitializeFirstAddress::getCode(const vector<bool> &val) {
+  return "data[0] = data[1]; reg = data[0];";
+}
+
 // NOT
 
 /*
@@ -280,6 +321,10 @@ Address Not::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string Not::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+string Not::getCode(const vector<bool> &val) {
+  return "reg = ~reg;";
 }
 
 // SHIFT LEFT
@@ -305,6 +350,10 @@ string ShiftLeft::getLabel() {
   return LOGIC_OPS_INDICATOR;
 }
 
+string ShiftLeft::getCode(const vector<bool> &val) {
+  return "reg <<= 1;";
+}
+
 // SHIFT RIGHT
 
 /*
@@ -326,6 +375,10 @@ Address ShiftRight::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string ShiftRight::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+string ShiftRight::getCode(const vector<bool> &val) {
+  return "reg >>= 1;";
 }
 
 // AND
@@ -351,6 +404,10 @@ string And::getLabel() {
   return LOGIC_OPS_INDICATOR;
 }
 
+string And::getCode(const vector<bool> &val) {
+  return "reg &= data[2];";
+}
+
 // OR
 
 /*
@@ -372,6 +429,10 @@ Address Or::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string Or::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+string Or::getCode(const vector<bool> &val) {
+  return "reg |= data[3];";
 }
 
 // XOR
@@ -399,6 +460,10 @@ string Xor::getLabel() {
   return LOGIC_OPS_INDICATOR;
 }
 
+string Xor::getCode(const vector<bool> &val) {
+  return "reg ^= data[3];";
+}
+
 // READ POINTER
 
 /*
@@ -422,6 +487,10 @@ Address ReadPointer::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string ReadPointer::getLabel() {
   return "READ *";
+}
+
+string ReadPointer::getCode(const vector<bool> &val) {
+  return "reg = data[data["+ to_string(Util::getInt(Util::getSecondNibble(val))) +"]&"+to_string(RAM_SIZE)+"];";
 }
 
 // WRITE POINTER
@@ -449,6 +518,10 @@ string WritePointer::getLabel() {
   return "WRITE *";
 }
 
+string WritePointer::getCode(const vector<bool> &val) {
+  return "data[data["+ to_string(Util::getInt(Util::getSecondNibble(val))) +"]&"+to_string(RAM_SIZE)+"] = reg;";
+}
+
 // INCREASE
 
 /*
@@ -471,6 +544,11 @@ Address Increase::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string Increase::getLabel() {
   return "INC/DEC";
+}
+
+string Increase::getCode(const vector<bool> &val) {
+  string strAdr = to_string(Util::getInt(getThreeBitAddress(val).val));
+  return "data[" +strAdr+ "] = sadd(data[" +strAdr+ "], 1); reg = data["+strAdr+"];";
 }
 
 // DECREASE
@@ -497,6 +575,11 @@ string Decrease::getLabel() {
   return "INC/DEC";
 }
 
+string Decrease::getCode(const vector<bool> &val) {
+  string strAdr = to_string(Util::getInt(getThreeBitAddress(val).val));
+  return "data[" +strAdr+ "] = ssub(data[" +strAdr+ "], 1); reg = data["+strAdr+"];";
+}
+
 // PRINT
 
 /*
@@ -520,6 +603,10 @@ Address Print::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 
 string Print::getLabel() {
   return "PRINT";
+}
+
+string Print::getCode(const vector<bool> &val) {
+  return "return data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"]";
 }
 
 // IF NOT MAX
@@ -549,6 +636,10 @@ string IfNotMax::getLabel() {
   return "IF NOT MAX";
 }
 
+string IfNotMax::getCode(const vector<bool> &val) {
+  return "if (reg != "+to_string(MAX_VALUE)+") goto *labels["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
+}
+
 // IF NOT MIN
 
 /*
@@ -576,6 +667,10 @@ string IfNotMin::getLabel() {
   return "IF NOT MIN";
 }
 
+string IfNotMin::getCode(const vector<bool> &val) {
+  return "if (reg != 0) goto *labels["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
+}
+
 //////////
 // UTIL //
 //////////
@@ -584,7 +679,7 @@ void increasePc(vector<bool> &pc) {
   pc = Util::getBoolNibb(Util::getInt(pc) + 1);
 }
 
-Address getThreeBitAddress(vector<bool> &val) {
+Address getThreeBitAddress(const vector<bool> &val) {
   vector<bool> adr = Util::getSecondNibble(val);
   adr[0] = false;
   return Address(DATA, adr);

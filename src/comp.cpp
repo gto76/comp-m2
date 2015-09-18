@@ -3,11 +3,13 @@
 #include <string>
 #include <vector>
 
+#include "compiler.hpp"
 #include "interactive_mode.hpp"
 #include "noninteractive_mode.hpp"
 
 using namespace std;
 
+void assertFilenames();
 bool inputIsNotPiped();
 void processArguments(int argc, const char* argv[]);
 void processFilename(string filename);
@@ -17,21 +19,30 @@ string getFirstFilename();
 vector<string> filenames;
 bool outputChars = false;
 bool bufferOutput = false;
+bool compile = false;
 
 int main(int argc, const char* argv[]) {
   srand(time(NULL));
   bool interactivieMode = inputIsNotPiped();
   processArguments(argc, argv);
-  if (interactivieMode) {
+  if (compile) {
+    assertFilenames();
+    string source = Compiler::compile(filenames);
+    cout << source;
+  } else if (interactivieMode) {
     InteractiveMode::startInteractiveMode(getFirstFilename());
   } else {
-    if (filenames.empty()) {
-      cout << "There were no files specified. Aborting.";
-      exit(1);
-    }
+    assertFilenames();
     NoninteractiveMode mode = NoninteractiveMode(filenames, outputChars,
                                                  bufferOutput);
     mode.run();
+  }
+}
+
+void assertFilenames() {
+  if (filenames.empty()) {
+    cout << "There were no files specified. Aborting.";
+    exit(1);
   }
 }
 
@@ -46,6 +57,8 @@ void processArguments(int argc, const char* argv[]) {
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-c") == 0) {
       outputChars = true;
+    } else if (strcmp(argv[i], "compile") == 0) {
+      compile = true;
     } else if (strcmp(argv[i], "-C") == 0) {
       outputChars = true;
       bufferOutput = true;

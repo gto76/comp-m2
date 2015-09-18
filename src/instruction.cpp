@@ -25,6 +25,10 @@ bool Instruction::isLogic() {
   return index == LOGIC_OPS_INDEX;
 }
 
+string Instruction::getCode() {
+  return inst->getCode(val);
+}
+
 SpecificInstruction * Instruction::getInstruction() {
   switch (index) {
     case 0:
