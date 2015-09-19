@@ -8,38 +8,38 @@
 #include "const.hpp"
 #include "instruction.hpp"
 
-///////// CONSTRUCTOR ///////////
+/////// ADDR SPACE API ////////
 
-/*
- * Constructor is implemented as function, because on some
- * systems 'const string drawing' from drawing.hpp is not yet
- * initialized at this point. So instead this function is called
- * the first time any of this class variables are needed.
- */
-void Cursor::initialize() {
-  // Initializes selected bit with the cursor. One per address space.
-  cursorPosition[CODE][X] = 0;
-  cursorPosition[CODE][Y] = 0;
-  cursorPosition[DATA][X] = 0;
-  cursorPosition[DATA][Y] = 0;
+void Cursor::switchAddressSpace() {
+  if (addrSpace == CODE) {
+    addrSpace = DATA;
+  } else {
+    addrSpace = CODE;
+  }
+}
+
+AddrSpace Cursor::getAddressSpace() const {
+  return addrSpace;
+}
+
+Address Cursor::getAddress() const {
+  vector<bool> adrVal = Util::getBoolNibb(cursorPosition.at(addrSpace).at(Y));
+  return Address(addrSpace, adrVal);
 }
 
 //////// COORDINATES API /////////
 
-int Cursor::getAbsoluteBitIndex() {
-  initCheck(); 
-  return cursorPosition[addrSpace][Y] * WORD_SIZE +
-         cursorPosition[addrSpace][X];
+int Cursor::getAbsoluteBitIndex() const {
+  return cursorPosition.at(addrSpace).at(Y) * WORD_SIZE +
+         cursorPosition.at(addrSpace).at(X);
 }
 
-int Cursor::getX() {
-  initCheck(); 
-  return cursorPosition[addrSpace][X];
+int Cursor::getX() const {
+  return cursorPosition.at(addrSpace).at(X);
 }
   
-int Cursor::getY() {
-  initCheck(); 
-  return cursorPosition[addrSpace][Y];
+int Cursor::getY() const {
+  return cursorPosition.at(addrSpace).at(Y);
 }
 
 void Cursor::increaseX() {
@@ -74,8 +74,15 @@ void Cursor::decreaseY() {
   setAddr(getAddr() - 1);
 }
 
+void Cursor::setBitIndex(int bitIndex) {
+  cursorPosition[addrSpace][X] = bitIndex;
+}
+
+void Cursor::setByteIndex(int byteIndex) {
+  cursorPosition[addrSpace][Y] = byteIndex;
+}
+
 void Cursor::goToAddress(Address adr) {
-  initCheck(); 
   addrSpace = adr.space;
   setBitIndex(0);
   setByteIndex(Util::getInt(adr.val));
@@ -115,37 +122,13 @@ void Cursor::goToInstructionsAddress() {
   goToAddress(inst.adr);
 }
 
-/////// ADDR SPACE API ////////
-
-void Cursor::switchAddressSpace() {
-  initCheck(); 
-  if (addrSpace == CODE) {
-    addrSpace = DATA;
-  } else {
-    addrSpace = CODE;
-  }
-}
-
-AddrSpace Cursor::getAddressSpace() {
-  initCheck(); 
-  return addrSpace;
-}
-
-Address Cursor::getAddress() {
-  initCheck(); 
-  vector<bool> adrVal = Util::getBoolNibb(cursorPosition.at(addrSpace).at(Y));
-  return Address(addrSpace, adrVal);
-}
-
 /////////// RAM API ////////////
 
-bool Cursor::getBit() {
-  initCheck(); 
+bool Cursor::getBit() const {
   return ram.state.at(addrSpace).at(getAddr()).at(getBitIndex());
 }
 
 void Cursor::setBit(bool bit) {
-  initCheck(); 
   ram.state[addrSpace].at(getAddr()).at(getBitIndex()) = bit;
 }
 
@@ -158,14 +141,12 @@ void Cursor::eraseByte() {
   setWord(EMPTY_WORD);
 }
 
-vector<bool> Cursor::getWord() {
-  initCheck(); 
+vector<bool> Cursor::getWord() const {
   Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
   return ram.get(adr);
 }
 
 void Cursor::setWord(vector<bool> word) {
-  initCheck(); 
   Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
   ram.set(adr, word);
 }
@@ -202,7 +183,6 @@ void Cursor::moveByteDown() {
  * Retruns whether the operation was successful.
  */
 bool Cursor::insertByteAndMoveRestDown() {
-  initCheck(); 
   if (addrSpace != CODE) {
     return false;
   }
@@ -230,7 +210,6 @@ bool Cursor::insertByteAndMoveRestDown() {
  * Retruns whether the operation was successful.
  */
 bool Cursor::deleteByteAndMoveRestUp() {
-  initCheck(); 
   vector<Address> addresses = getAddressesOfAllInstructions();
   bool includesCurrentAddress = 
       find(addresses.begin(), addresses.end(), getAddress()) != 
@@ -277,35 +256,15 @@ void Cursor::setAddress(vector<bool> &word, int val) {
   word[7] = boolVal[3];
 }
 
-void Cursor::initCheck() {
-  if (notInitialized) {
-    initialize();
-  }
-  notInitialized = false;
+int Cursor::getBitIndex() const {
+  return cursorPosition.at(addrSpace).at(X);
 }
 
-int Cursor::getBitIndex() {
-  initCheck(); 
-  return cursorPosition[addrSpace][X];
-}
-
-int Cursor::getAddr() { 
-  initCheck(); 
-  return cursorPosition[addrSpace][Y];
-}
-
-void Cursor::setBitIndex(int bitIndex) {
-  initCheck(); 
-  cursorPosition[addrSpace][X] = bitIndex;
-}
-
-void Cursor::setByteIndex(int byteIndex) {
-  initCheck(); 
-  cursorPosition[addrSpace][Y] = byteIndex;
+int Cursor::getAddr() const { 
+  return cursorPosition.at(addrSpace).at(Y);
 }
 
 void Cursor::setAddr(int addr) {
-  initCheck(); 
   cursorPosition[addrSpace][Y] = addr;
 }
 

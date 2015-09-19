@@ -14,17 +14,24 @@ using namespace std;
 
 class Cursor {
   public:
-    Cursor(Ram &ramIn) : ram(ramIn) { }
+    Cursor(Ram &ramIn) : ram(ramIn) {
+      cursorPosition[CODE][X] = 0;
+      cursorPosition[CODE][Y] = 0;
+      cursorPosition[DATA][X] = 0;
+      cursorPosition[DATA][Y] = 0;
+    }
+
+    //////// ADDR SPACE API //////////
 
     void switchAddressSpace();
-    AddrSpace getAddressSpace(); // const;
-    Address getAddress(); // const;
+    AddrSpace getAddressSpace() const;
+    Address getAddress() const;
 
     //////// COORDINATES API /////////
 
-    int getAbsoluteBitIndex(); // const;
-    int getX(); // const;
-    int getY(); // const;
+    int getAbsoluteBitIndex() const;
+    int getX() const;
+    int getY() const;
     void increaseX();
     void increaseY();
     void decreaseX();
@@ -39,11 +46,11 @@ class Cursor {
 
     /////////// RAM API ////////////
 
-    bool getBit(); // const;
+    bool getBit() const;
     void setBit(bool bit);
     void switchBit();
     void eraseByte();
-    vector<bool> getWord(); // const;
+    vector<bool> getWord() const;
     void setWord(vector<bool> word);
     void moveByteUp();
     void moveByteDown();
@@ -56,18 +63,13 @@ class Cursor {
     AddrSpace addrSpace = CODE;
     // Selected bit with the cursor.
     map<AddrSpace, map<Axis, int>> cursorPosition;
-    bool notInitialized = true;
 
     vector<Address> getAddressesOfAllInstructions();
     void incOrDecAddressesPastTheIndex(int index, int delta);
     static void setAddress(vector<bool> &word, int val);
-    void initCheck();
-    void initialize();
-    int getBitIndex();
-    int getAddr();
+    int getBitIndex() const;
+    int getAddr() const;
     void setAddr(int addr);
-    void moveByteFor(int delta);
-    bool switchWordsInRam(int addr1, int addr2);
 };
 
 #endif
