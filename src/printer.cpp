@@ -41,7 +41,7 @@ string Printer::getOutput() {
   return output;
 }
 
-string Printer::getPrinterOutput() {
+string Printer::getPrinterOutput() const {
   if (!printerOutputUpdated) {
     printerOutput = renderPrinterOutput();
     printerOutputUpdated = true;
@@ -54,7 +54,7 @@ void Printer::clear() {
   printerOutputUpdated = false;
 }
 
-string Printer::renderPrinterOutput() {
+string Printer::renderPrinterOutput() const {
   if (output.length() <= 0) {
     return "|0|______________|0|";
   }

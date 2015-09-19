@@ -24,10 +24,10 @@ class Renderer {
                                               const View &view);
 
   private:
-    Printer printer;
+    const Printer &printer;
     const Ram &ram;
     const Cpu &cpu;
-    Cursor cursor;
+    const Cursor &cursor;
     const View &view;
     Renderer (const Printer &printerIn, const Ram &ramIn, const Cpu &cpuIn,
               const Cursor &cursorIn, const View &viewIn)

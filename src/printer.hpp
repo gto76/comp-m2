@@ -16,21 +16,21 @@ class Printer {
           printState(printStateIn),
           sleepAndCheckForKey(sleepAndCheckForKeyIn) { }
     void run();
-    string getPrinterOutput();
+    string getPrinterOutput() const;
 
   private:
     ProvidesOutput &input;
     void (*printState)(void);
     void (*sleepAndCheckForKey)(void);
-    string output = "";
-    string printerOutput;
-    bool printerOutputUpdated = false;
+    string output;
+    mutable string printerOutput;
+    mutable bool printerOutputUpdated = false;
 
     void print(vector<bool> sIn);
     void printEmptyLine();
     string getOutput();
     void clear();
-    string renderPrinterOutput();
+    string renderPrinterOutput() const;
 };
 
 #endif
