@@ -25,8 +25,8 @@ bool Instruction::isLogic() {
   return index == LOGIC_OPS_INDEX;
 }
 
-string Instruction::getCode() {
-  return inst->getCode(val);
+string Instruction::getCode(int pc) {
+  return inst->getCode(adr, pc);
 }
 
 SpecificInstruction * Instruction::getInstruction() {

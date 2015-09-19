@@ -20,6 +20,12 @@ const string LIGHTBULB_OFF_3D_B = u8"\u00b7";
 const string LIGHTBULB_ON_2D = "*";
 const string LIGHTBULB_OFF_2D = "-";
 
+const int INIT_OPERAND_INDEX = 1;
+const int AND_OPERAND_INDEX = 2;
+const int OR_OPERAND_INDEX = 3;
+
+// Folowing constants will probably break code if changed.
+
 const int WORD_SIZE = 8;
 const int ADDR_SIZE = 4;
 const int RAM_SIZE = 15;

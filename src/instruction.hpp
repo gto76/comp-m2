@@ -29,7 +29,7 @@ class Instruction {
           label(inst->getLabel()) { }
     void exec(vector<bool> &pc, vector<bool> &reg, Ram &ram);
     bool isLogic();
-    string getCode();
+    string getCode(int pc);
   private:
     vector<Address> getFirstOrderAdr(vector<bool> val);
     Address getAddress(Address firstOrderAdr, const vector<bool> &reg,

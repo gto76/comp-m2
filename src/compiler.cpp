@@ -64,11 +64,11 @@ string Compiler::getLineOfCode(vector<bool> word, int index, Ram ram) {
     strIndex = "0";
   }
   strIndex += to_string(index);
-  string instCode = inst.getCode();
-  string ret = "return";
-  bool isReturn = !instCode.compare(0, ret.size(), ret);
-  if (isReturn) {
-    instCode = "pc = " + to_string(index+1) + "; " + instCode;
-  }
+  string instCode = inst.getCode(index);
+  // string ret = "return";
+  // bool isReturn = !instCode.compare(0, ret.size(), ret);
+  // if (isReturn) {
+  //   instCode = "pc = " + to_string(index+1) + "; " + instCode;
+  // }
   return "  a" + strIndex + ": " + instCode;
 }

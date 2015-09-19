@@ -17,14 +17,14 @@ class Cursor {
     Cursor(Ram &ramIn) : ram(ramIn) { }
 
     void switchAddressSpace();
-    AddrSpace getAddressSpace();
-    Address getAddress();
+    AddrSpace getAddressSpace(); // const;
+    Address getAddress(); // const;
 
     //////// COORDINATES API /////////
 
-    int getAbsoluteBitIndex();
-    int getX();
-    int getY();
+    int getAbsoluteBitIndex(); // const;
+    int getX(); // const;
+    int getY(); // const;
     void increaseX();
     void increaseY();
     void decreaseX();
@@ -39,11 +39,11 @@ class Cursor {
 
     /////////// RAM API ////////////
 
-    bool getBit();
+    bool getBit(); // const;
     void setBit(bool bit);
     void switchBit();
     void eraseByte();
-    vector<bool> getWord();
+    vector<bool> getWord(); // const;
     void setWord(vector<bool> word);
     void moveByteUp();
     void moveByteDown();
