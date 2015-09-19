@@ -37,7 +37,7 @@ Overview
 * Processor has one 8 bit register.
 * Ram is separated into two address spaces; one for instructions, called CODE, and one for data, called DATA.
 * All instructions are 8 bits long.
-* Execution starts at the first address (0) of CODE ram. 
+* Execution starts at the first address (0) of CODE ram.
 * Execution stops when program reaches last address (15) of CODE ram.
 * Most of instructions consist of instruction code and address:
 ```
@@ -51,53 +51,27 @@ instruction code - 4 bits
 * Whatever gets written to the last address is sent to the printer, or to 'stdout' if program is running in non-interactive mode.
 * When reading from the last address (15), we get a random byte value, or a single word from 'stdin' if program is running in non-interactive mode.
 
-
 Instruction set
 ---------------
+Most of the instructions, together with the highlighted region of the ram that they use/modify, are pretty self-explainatory. Exception are instructions, that start with `-***`, and are a part of **JRI~<>^VX** instruction cluster. They are:  
+ * JUMP_REG,
+ * READ_REG,
+ * INIT,
+ * NOT,
+ * SHIFT_L,
+ * SHIFT_R,
+ * AND,
+ * OR and
+ * XOR.
 
-### Read and Write
- _Name_        | -_Code_-  | _Description_  
-:------------- |:--------:| ---------------------------------------------------
-**READ**       | ----     | Copies the value at the specified address into register.  
-**WRITE**      | ---\*    | Copies value of the register to the specified address. 
-**READ_***     | \*---    | Copies the value that specified address is pointing to into register.  
-**WRITE_***    | \*--\*   | Copies value of the register to the address, that specified address is pointing to.  
-**PRINT**      | \*-\*\*  | Copies the value at the specified address to the last address of data ram, thus sends it to the printer.
-**READ_REG**   | -\*\*\*-\*\*- | Copies the value that register is pointing to into register.  
-
-### Arithmetic
- _Name_        | -_Code_-   | _Description_  
-:------------- |:--------:| ---------------------------------------------------
-**ADD**        | --\*--   | Adds value at the specified address to the value of the register, and writes result to the register. If result is bigger than the maximum possible value of _255_ = '********', then _255_ gets written. 
-**SUB**        | --\*-\*  | Subtracts value at the specified address from the value of the register, and writes result to the register. If result is smaller than _0_, then _0_ gets written.  
-**INC**        | --\*--   | Adds 1 to value at the specified address, and copies it to the register.
-**DEC**        | --\*-\*  | Subtracts 1 from value at the specified address, and copies it to the register.
-
-### Execution Control
- _Name_        | -_Code_-   | _Description_  
-:------------- |:--------:| ---------------------------------------------------
-**JUMP**       | -\*--    | Changes the value of the program counter to the specified address, meaning that in the next cycle execution will continue at that address.  
-**IF_MAX**     | -\*-\*   | Jumps to the specified address if register has value _255_ = '********'. 
-**IF_MIN**     | -\*\*-   | Jumps to the specified address if register has value _0_ = '--------'. 
-**IF_NOT_MAX** | \*\*-*   | Jumps to the specified address if register does not have value _255_ = '********'. 
-**IF_NOT_MIN** | \*\*\*-  | Jumps to the specified address if register does not have value _0_ = '--------'. 
-**JUMP_REG**   | -\*\*\*-\*\*\* | Jumps to the address that register is pointing to.
-
-### Bitwise/Logic
- _Name_        |  -_Code_-        | _Description_  
-:------------- |:-------------:| ---------------------------------------------------
-**SHIFT_L**    | -\*\*\*----   | Moves bits in the register one spot to the left.
-**SHIFT_R**    |  -\*\*\*---\* | Moves bits in the register one spot to the right.
-**AND**        | -\*\*\*--\*-  | Bitwise AND is executed between the value of the register and value at the first address of data ram, and result is written to the register.
-**OR**         | -\*\*\*--\*\* | Bitwise OR is executed between the value of the register and value at the first address of data ram, and result is written to the register.
-**NOT**        | -\*\*\*-\*--  | Changes value of every bit in the the register. 
+Detailed descriptions of all instructions can be found [**here**](doc/instruction-set.md).
 
 Non-interactive mode
 --------------------
 Non-interactive mode is started if any input is piped to the program. In this mode:  
-* computer prints to 'stdout', 
-* there is no user interface, 
-* there is no pause between cycles, 
+* computer prints to 'stdout',
+* there is no user interface,
+* there is no pause between cycles,
 * and when program reads from last address, it gets one word from 'stdin' (pipe). In this word every '`*`' is interpreted as true and all other characters as false. If word starts with a digit, then it is red as a number and converted appropriately.
 
 Examples
@@ -116,10 +90,3 @@ $ examples/keyFilter | ./comp examples/randomDot
 ----*---   8
 ---*----  16
 ```
-
-
-
-
-
-
-

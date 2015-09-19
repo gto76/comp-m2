@@ -43,7 +43,12 @@ string Read::getLabel() {
 }
 
 string Read::getCode(const vector<bool> &val) {
-  return "reg = data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
+  int intAdr = Util::getInt(Util::getSecondNibble(val));
+  if (intAdr == RAM_SIZE) {
+    return "reg = predecesor();";
+  } else {
+    return "reg = data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
+  }
 }
 
 // WRITE
@@ -69,9 +74,13 @@ string Write::getLabel() {
   return "WRITE  ";
 }
 
-// TODO out
 string Write::getCode(const vector<bool> &val) {
-  return "data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"] = reg;";
+  int intAdr = Util::getInt(Util::getSecondNibble(val));
+  if (intAdr == RAM_SIZE) {
+    return "return reg;";
+  } else {
+    return "data["+to_string(intAdr)+"] = reg;";
+  }
 }
 
 // ADD
@@ -461,7 +470,7 @@ string Xor::getLabel() {
 }
 
 string Xor::getCode(const vector<bool> &val) {
-  return "reg ^= data[3];";
+  return "reg ^= data[" + to_string(Util::getInt(getThreeBitAddress(val).val)) + "];";
 }
 
 // READ POINTER
@@ -606,7 +615,7 @@ string Print::getLabel() {
 }
 
 string Print::getCode(const vector<bool> &val) {
-  return "return data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"]";
+  return "return data["+to_string(Util::getInt(Util::getSecondNibble(val)))+"];";
 }
 
 // IF NOT MAX

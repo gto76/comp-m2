@@ -17,11 +17,12 @@ string Compiler::compile(vector<string> filenamesIn) {
     Load::fillRamWithFile(filenamesIn[i].c_str(), rams[i]);
   }
   string source;
-  source = SOURCE_HEADER+ "\n";
+  source = SOURCE_HEADER+ "\n\n";
   for (size_t i = 0; i < filenamesIn.size(); i++) {
-    source += getComputerFunction(rams[i], i)+ "\n";
+    source += getComputerFunction(rams[i], i)+ "\n\n";
   }
-  source += SOURCE_FOOTER+ "\n";
+  source += SOURCE_FOOTER_1 + to_string(filenamesIn.size()) + 
+            SOURCE_FOOTER_2 + "\n";
   return source;
 }
 
@@ -31,17 +32,43 @@ string Compiler::getComputerFunction(Ram ram, int index) {
   for (size_t i = 0; i < RAM_SIZE; i++) {
     function += getLineOfCode(ram.state[CODE][i], i, ram) + "\n";
   }
-  function += SOURCE_FUNCTION_FOOTER+ "\n";
+  function += SOURCE_FUNCTION_FOOTER;
   return function;
 }
 
 string Compiler::getFunctionHeader(vector<vector<bool>> data, int index) {
-  string functionHeader = SOURCE_FUNCTION_HEADER+ "\n";
-  // TODO
-  return functionHeader;
+  return SOURCE_FUNCTION_HEADER_1 + to_string(index+1) + 
+         SOURCE_FUNCTION_HEADER_2 + to_string(index) +
+         SOURCE_FUNCTION_HEADER_3 + getData(data) +
+         SOURCE_FUNCTION_HEADER_4;
+}
+
+string Compiler::getData(vector<vector<bool>> data) {
+  string out;
+  bool first = true;
+  for (vector<bool> word : data) {
+    if (first) {
+      first = false;
+      out += to_string(Util::getInt(word));
+    } else {
+      out += ", " + to_string(Util::getInt(word));
+    }
+  }
+  return out;
 }
 
 string Compiler::getLineOfCode(vector<bool> word, int index, Ram ram) {
-  Instruction inst = Instruction(word, EMPTY_WORD, ram); // TODO ram is probably not const?
-  return inst.getCode();
+  Instruction inst = Instruction(word, EMPTY_WORD, ram);
+  string strIndex;
+  if (index < 10) {
+    strIndex = "0";
+  }
+  strIndex += to_string(index);
+  string instCode = inst.getCode();
+  string ret = "return";
+  bool isReturn = !instCode.compare(0, ret.size(), ret);
+  if (isReturn) {
+    instCode = "pc = " + to_string(index+1) + "; " + instCode;
+  }
+  return "  a" + strIndex + ": " + instCode;
 }

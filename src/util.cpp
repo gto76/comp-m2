@@ -65,6 +65,15 @@ vector<bool> Util::getBool(int num, int length) {
   return out;
 }
 
+// New getBool - it doesen't saturate.
+// vector<bool> Util::getBool(int num, int length) {
+//   vector<bool> out(length);
+//   for (c = length; c >= 0; c--) {
+//     int k = num >> c;
+//     out.push_back(k & 1);
+//   }
+// }
+
 vector<bool> Util::getBoolByte(string sIn) {
   vector<bool> out(8);
   int i = 0;
@@ -276,11 +285,7 @@ int Util::extractInteger(string line) {
     i++;
   }
   string stringNumber = line.substr(0, i);
-  stringstream ss;
-  ss << stringNumber;
-  int out;
-  ss >> out;
-  return out;
+  return stoi(stringNumber, NULL);
 }
 
 int Util::getSignedIntFromNibble(vector<bool> nibble) {

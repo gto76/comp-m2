@@ -14,6 +14,7 @@ class Compiler {
   private:
     static string getComputerFunction(Ram ram, int index);
     static string getFunctionHeader(vector<vector<bool>> data, int index);
+    static string getData(vector<vector<bool>> data);
     static string getLineOfCode(vector<bool> word, int index, Ram ram);
 };
 
