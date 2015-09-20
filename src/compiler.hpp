@@ -10,7 +10,7 @@ using namespace std;
 
 class Compiler {
   public:
-    static string compile(vector<string> filenamesIn);
+    static string compile(vector<string> filenamesIn, bool outputChars);
   private:
     static string getComputerFunction(Ram ram, int index);
     static string getFunctionHeader(vector<vector<bool>> data, int index);

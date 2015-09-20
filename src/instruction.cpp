@@ -26,7 +26,7 @@ bool Instruction::isLogic() {
 }
 
 string Instruction::getCode(int pc) {
-  return inst->getCode(adr, pc);
+  return inst->getCode(firstOrderAdr[0], pc);
 }
 
 SpecificInstruction * Instruction::getInstruction() {

@@ -131,9 +131,10 @@ const string SOURCE_HEADER = ""
 const string SOURCE_FOOTER_1 = ""
 "int main() {\n"
 "  while(1) {\n"
-"    printf(\"%d\\n\", f";
+"    cout << f";
+//"    printf(\"%d\\n\", f"; TODO!!!
 
-const string SOURCE_FOOTER_2 = "());\n"
+const string SOURCE_FOOTER_2 = "();\n"
 "  }\n"
 "}";
 
@@ -143,16 +144,17 @@ const string SOURCE_FUNCTION_HEADER_2 = "() {\n"
 "  static unsigned char (*predecesor)() = &f";
 
 const string SOURCE_FUNCTION_HEADER_3 = ";\n"
-"  static void *labels[16] = { &&a00, &&a01, &&a02, &&a03, &&a04, &&a05,\n"
+"  static void *a[16] = { &&a00, &&a01, &&a02, &&a03, &&a04, &&a05,\n"
 "                              &&a06, &&a07, &&a08, &&a09, &&a10, &&a11,\n" 
 "                              &&a12, &&a13, &&a14, &&a15 };\n"
 "  static unsigned char reg = 0;\n"
 "  static unsigned char pc = 0;\n"
+"  static unsigned char adr = 0;\n"
 "  static unsigned char data[15] = { ";
 
 const string SOURCE_FUNCTION_HEADER_4 = " };\n"
 "\n"
-"  goto *labels[pc];";
+"  goto *a[pc];";
 
 const string SOURCE_FUNCTION_FOOTER = ""
 "  a15: exit(0);\n"

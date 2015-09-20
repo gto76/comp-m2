@@ -159,7 +159,7 @@ string Jump::getLabel() {
 }
 
 string Jump::getCode(const Address &adr, int pc) {
-  return "goto *labels["+adr.getIntStr()+"];";
+  return "goto *a["+adr.getIntStr()+"];";
 }
 
 // IF MAX
@@ -189,7 +189,7 @@ string IfMax::getLabel() {
 }
 
 string IfMax::getCode(const Address &adr, int pc) {
-  return "if (reg == "+to_string(MAX_VALUE)+") goto *labels["+adr.getIntStr()+"];";
+  return "if (reg == "+to_string(MAX_VALUE)+") goto *a["+adr.getIntStr()+"];";
 }
 
 // IF MIN
@@ -219,7 +219,7 @@ string IfMin::getLabel() {
 }
 
 string IfMin::getCode(const Address &adr, int pc) {
-  return "if (reg == 0) goto *labels["+adr.getIntStr()+"];";
+  return "if (reg == 0) goto *a["+adr.getIntStr()+"];";
 }
 
 // JUMP REG
@@ -245,7 +245,7 @@ string JumpReg::getLabel() {
 }
 
 string JumpReg::getCode(const Address &adr, int pc) {
-  return "goto *labels[reg&"+to_string(RAM_SIZE)+"];";
+  return "goto *a[reg&"+to_string(RAM_SIZE)+"];";
 }
 
 // READ REG
@@ -499,7 +499,7 @@ string ReadPointer::getLabel() {
 }
 
 string ReadPointer::getCode(const Address &adr, int pc) {
-  return "unsigned char adr = "+getOperand(adr)+"&"+to_string(RAM_SIZE)+"; "
+  return "adr = "+getOperand(adr)+"&"+to_string(RAM_SIZE)+"; "
          "if (adr == "+to_string(RAM_SIZE)+") reg = predecesor(); "
          "else reg = data[adr];";
 }
@@ -531,7 +531,7 @@ string WritePointer::getLabel() {
 
 string WritePointer::getCode(const Address &adr, int pc) {
   return "pc = "+to_string(pc)+"; "
-         "unsigned char adr = "+getOperand(adr)+"&"+to_string(RAM_SIZE)+"; "
+         "adr = "+getOperand(adr)+"&"+to_string(RAM_SIZE)+"; "
          "if (adr == "+to_string(RAM_SIZE)+") return reg; "
          "else data[adr] = reg;";
 }
@@ -561,8 +561,8 @@ string Increase::getLabel() {
 }
 
 string Increase::getCode(const Address &adr, int pc) {
-  return "data["+adr.getIntStr()+"] = sadd(data["+adr.getIntStr()+"], 1); "
-          "reg = data["+adr.getIntStr()+"];";
+  return "data["+adr.getIntStr()+"]++; "
+         "reg = data["+adr.getIntStr()+"];";
 }
 
 // DECREASE
@@ -590,8 +590,8 @@ string Decrease::getLabel() {
 }
 
 string Decrease::getCode(const Address &adr, int pc) {
-  return "data["+adr.getIntStr()+"] = ssub(data["+adr.getIntStr()+"], 1); "
-          "reg = data["+adr.getIntStr()+"];";
+  return "data["+adr.getIntStr()+"]--; "
+         "reg = data["+adr.getIntStr()+"];";
 }
 
 // PRINT
@@ -652,7 +652,7 @@ string IfNotMax::getLabel() {
 }
 
 string IfNotMax::getCode(const Address &adr, int pc) {
-  return "if (reg != "+to_string(MAX_VALUE)+") goto *labels["+adr.getIntStr()+"];";
+  return "if (reg != "+to_string(MAX_VALUE)+") goto *a["+adr.getIntStr()+"];";
 }
 
 // IF NOT MIN
@@ -683,7 +683,7 @@ string IfNotMin::getLabel() {
 }
 
 string IfNotMin::getCode(const Address &adr, int pc) {
-  return "if (reg != 0) goto *labels["+adr.getIntStr()+"];";
+  return "if (reg != 0) goto *a["+adr.getIntStr()+"];";
 }
 
 //////////

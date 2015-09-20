@@ -10,7 +10,7 @@
 
 using namespace std;
 
-string Compiler::compile(vector<string> filenamesIn) {
+string Compiler::compile(vector<string> filenamesIn, bool outputChars) {
   vector<Ram> rams = vector<Ram>(filenamesIn.size());
   // Fills rams with contents of files.
   for (size_t i = 0; i < filenamesIn.size(); i++) {
@@ -64,11 +64,6 @@ string Compiler::getLineOfCode(vector<bool> word, int index, Ram ram) {
     strIndex = "0";
   }
   strIndex += to_string(index);
-  string instCode = inst.getCode(index);
-  // string ret = "return";
-  // bool isReturn = !instCode.compare(0, ret.size(), ret);
-  // if (isReturn) {
-  //   instCode = "pc = " + to_string(index+1) + "; " + instCode;
-  // }
+  string instCode = inst.getCode(index+1);
   return "  a" + strIndex + ": " + instCode;
 }

@@ -27,7 +27,7 @@ int main(int argc, const char* argv[]) {
   processArguments(argc, argv);
   if (compile) {
     assertFilenames();
-    string source = Compiler::compile(filenames);
+    string source = Compiler::compile(filenames, outputChars);
     cout << source;
   } else if (interactivieMode) {
     InteractiveMode::startInteractiveMode(getFirstFilename());
