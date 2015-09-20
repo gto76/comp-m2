@@ -350,13 +350,14 @@ void userInput() {
           cursor.increaseX();
           fileSaved = false;
           break;
-        case 120:  // x
+        case 120: { // x
           clipboard = cursor.getWord();
           cursor.eraseByte();
           fileSaved = false;
           // cursor.setBitIndex(0);
           break;
-        } case 111: { // o
+        } 
+        case 111: { // o
           cursor.increaseY();
           bool success = cursor.insertByteAndMoveRestDown();
           if (success) {

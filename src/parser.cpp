@@ -1,4 +1,4 @@
-#include "compiler.hpp"
+#include "parser.hpp"
 
 #include <string>
 #include <vector>
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-string Compiler::compile(vector<string> filenamesIn, bool outputChars) {
+string Parser::parse(vector<string> filenamesIn, bool outputChars) {
   vector<Ram> rams = vector<Ram>(filenamesIn.size());
   // Fills rams with contents of files.
   for (size_t i = 0; i < filenamesIn.size(); i++) {
@@ -26,7 +26,7 @@ string Compiler::compile(vector<string> filenamesIn, bool outputChars) {
   return source;
 }
 
-string Compiler::getComputerFunction(Ram ram, int index) {
+string Parser::getComputerFunction(Ram ram, int index) {
   string function;
   function += getFunctionHeader(ram.state[DATA], index)+ "\n";
   for (size_t i = 0; i < RAM_SIZE; i++) {
@@ -36,14 +36,14 @@ string Compiler::getComputerFunction(Ram ram, int index) {
   return function;
 }
 
-string Compiler::getFunctionHeader(vector<vector<bool>> data, int index) {
+string Parser::getFunctionHeader(vector<vector<bool>> data, int index) {
   return SOURCE_FUNCTION_HEADER_1 + to_string(index+1) + 
          SOURCE_FUNCTION_HEADER_2 + to_string(index) +
          SOURCE_FUNCTION_HEADER_3 + getData(data) +
          SOURCE_FUNCTION_HEADER_4;
 }
 
-string Compiler::getData(vector<vector<bool>> data) {
+string Parser::getData(vector<vector<bool>> data) {
   string out;
   bool first = true;
   for (vector<bool> word : data) {
@@ -57,7 +57,7 @@ string Compiler::getData(vector<vector<bool>> data) {
   return out;
 }
 
-string Compiler::getLineOfCode(vector<bool> word, int index, Ram ram) {
+string Parser::getLineOfCode(vector<bool> word, int index, Ram ram) {
   Instruction inst = Instruction(word, EMPTY_WORD, ram);
   string strIndex;
   if (index < 10) {

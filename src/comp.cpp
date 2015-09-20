@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "compiler.hpp"
+#include "parser.hpp"
 #include "interactive_mode.hpp"
 #include "noninteractive_mode.hpp"
 
@@ -27,7 +27,7 @@ int main(int argc, const char* argv[]) {
   processArguments(argc, argv);
   if (compile) {
     assertFilenames();
-    string source = Compiler::compile(filenames, outputChars);
+    string source = Parser::parse(filenames, outputChars);
     cout << source;
   } else if (interactivieMode) {
     InteractiveMode::startInteractiveMode(getFirstFilename());
