@@ -1,4 +1,8 @@
+#include "comp.hpp"
+
+#include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,13 +17,17 @@ void assertFilenames();
 bool inputIsNotPiped();
 void processArguments(int argc, const char* argv[]);
 void processFilename(string filename);
+string getFilenameOut();
+void saveSourceToFile(string filenameOut);
 void loadAllFilesFromDir(string dirname);
 string getFirstFilename();
 
 vector<string> filenames;
+string dirname;
 bool outputChars = false;
 bool bufferOutput = false;
 bool compile = false;
+bool parse = false;
 
 int main(int argc, const char* argv[]) {
   srand(time(NULL));
@@ -27,8 +35,17 @@ int main(int argc, const char* argv[]) {
   processArguments(argc, argv);
   if (compile) {
     assertFilenames();
-    string source = Parser::parse(filenames, outputChars);
-    cout << source;
+    string filenameOut = getFilenameOut();
+    string sourceNameOut = filenameOut+".cpp";
+    saveSourceToFile(sourceNameOut);
+    string command = GCC_COMMAND+" "+filenameOut+" "+sourceNameOut;
+    cout << command << endl;
+    system(command.c_str());
+  } else if (parse) {
+    assertFilenames();
+    string filenameOut = getFilenameOut();
+    cout << filenameOut << endl;
+    saveSourceToFile(filenameOut+".cpp");
   } else if (interactivieMode) {
     InteractiveMode::startInteractiveMode(getFirstFilename());
   } else {
@@ -59,6 +76,8 @@ void processArguments(int argc, const char* argv[]) {
       outputChars = true;
     } else if (strcmp(argv[i], "compile") == 0) {
       compile = true;
+    } else if (strcmp(argv[i], "parse") == 0) {
+      parse = true;
     } else if (strcmp(argv[i], "-C") == 0) {
       outputChars = true;
       bufferOutput = true;
@@ -70,6 +89,7 @@ void processArguments(int argc, const char* argv[]) {
 
 void processFilename(string filename) {
   if (Util::isADir(filename)) {
+    dirname = filename;
     loadAllFilesFromDir(filename);
   } else {
     filenames.push_back(filename);
@@ -83,6 +103,44 @@ void loadAllFilesFromDir(string dirname) {
       filenames.push_back(file);
     }
   }
+}
+
+string getFilenameOut() {
+  string fullname = filenames.back();
+  cout << "fullname "+fullname << endl;
+  // Names source file and executable by directory name if present,
+  // else by the last input file.
+  cout << "dirname "+dirname << endl;
+  if (dirname != "") {
+    fullname = dirname;
+  }
+  cout << "fullname "+fullname << endl;
+  size_t slashIndex = fullname.find_last_of('/');
+  if (slashIndex != string::npos) {
+    if(slashIndex == fullname.length()-1) {
+      fullname.erase(fullname.length()-1);
+      slashIndex = fullname.find_last_of( '/' );
+      if (slashIndex != string::npos) {
+        fullname = fullname.substr(slashIndex + 1);
+      }
+    } else {
+      fullname = fullname.substr(slashIndex + 1);
+    }
+  }
+  cout << "fullname "+fullname << endl;
+  size_t lastindex = fullname.find_last_of("."); 
+  if (lastindex == string::npos) {
+    return fullname;
+  } else {
+    return fullname.substr(0, lastindex);
+  }
+}
+
+void saveSourceToFile(string filenameOut) {
+  string source = Parser::parse(filenames, outputChars);
+  ofstream out(filenameOut);
+  out << source;
+  out.close();
 }
 
 string getFirstFilename() {

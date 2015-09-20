@@ -24,6 +24,8 @@ const int INIT_OPERAND_INDEX = 1;
 const int AND_OPERAND_INDEX = 2;
 const int OR_OPERAND_INDEX = 3;
 
+const string GCC_COMMAND = "g++ -std=c++11 -g -O2 -o";
+
 // Folowing constants will probably break code if changed.
 
 const int WORD_SIZE = 8;
