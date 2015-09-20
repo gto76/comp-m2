@@ -59,7 +59,7 @@ char readStdin(bool drawCursor);
 //////////////////////
 
 View view3d = View(drawing3D, LIGHTBULB_ON_3D, LIGHTBULB_OFF_3D);
-View view3db = View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B); 
+View view3db = View(drawing3Db, LIGHTBULB_ON_3D_B, LIGHTBULB_OFF_3D_B);
 View view2d = View(drawing2D, LIGHTBULB_ON_2D, LIGHTBULB_OFF_2D);
 View *selectedView = &view3d;
 RandomInput input;
@@ -114,8 +114,8 @@ void selectView() {
 }
 
 /*
- * Initializes 'output.cpp' by sending dimensions of a 'drawing' and 
- * a 'drawScreen' callback function, that output.c will use on every 
+ * Initializes 'output.cpp' by sending dimensions of a 'drawing' and
+ * a 'drawScreen' callback function, that output.c will use on every
  * screen redraw.
  */
 void prepareOutput() {
@@ -123,7 +123,7 @@ void prepareOutput() {
 }
 
 void drawScreen() {
-  vector<vector<string>> buffer = Renderer::renderState(printer, computer.ram, computer.cpu, 
+  vector<vector<string>> buffer = Renderer::renderState(printer, computer.ram, computer.cpu,
                                                         cursor, *selectedView);
   int i = 0;
   for (vector<string> line : buffer) {
@@ -137,7 +137,7 @@ void drawScreen() {
 
 /*
  * Saves the state of the ram and starts the execution of a program.
- * When execution stops, due to it reaching last address or user pressing 
+ * When execution stops, due to it reaching last address or user pressing
  * 'esc', it loads back the saved state of the ram, and resets the cpu.
  */
 void run() {
@@ -208,7 +208,7 @@ void userInput() {
           continue;
         }
       }
-      switch (c) {   
+      switch (c) {
         // BEGIN EXECUTION
         case 10:   // enter
           run();
@@ -226,7 +226,7 @@ void userInput() {
           break;
 
         // VIEWS
-        case 118:  // v
+        case 46:  // .
           switchDrawing();
           break;
 
@@ -255,9 +255,9 @@ void userInput() {
             saveRamToNewFile();
           }
           exit(0);
-          break;          
+          break;
         }
-        
+
         // BASIC MOVEMENT
         case 107:  // k
         case 65:   // A, part of escape seqence of up arrow
@@ -280,10 +280,13 @@ void userInput() {
           cursor.switchAddressSpace();
           break;
         case 72:   // H (home)
+        case 94:   // ^
           cursor.setBitIndex(0);
           break;
         case 70:   // F (end)
+        case 36:   // $
           cursor.setBitIndex(WORD_SIZE-1);
+          break;
 
         // VIM MOVEMENT
         case 103:  // g
@@ -291,7 +294,7 @@ void userInput() {
           break;
         case 71:   // G
           cursor.setByteIndex(RAM_SIZE-1);
-          break; 
+          break;
         case 101:  // e
           cursor.goToEndOfWord();
           break;
@@ -304,12 +307,6 @@ void userInput() {
         case 97:   // a
           cursor.setBitIndex(4);
           break;
-        case 36:   // $
-          cursor.setBitIndex(WORD_SIZE-1);
-          break;
-        case 94:   // ^
-          cursor.setBitIndex(0);
-          break;        
         case 122:  // z
         case 90:   // shift + tab
         case 84:   // T
@@ -321,15 +318,16 @@ void userInput() {
           cursor.switchBit();
           fileSaved = false;
           break;
-        case 51: { // 3, part of escape seqence of delete key
+        case 51:   // 3, part of escape seqence of delete key
+        case 88: { // X
           vector<bool> temp = cursor.getWord();
           bool success = cursor.deleteByteAndMoveRestUp();
           if (success) {
             clipboard = temp;
             fileSaved = false;
           }
-          break;  
-        }      
+          break;
+        }
         case 75:   // K
         case 53:   // 5, part of escape seqence of page up
           cursor.moveByteUp();
@@ -358,14 +356,6 @@ void userInput() {
           fileSaved = false;
           // cursor.setBitIndex(0);
           break;
-        case 88: { // X
-          vector<bool> temp = cursor.getWord();
-          bool success = cursor.deleteByteAndMoveRestUp();
-          if (success) {
-            clipboard = temp;
-            fileSaved = false;
-          }
-          break; 
         } case 111: { // o
           cursor.increaseY();
           bool success = cursor.insertByteAndMoveRestDown();
@@ -377,10 +367,11 @@ void userInput() {
           }
           break;
         }
-        case 121:  // y
         case 99:   // c
+        case 121:  // y
           clipboard = cursor.getWord();
           break;
+        case 118:  // v
         case 112:  // p
           cursor.setWord(clipboard);
           fileSaved = false;
@@ -527,4 +518,3 @@ char readStdin(bool drawCursor) {
   }
   return c;
 }
-

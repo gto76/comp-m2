@@ -1,5 +1,6 @@
 core
 tmp
+*.cmp
 
 # Compiled Object files
 *.slo
