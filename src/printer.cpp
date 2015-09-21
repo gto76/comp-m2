@@ -13,6 +13,7 @@ void Printer::run() {
     vector<bool> out = input.getOutput();
     if (out.empty()) {
       printEmptyLine();
+      printState();
       return;
     } else {
       print(out);

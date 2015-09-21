@@ -88,6 +88,8 @@ class Renderer {
     // GET INSTRUCTION
     Instruction* getInstruction();
     bool machineActive();
+    bool executionHasntStarted();
+    bool executionEnded();
     Instruction initializeInstruction();
     bool instructionHasId(int id);
     bool instructionPointingToAddress(Address adr);

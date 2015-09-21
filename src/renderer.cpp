@@ -80,6 +80,9 @@ vector<string> Renderer::insertEscSeqences(
 vector<bool> Renderer::getHighlightedLocations(vector<string> lineIn) {
   vector<bool> highlightedLocations (lineIn.size(), false);
   highlightPc(highlightedLocations, lineIn);
+  if (executionEnded()) {
+    return highlightedLocations;
+  }
   highlightCursor(highlightedLocations, lineIn);
   Instruction *inst = getInstruction();
   if (inst == NULL) {
@@ -97,7 +100,7 @@ vector<bool> Renderer::getHighlightedLocations(vector<string> lineIn) {
 
 void Renderer::highlightPc(vector<bool> &highlightedLocations,
                                    vector<string> &lineIn) {
-  if (!machineActive() || pcHighlighted) {
+  if (executionHasntStarted() || pcHighlighted) {
     return;
   }
   for (size_t i = 0; i < lineIn.size(); i++) {
@@ -114,7 +117,7 @@ void Renderer::highlightPc(vector<bool> &highlightedLocations,
 
 void Renderer::highlightCursor(vector<bool> &highlightedLocations,
                                        vector<string> &lineIn) {
-  if (machineActive() || cursorHighlighted) {
+  if (!executionHasntStarted() || cursorHighlighted) {
     return;
   }
   if (cursor.getAddressSpace() == CODE) {
@@ -277,8 +280,7 @@ pair<int, int> Renderer::convertIndexToCoordinates(int index) {
 }
 
 bool Renderer::pcPointingToAddress(int adr) {
-  bool executionHasntStarted = cpu.getCycle() == 0;
-  if (executionHasntStarted) {
+  if (executionHasntStarted()) {
     return false;
   }
   return Util::getInt(cpu.getPc()) == adr;
@@ -315,9 +317,15 @@ Instruction* Renderer::getInstruction() {
 }
 
 bool Renderer::machineActive() {
-  bool executionHasntStarted = cpu.getCycle() == 0;
-  bool executionEnded = Util::getInt(cpu.getPc()) == RAM_SIZE;
-  return !(executionHasntStarted || executionEnded);
+  return !(executionHasntStarted() || executionEnded());
+}
+
+bool Renderer::executionHasntStarted() {
+  return cpu.getCycle() == 0;
+}
+
+bool Renderer::executionEnded() {
+  return Util::getInt(cpu.getPc()) == RAM_SIZE;
 }
 
 Instruction Renderer::initializeInstruction() {
