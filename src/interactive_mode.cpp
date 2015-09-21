@@ -123,8 +123,9 @@ void prepareOutput() {
 }
 
 void drawScreen() {
-  vector<vector<string>> buffer = Renderer::renderState(printer, computer.ram, computer.cpu,
-                                                        cursor, *selectedView);
+  vector<vector<string>> buffer = Renderer::renderState(printer, computer.ram,
+                                                        computer.cpu, cursor, 
+                                                        *selectedView);
   int i = 0;
   for (vector<string> line : buffer) {
     replaceLine(line, i++);

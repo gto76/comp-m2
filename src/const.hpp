@@ -52,6 +52,9 @@ const char DEFAULT_VAR_NAME = '-';
 const string HIGHLIGHT_ESC = "\e[7m";
 const string HIGHLIGHT_END_ESC = "\e[27m";
 
+const vector<string> HIGHLIGHT_ESC_VEC = { "\e", "[", "7", "m" };
+const vector<string> HIGHLIGHT_END_ESC_VEC = { "\e", "[", "2", "7", "m" };
+
 const string CODE_INDICATOR = "a";
 const string DATA_INDICATOR = "b";
 const string CODE_ADR_INDICATOR = "g";

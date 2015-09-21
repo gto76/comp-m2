@@ -119,7 +119,7 @@ string getFilenameOut() {
   if (slashIndex != string::npos) {
     if(slashIndex == fullname.length()-1) {
       fullname.erase(fullname.length()-1);
-      slashIndex = fullname.find_last_of( '/' );
+      slashIndex = fullname.find_last_of('/');
       if (slashIndex != string::npos) {
         fullname = fullname.substr(slashIndex + 1);
       }
