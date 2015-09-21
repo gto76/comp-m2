@@ -170,15 +170,15 @@ void sleepAndCheckForKey() {
   }
   // Pauses execution if a key was hit, and waits for another key hit.
   if (int keyCode = Util::getKey()) {
-    // If escape was pressed.
+    // Cancels execution if escape was pressed.
     if (keyCode == 27) {
       executionCanceled = true;
       return;
     }
     // "Press key to continue."
     keyCode = readStdin(false);
-    // If esc key was pressed.
-    if (keyCode == 27) {
+    // Cancels execution if escape or tab was pressed.
+    if (keyCode == 27 || keyCode == 9) {
       executionCanceled = true;
     }
     // If s or S was pressed saves to file.
