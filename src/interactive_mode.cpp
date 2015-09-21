@@ -44,7 +44,7 @@ void processInputWithShift(char c);
 bool insertNumberIntoRam(char c);
 void engageInsertCharMode();
 void engageInsertNumberMode();
-void switchDrawing();
+void switchDrawing(bool direction);
 // SAVE
 void saveRamToNewFile();
 void saveRamToCurrentFile();
@@ -230,8 +230,11 @@ void userInput() {
           break;
 
         // VIEWS
+        case 44:  // ,
+          switchDrawing(false);
+          break;
         case 46:  // .
-          switchDrawing();
+          switchDrawing(true);
           break;
 
         // SAVE
@@ -445,13 +448,23 @@ void engageInsertNumberMode() {
   }
 }
 
-void switchDrawing() {
-  if (*selectedView == view3d) {
-    selectedView = &view3db;
-  } else if (*selectedView == view3db) {
-    selectedView = &view2d;
+void switchDrawing(bool direction) {
+  if (direction) {
+    if (*selectedView == view3d) {
+      selectedView = &view3db;
+    } else if (*selectedView == view3db) {
+      selectedView = &view2d;
+    } else {
+      selectedView = &view3d;
+    }
   } else {
-    selectedView = &view3d;
+    if (*selectedView == view3d) {
+      selectedView = &view2d;
+    } else if (*selectedView == view3db) {
+      selectedView = &view3d;
+    } else {
+      selectedView = &view3db;
+    }
   }
   prepareOutput();
   clearScreen();
