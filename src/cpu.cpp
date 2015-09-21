@@ -49,6 +49,10 @@ int Cpu::getCycle() const {
   return cycle;
 }
 
+void Cpu::switchOn() {
+  cycle = 1;
+}
+
 
 
 

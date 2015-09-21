@@ -58,15 +58,12 @@ vector<string> Renderer::insertEscSeqences(
   for (size_t i = 0; i < lineWithoutEscapeSeqences.size(); i++) {
     bool firstCharInsideBlock = highlightedChars[i] && !insideHighlightBlock;
     if (firstCharInsideBlock) {
-      // vector<string> highlightEsc = Util::stringToVecOfString(HIGHLIGHT_ESC);
       lineOut.insert(lineOut.end(), HIGHLIGHT_ESC_VEC.begin(),   
                      HIGHLIGHT_ESC_VEC.end());
       insideHighlightBlock = true;
     }
     bool firstCharOutsideBlock = !highlightedChars[i] && insideHighlightBlock;
     if (firstCharOutsideBlock) {
-      // vector<string> highlightEscEnd = 
-      //     Util::stringToVecOfString(HIGHLIGHT_END_ESC);
       lineOut.insert(lineOut.end(), HIGHLIGHT_END_ESC_VEC.begin(), 
                      HIGHLIGHT_END_ESC_VEC.end());
       insideHighlightBlock = false;

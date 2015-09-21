@@ -24,6 +24,7 @@ class Cpu {
     vector<bool> getRegister() const;
     vector<bool> getPc() const;
     int getCycle() const;
+    void switchOn();
 
   private:
     Ram &ram;

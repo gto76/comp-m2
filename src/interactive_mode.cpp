@@ -143,6 +143,9 @@ void drawScreen() {
  */
 void run() {
   savedRamState = computer.ram.state;
+  computer.cpu.switchOn();
+  redrawScreen();
+  sleepAndCheckForKey();
   printer.run();
   // If 'esc' was pressed then it doesn't wait for keypress at the end.
   if (executionCanceled) {
