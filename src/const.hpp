@@ -38,6 +38,8 @@ const vector<bool> FIRST_ADDRESS = { false, false, false, false };
 const vector<bool> LAST_ADDRESS = { true, true, true, true };
 const int MAX_VALUE = 255;
 
+const int PRINTER_WIDTH = 12;
+
 const string LOGIC_OPS_INDICATOR = "JRI~<>&VX";
 const int LOGIC_OPS_INDEX = 7;
 

@@ -4,9 +4,12 @@
 #include <iostream>
 #include <vector>
 
+#include "const.hpp"
 #include "util.hpp"
 
 using namespace std;
+
+/// INTERFACE ///
 
 void Printer::run() {
   while (1) {
@@ -23,7 +26,31 @@ void Printer::run() {
   }
 }
 
+string Printer::getPrinterOutput() const {
+  if (!printerOutputUpdated) {
+    printerOutput = renderPrinterOutput();
+    printerOutputUpdated = true;
+  }
+  return printerOutput;
+}
+
+void Printer::printString(string sIn) {
+  string sOut;
+  while (sIn.size() > PRINTER_WIDTH) {
+    sOut.insert(0, sIn.substr(0, PRINTER_WIDTH) + "\n");
+    sIn = sIn.substr(PRINTER_WIDTH, sIn.length());
+  }
+  if (sIn.length() > 0) {
+    sOut.insert(0, sIn.append(PRINTER_WIDTH-sIn.length(),' ') + "\n");
+  }
+  output += sOut;
+  printerOutputUpdated = false;
+}
+
+/// PRIVATE ///
+
 /*
+ * TODO: This doc still relavant, but should not be here:
  * If in interactive mode, then prints word together with decimal
  * representation on the printer. If not in interactive mode,
  * then prints to the stdout. If stdout is a pipe, then it doesen't
@@ -40,14 +67,6 @@ void Printer::printEmptyLine() {
 
 string Printer::getOutput() {
   return output;
-}
-
-string Printer::getPrinterOutput() const {
-  if (!printerOutputUpdated) {
-    printerOutput = renderPrinterOutput();
-    printerOutputUpdated = true;
-  }
-  return printerOutput;
 }
 
 void Printer::clear() {

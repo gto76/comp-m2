@@ -15,8 +15,11 @@ class Printer {
         : input(inputIn),
           printState(printStateIn),
           sleepAndCheckForKey(sleepAndCheckForKeyIn) { }
+
+    /// INTERFACE ///
     void run();
     string getPrinterOutput() const;
+    void printString(string sIn);
 
   private:
     ProvidesOutput &input;
@@ -26,6 +29,7 @@ class Printer {
     mutable string printerOutput;
     mutable bool printerOutputUpdated = false;
 
+    /// PRIVATE ///
     void print(vector<bool> sIn);
     void printEmptyLine();
     string getOutput();

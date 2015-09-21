@@ -46,8 +46,8 @@ void engageInsertCharMode();
 void engageInsertNumberMode();
 void switchDrawing(bool direction);
 // SAVE
-void saveRamToNewFile();
-void saveRamToCurrentFile();
+void save();
+void saveAs();
 string getFreeFileName();
 string getGenericFileName(int index);
 void saveRamToFile(string filename);
@@ -181,13 +181,14 @@ void sleepAndCheckForKey() {
     if (keyCode == 27 || keyCode == 9) {
       executionCanceled = true;
     }
-    // If s or S was pressed saves to file.
+    // If s was pressed - save.
     if (keyCode == 115) {
-      saveRamToNewFile();
+      save();
       executionCanceled = true;
     }
+    // If S was pressed - save as.
     if (keyCode == 83) {
-      saveRamToCurrentFile();
+      saveAs();
       executionCanceled = true;
     }
   }
@@ -230,28 +231,20 @@ void userInput() {
           break;
 
         // VIEWS
-        case 44:  // ,
+        case 44:   // ,
           switchDrawing(false);
           break;
-        case 46:  // .
+        case 46:   // .
           switchDrawing(true);
           break;
 
         // SAVE
-        case 115: { // s
-          if (!fileSaved) {
-            saveRamToNewFile();
-            fileSaved = true;
-          }
+        case 115:  // s
+          save();
           break;
-        }
-        case 83: {  // S
-          if (!fileSaved) {
-            saveRamToCurrentFile();
-            fileSaved = true;
-          }
+        case 83:   // S
+          saveAs();
           break;
-        }
 
         // QUIT
         case 81:   // Q
@@ -259,7 +252,7 @@ void userInput() {
           break;
         case 113: { // q
           if (!fileSaved) {
-            saveRamToNewFile();
+            saveAs();
           }
           exit(0);
           break;
@@ -475,20 +468,29 @@ void switchDrawing(bool direction) {
 /// SAVE ///
 ////////////
 
-void saveRamToNewFile() {
+
+void save() {
+  if (fileSaved) {
+    printer.printString("Saved "+loadedFilename);
+    return;
+  }
+  if (loadedFilename.empty()) {
+    saveAs();
+  } else {
+    saveRamToFile(loadedFilename);
+    fileSaved = true; 
+    printer.printString("Saved "+loadedFilename);
+    redrawScreen();   
+  }
+}
+
+void saveAs() {
   string fileName = getFreeFileName();
   saveRamToFile(fileName);
   loadedFilename = fileName;
-}
-
-void saveRamToCurrentFile() {
-  string fileName;
-  if (loadedFilename == "") {
-    fileName = getFreeFileName();
-  } else {
-    fileName = loadedFilename;
-  }
-  saveRamToFile(fileName);
+  fileSaved = true;
+  printer.printString("Saved as "+fileName);
+  redrawScreen();
 }
 
 string getFreeFileName() {
