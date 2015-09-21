@@ -24,7 +24,6 @@ void clearScreen(void);
 void registerSigWinChCatcher(void);
 void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
-int getLengthOfString(vector<string> s);
 void setLine(vector<string> line, int y);
 void printLine(vector<string> lineVec, int lineNo);
 vector<string> resizeLine(vector<string> line, int size);
@@ -100,18 +99,12 @@ void printCharXY(string c, int x, int y) {
   setBuffer({ c }, x, y);
 }
 
-void printString(vector<string> s, int x, int y) {
+void printString(vector<string> sss, int x, int y) {
   if (coordinatesOutOfBounds(x, y)) {
     return;
   }
-  bool itDoesntFitTheScreen = getLengthOfString(s) + (unsigned) x > (unsigned) columns;
-  if (itDoesntFitTheScreen) {
-    int distanceToTheRightEdge = columns - x - 1;
-    s.resize(distanceToTheRightEdge);
-    setBuffer(s, x, y);
-  } else {
-    setBuffer(s, x, y);
-  }
+  sss = resizeLine(sss, columns - x - 1);
+  setBuffer(sss, x, y);
 }
 
 /////////////////////////////
@@ -134,22 +127,12 @@ void replaceLine(vector<string> line, int y) {
   }
   line = resizeLine(line, columns - x - 1);
   setLine(line, y);
-  // int itDoesntFitTheScreen = getLengthOfString(line) + (unsigned) x > 
-  //                            (unsigned) columns;
-  // if (itDoesntFitTheScreen) {
-  //   int distanceToTheRightEdge = columns - x - 1;
-  //   line.resize(distanceToTheRightEdge); // todo change inteligently
-  //   setLine(line, y);
-  // } else {
-  //   setLine(line, y);
-  // }
 }
 
 vector<string> resizeLine(vector<string> line, int size) {
   if (size < 1) {
     return vector<string>();
   }
-  //size_t positiveSize = (size_t) size;
   vector<string> lineOut;
   bool insideHighlightedText = false;
   int counter = 0;
@@ -187,36 +170,6 @@ bool isEscSeqence(vector<string> line, vector<string> seqence, int index) {
     return false;
   }
   return equal(seqence.begin(), seqence.end(), line.begin()+index);
-}
-
-int getLengthOfString(vector<string> line) {
-  int counter = 0;
-  bool insideEscapeSeqence = false;
-  // for every char:
-  for (size_t i = 0; i < line.size(); i++) {
-    // if escape sequence -> dont count
-    if (line[i] == ESCAPE) {
-      // cerr << "inside escape seqence char no " << to_string(i) << endl;
-      insideEscapeSeqence = true;
-      continue;
-    }
-    // HIGHLIGHT_END_ESC = "\e[27m";
-    if (insideEscapeSeqence &&
-        line.size() >= HIGHLIGHT_END_ESC.length() &&
-        line[i] == string(1, HIGHLIGHT_END_ESC[4]) &&
-        line[i-1] == string(1, HIGHLIGHT_END_ESC[3]) &&
-        line[i-2] == string(1, HIGHLIGHT_END_ESC[2]) &&
-        line[i-3] == string(1, HIGHLIGHT_END_ESC[1]) &&
-        line[i-4] == string(1, HIGHLIGHT_END_ESC[0])) {
-      // cerr << "outside escape seqence char no " << to_string(i) << endl;
-      insideEscapeSeqence = false;
-      continue;
-    }
-    if (!insideEscapeSeqence) {
-      counter++;
-    }
-  }
-  return counter;
 }
 
 int getAbsoluteX(int x) {
