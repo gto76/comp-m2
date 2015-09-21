@@ -404,10 +404,13 @@ void processInputWithShift(char c) {
   shiftPressed = false;
   if (c == 65) {           // A, part of up arrow
     cursor.moveByteUp();
+    fileSaved = false;
   } else if (c == 66) {    // B, part of down arrow
     cursor.moveByteDown();
+    fileSaved = false;
   } else if (c == 126) {   // ~, part of insert key (also is 2)
     cursor.insertByteAndMoveRestDown();
+    fileSaved = false;
   }
 }
 

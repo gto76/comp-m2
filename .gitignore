@@ -1,6 +1,9 @@
 core
 tmp
 *.cmp
+cat-vs-mouse
+test
+punchcard*
 
 # Compiled Object files
 *.slo

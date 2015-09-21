@@ -64,8 +64,9 @@ class Cursor {
     // Selected bit with the cursor.
     map<AddrSpace, map<Axis, int>> cursorPosition;
 
+    bool addressReferenced(Address adr);
     vector<Address> getAddressesOfAllInstructions();
-    void incOrDecAddressesPastTheIndex(int index, int delta);
+    void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
     static void setAddress(vector<bool> &word, int val);
     int getBitIndex() const;
     int getAddr() const;

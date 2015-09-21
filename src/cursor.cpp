@@ -190,15 +190,12 @@ bool Cursor::insertByteAndMoveRestDown() {
   if (lastWordIsNotEmpty) {
     return false;
   }
-  vector<Address> addresses = getAddressesOfAllInstructions();
   Address lastCodeAddress = Address(CODE, Util::getBoolNibb(RAM_SIZE-1));
-  bool includesLastAddress = 
-      find(addresses.begin(), addresses.end(), lastCodeAddress) != 
-      addresses.end();
-  if (includesLastAddress) {
+  if (addressReferenced(lastCodeAddress)) {
     return false;
   }
-  incOrDecAddressesPastTheIndex(getY(), 1);
+
+  incOrDecAddressesPastTheIndex(CODE, getY(), 1);
   for (int i = RAM_SIZE-1; i > getY(); i--) {
     ram.state[CODE][i] = ram.state[CODE][i-1];
   }
@@ -210,14 +207,11 @@ bool Cursor::insertByteAndMoveRestDown() {
  * Retruns whether the operation was successful.
  */
 bool Cursor::deleteByteAndMoveRestUp() {
-  vector<Address> addresses = getAddressesOfAllInstructions();
-  bool includesCurrentAddress = 
-      find(addresses.begin(), addresses.end(), getAddress()) != 
-      addresses.end();
-  if (includesCurrentAddress) {
+  if (addressReferenced(getAddress())) {
     return false;
   }
-  incOrDecAddressesPastTheIndex(getY(), -1);
+
+  incOrDecAddressesPastTheIndex(CODE, getY(), -1);
   for (int i = getY(); i < RAM_SIZE-1; i++) {
     ram.state[CODE][i] = ram.state[CODE][i+1];
   }
@@ -226,6 +220,11 @@ bool Cursor::deleteByteAndMoveRestUp() {
 }
 
 /////////// PRIVATE //////////
+
+bool Cursor::addressReferenced(Address adr) {
+  vector<Address> addresses = getAddressesOfAllInstructions();
+  return find(addresses.begin(), addresses.end(), adr) != addresses.end();
+}
 
 vector<Address> Cursor::getAddressesOfAllInstructions() {
   vector<Address> out;
@@ -236,12 +235,13 @@ vector<Address> Cursor::getAddressesOfAllInstructions() {
   return out;
 }
 
-void Cursor::incOrDecAddressesPastTheIndex(int index, int delta) {
+void Cursor::incOrDecAddressesPastTheIndex(AddrSpace space,
+                                           int index, int delta) {
   for (vector<bool> &word : ram.state[CODE]) {
     Instruction inst = Instruction(word, EMPTY_WORD, ram);
     Address adr = inst.firstOrderAdr[0];
     int intVal = Util::getInt(adr.val);
-    if (adr.space == CODE && intVal >= index) {
+    if (adr.space == space && intVal >= index && adr.val != LAST_ADDRESS) {
       int newVal = intVal + delta;
       setAddress(word, newVal);
     }
