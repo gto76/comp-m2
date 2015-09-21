@@ -36,10 +36,9 @@ int main(int argc, const char* argv[]) {
   if (compile) {
     assertFilenames();
     string filenameOut = getFilenameOut();
-    string sourceNameOut = filenameOut+".cpp";
+    string sourceNameOut = "/tmp/"+filenameOut+".cpp";
     saveSourceToFile(sourceNameOut);
     string command = GCC_COMMAND+" "+filenameOut+" "+sourceNameOut;
-    cout << command << endl;
     system(command.c_str());
   } else if (parse) {
     assertFilenames();
@@ -107,14 +106,11 @@ void loadAllFilesFromDir(string dirname) {
 
 string getFilenameOut() {
   string fullname = filenames.back();
-  cout << "fullname "+fullname << endl;
   // Names source file and executable by directory name if present,
   // else by the last input file.
-  cout << "dirname "+dirname << endl;
   if (dirname != "") {
     fullname = dirname;
   }
-  cout << "fullname "+fullname << endl;
   size_t slashIndex = fullname.find_last_of('/');
   if (slashIndex != string::npos) {
     if(slashIndex == fullname.length()-1) {
@@ -127,7 +123,6 @@ string getFilenameOut() {
       fullname = fullname.substr(slashIndex + 1);
     }
   }
-  cout << "fullname "+fullname << endl;
   size_t lastindex = fullname.find_last_of("."); 
   if (lastindex == string::npos) {
     return fullname;
