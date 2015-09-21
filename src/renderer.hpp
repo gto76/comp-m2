@@ -42,6 +42,8 @@ class Renderer {
     vector<Instruction> instruction;
     vector<Instruction> allInstructions;
     set<int> pointingInstructions;
+    bool effectiveInstructionsInitialized;
+    vector<Instruction> effectiveInstructions;
     // Counts occurances of a char in a drawing.
     map<string, int> switchIndex;
 
@@ -95,6 +97,7 @@ class Renderer {
     bool instructionPointingToAddress(Address adr);
     set<int>* getIndexesOfPointingInstructions();
     set<int> generatePointingInstructions();
+    vector<Instruction>* getEffectiveInstructions();
     vector<Instruction>* getAllInstructions();
     bool isAddressReferencedFirstOrder(Address adr);
 };

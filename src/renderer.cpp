@@ -85,7 +85,8 @@ vector<bool> Renderer::getHighlightedLocations(vector<string> lineIn) {
   }
   highlightCursor(highlightedLocations, lineIn);
   Instruction *inst = getInstruction();
-  if (inst == NULL) {
+  bool cursorOnData = inst == NULL;
+  if (cursorOnData) {
     highlightPointingInstructions(highlightedLocations, lineIn);
     return highlightedLocations;
   }
@@ -366,7 +367,7 @@ set<int>* Renderer::getIndexesOfPointingInstructions() {
 }
 
 set<int> Renderer::generatePointingInstructions() {
-  vector<Instruction> *allInstructions = getAllInstructions();
+  vector<Instruction> *allInstructions = getEffectiveInstructions();
   set<int> out;
   int i = 0;
   for (Instruction inst : *allInstructions) {
@@ -376,6 +377,28 @@ set<int> Renderer::generatePointingInstructions() {
     i++;
   }
   return out;
+}
+
+vector<Instruction>* Renderer::getEffectiveInstructions() {
+  if (!effectiveInstructionsInitialized) {
+    vector<Instruction> *allInstructions = getAllInstructions();
+    int lastNonemptyInst = -1;
+    int i = 0;
+    for (Instruction inst : *allInstructions) {
+      if (inst.val != EMPTY_WORD) {
+        lastNonemptyInst = i;
+      }
+      i++;
+    }
+    bool somePresent = lastNonemptyInst != -1;
+    if (somePresent) {
+      effectiveInstructions = vector<Instruction>(
+          allInstructions->begin(), 
+          allInstructions->begin() + lastNonemptyInst+1);
+    }
+    effectiveInstructionsInitialized = true;
+  }
+  return &effectiveInstructions;
 }
 
 vector<Instruction>* Renderer::getAllInstructions() {
