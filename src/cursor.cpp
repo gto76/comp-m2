@@ -312,17 +312,14 @@ void Cursor::incOrDecAddressesPastTheIndex(AddrSpace space,
     int intVal = Util::getInt(adr.val);
     if (adr.space == space && intVal >= index && adr.val != LAST_ADDRESS) {
       int newVal = intVal + delta;
-      setAddress(word, newVal);
+      setAddress(word, newVal, inst.inst->getAdrIndex());
     }
   }
 }
 
-void Cursor::setAddress(vector<bool> &word, int val) {
-  vector<bool> boolVal = Util::getBoolNibb(val);
-  word[4] = boolVal[0];
-  word[5] = boolVal[1];
-  word[6] = boolVal[2];
-  word[7] = boolVal[3];
+void Cursor::setAddress(vector<bool> &word, int val, int adrIndex) {
+  vector<bool> boolVal = Util::getBool(val, WORD_SIZE-adrIndex);
+  word.insert(word.begin() + adrIndex, boolVal.begin(), boolVal.end());
 }
 
 int Cursor::getBitIndex() const {

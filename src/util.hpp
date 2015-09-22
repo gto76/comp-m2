@@ -12,6 +12,7 @@ class Util {
     static int getInt(vector<bool> bbb);
     static vector<bool> getBoolByte(int num);
     static vector<bool> getBoolNibb(int num);
+    static vector<bool> getBool(int num, int length);
     static vector<bool> getBoolByte(string sIn);
     static vector<bool> getFirstNibble(vector<bool> bbb);
     static vector<bool> getSecondNibble(vector<bool> bbb);
@@ -50,9 +51,6 @@ class Util {
     static vector<string> getFilesInDirectory(const string &directory);
     static bool endsWith(string const &fullString, string const &ending);
     static bool isADir(string filename);
-
-  private:
-    static vector<bool> getBool(int num, int length);
 };
 
 #endif

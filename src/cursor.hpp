@@ -72,7 +72,7 @@ class Cursor {
     vector<Address> getAddressesOfAllInstructions();
     vector<Instruction> getAllInstructions();
     void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
-    static void setAddress(vector<bool> &word, int val);
+    static void setAddress(vector<bool> &word, int val, int adrIndex);
     int getBitIndex() const;
     int getAddr() const;
     void setAddr(int addr);
