@@ -17,7 +17,9 @@ map<int, Instruction> Cursor::BOUND_DATA_ADDRESSES = {
       Instruction(LAST_XOR_INSTRUCTION, EMPTY_WORD, NULL) }
 };
 
+///////////////////////////////
 /////// ADDR SPACE API ////////
+///////////////////////////////
 
 void Cursor::switchAddressSpace() {
   if (addrSpace == CODE) {
@@ -36,7 +38,9 @@ Address Cursor::getAddress() const {
   return Address(addrSpace, adrVal);
 }
 
+//////////////////////////////////
 //////// COORDINATES API /////////
+//////////////////////////////////
 
 int Cursor::getAbsoluteBitIndex() const {
   return cursorPosition.at(addrSpace).at(Y) * WORD_SIZE +
@@ -131,7 +135,9 @@ void Cursor::goToInstructionsAddress() {
   goToAddress(inst.adr);
 }
 
+////////////////////////////////
 /////////// RAM API ////////////
+////////////////////////////////
 
 bool Cursor::getBit() const {
   return ram.state.at(addrSpace).at(getAddr()).at(getBitIndex());
@@ -201,7 +207,7 @@ bool Cursor::insertByteAndMoveRestDown() {
     return false;
   }
   if (addrSpace == DATA) {
-    if (shouldNotInsertIntoData()) {
+    if (shouldNotModifyData(true)) {
       return false;
     }
   }
@@ -210,40 +216,28 @@ bool Cursor::insertByteAndMoveRestDown() {
   return true;
 }
 
-bool Cursor::shouldNotInsertIntoData() {
-  vector<Instruction> instructions = getAllInstructions();
-  for (int i = getY(); i <= LAST_XOR_OPERAND_INDEX; i++) {
-    bool addressCouldBeBound = BOUND_DATA_ADDRESSES.find(i) != 
-                               BOUND_DATA_ADDRESSES.end();
-    if (addressCouldBeBound) {
-      Instruction boundingInst = BOUND_DATA_ADDRESSES.at(i);
-      bool instructionExists = 
-          find(instructions.begin(), instructions.end(), boundingInst) != 
-          instructions.end();
-      if (instructionExists) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
 /*
  * Retruns whether the operation was successful.
  */
 bool Cursor::deleteByteAndMoveRestUp() {
-  if (addressReferenced(getAddress())) {
+  bool wordNotEmpty = getWord() != EMPTY_WORD;
+  if (wordNotEmpty || addressReferenced(getAddress())) {
+    eraseByte();
     return false;
   }
-  incOrDecAddressesPastTheIndex(CODE, getY(), -1);
-  for (int i = getY(); i < RAM_SIZE-1; i++) {
-    ram.state[CODE][i] = ram.state[CODE][i+1];
+  if (addrSpace == DATA) {
+    if (shouldNotModifyData(false)) {
+      return false;
+    }
   }
-  ram.state[CODE][RAM_SIZE-1] = EMPTY_WORD;
+  incOrDecAddressesPastTheIndex(addrSpace, getY(), -1);
+  actuallyDelete();
   return true;
 }
 
+//////////////////////////////
 /////////// PRIVATE //////////
+//////////////////////////////
 
 bool Cursor::addressReferenced(Address adr) {
   vector<Address> addresses = getAddressesOfAllInstructions();
@@ -265,6 +259,33 @@ vector<Instruction> Cursor::getAllInstructions() {
     out.push_back(inst);
   }
   return out;
+}
+
+/*
+ * True means insert, false delete.
+ */
+bool Cursor::shouldNotModifyData(bool insert) {
+  vector<Instruction> instructions = getAllInstructions();
+  int lastAddressToCheck = LAST_XOR_OPERAND_INDEX;
+  // For delete we don't need to check if there exists xor instruction, that
+  // has 8th address.
+  if (!insert) {
+    lastAddressToCheck--;
+  }
+  for (int i = getY(); i <= lastAddressToCheck; i++) {
+    bool addressCouldBeBound = BOUND_DATA_ADDRESSES.find(i) != 
+                               BOUND_DATA_ADDRESSES.end();
+    if (addressCouldBeBound) {
+      Instruction boundingInst = BOUND_DATA_ADDRESSES.at(i);
+      bool instructionExists = 
+          find(instructions.begin(), instructions.end(), boundingInst) != 
+          instructions.end();
+      if (instructionExists) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 void Cursor::incOrDecAddressesPastTheIndex(AddrSpace space,
@@ -295,6 +316,13 @@ void Cursor::actuallyInsert() {
     ram.state[addrSpace][i] = ram.state[addrSpace][i-1];
   }
   ram.state[addrSpace][getY()] = EMPTY_WORD;
+}
+
+void Cursor::actuallyDelete() {
+  for (int i = getY(); i < RAM_SIZE-1; i++) {
+    ram.state[addrSpace][i] = ram.state[addrSpace][i+1];
+  }
+  ram.state[addrSpace][RAM_SIZE-1] = EMPTY_WORD;
 }
 
 int Cursor::getBitIndex() const {
