@@ -395,6 +395,9 @@ vector<Instruction>* Renderer::getEffectiveInstructions() {
     }
     bool somePresent = lastNonemptyInst != -1;
     if (somePresent) {
+      // vector<Instruction>::iterator first = allInstructions->begin();
+      // vector<Instruction>::iterator last = first  + lastNonemptyInst + 1;
+      // effectiveInstructions = vector<Instruction>(first, last);
       effectiveInstructions = vector<Instruction>(
           allInstructions->begin(), 
           allInstructions->begin() + lastNonemptyInst+1);

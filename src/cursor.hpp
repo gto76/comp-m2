@@ -70,6 +70,7 @@ class Cursor {
     bool addressReferenced(Address adr);
     vector<Address> getAddressesOfAllInstructions();
     bool shouldNotModifyData(bool insert);
+    vector<Instruction> getEffectiveInstructions();
     vector<Instruction> getAllInstructions();
     void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
     static void setAddress(vector<bool> &word, int val, int adrIndex);

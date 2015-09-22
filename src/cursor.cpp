@@ -246,10 +246,33 @@ bool Cursor::addressReferenced(Address adr) {
 
 vector<Address> Cursor::getAddressesOfAllInstructions() {
   vector<Address> out;
-  for (Instruction inst : getAllInstructions()) {
+  for (Instruction inst : getEffectiveInstructions()) {
     out.push_back(inst.firstOrderAdr[0]);
   }
   return out;
+}
+
+/*
+ * Doesn't include empty instructions from last non-empty on.
+ */
+vector<Instruction> Cursor::getEffectiveInstructions() {
+  vector<Instruction> effectiveInstructions;
+  vector<Instruction> allInstructions = getAllInstructions();
+  int lastNonemptyInst = -1;
+  int i = 0;
+  for (Instruction inst : allInstructions) {
+    if (inst.val != EMPTY_WORD) {
+      lastNonemptyInst = i;
+    }
+    i++;
+  }
+  bool somePresent = lastNonemptyInst != -1;
+  if (somePresent) {
+    effectiveInstructions = vector<Instruction>(
+      allInstructions.begin(), 
+      allInstructions.begin() + lastNonemptyInst+1);
+  }
+  return effectiveInstructions;
 }
 
 vector<Instruction> Cursor::getAllInstructions() {
@@ -265,7 +288,7 @@ vector<Instruction> Cursor::getAllInstructions() {
  * True means insert, false delete.
  */
 bool Cursor::shouldNotModifyData(bool insert) {
-  vector<Instruction> instructions = getAllInstructions();
+  vector<Instruction> instructions = getEffectiveInstructions();
   int lastAddressToCheck = LAST_XOR_OPERAND_INDEX;
   // For delete we don't need to check if there exists xor instruction, that
   // has 8th address.
