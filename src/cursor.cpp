@@ -8,6 +8,28 @@
 #include "const.hpp"
 #include "instruction.hpp"
 
+
+// static map<int, Instruction> getMap() {
+//   map<int, Instruction> out = { 
+//     { INIT_OPERAND_INDEX, Instruction(INIT_INSTRUCTION, EMPTY_WORD, NULL) },
+//     { AND_OPERAND_INDEX, Instruction(AND_INSTRUCTION, EMPTY_WORD, NULL) },
+//     { OR_OPERAND_INDEX, Instruction(OR_INSTRUCTION, EMPTY_WORD, NULL) },
+//     { LAST_XOR_OPERAND_INDEX, 
+//       Instruction(LAST_XOR_INSTRUCTION, EMPTY_WORD, NULL) }
+//   };
+//   return out;
+// }
+
+map<int, Instruction> Cursor::BOUND_DATA_ADDRESSES = { 
+    { INIT_OPERAND_INDEX, Instruction(INIT_INSTRUCTION, EMPTY_WORD, NULL) },
+    { AND_OPERAND_INDEX, Instruction(AND_INSTRUCTION, EMPTY_WORD, NULL) },
+    { OR_OPERAND_INDEX, Instruction(OR_INSTRUCTION, EMPTY_WORD, NULL) },
+    { LAST_XOR_OPERAND_INDEX, 
+      Instruction(LAST_XOR_INSTRUCTION, EMPTY_WORD, NULL) }
+};
+
+// static map<int, Instruction> Cursor::BOUND_DATA_ADDRESSES = getMap();
+
 /////// ADDR SPACE API ////////
 
 void Cursor::switchAddressSpace() {
@@ -115,7 +137,7 @@ void Cursor::goToInstructionsAddress() {
   if (getAddressSpace() == DATA) {
     return;
   }
-  Instruction inst = Instruction(getWord(), EMPTY_WORD, ram);
+  Instruction inst = Instruction(getWord(), EMPTY_WORD, &ram);
   if (inst.adr.space == NONE) {
     return;
   }
@@ -179,28 +201,68 @@ void Cursor::moveByteDown() {
   increaseY();
 }
 
+// bool Cursor::insertByteAndMoveRestDown() {
+//   if (addrSpace != CODE) {
+//     return false;
+//   }
+//   bool lastWordIsNotEmpty = ram.state[CODE][RAM_SIZE-1] != EMPTY_WORD;
+//   if (lastWordIsNotEmpty) {
+//     return false;
+//   }
+//   Address lastCodeAddress = Address(CODE, Util::getBoolNibb(RAM_SIZE-1));
+//   if (addressReferenced(lastCodeAddress)) {
+//     return false;
+//   }
+
+//   incOrDecAddressesPastTheIndex(CODE, getY(), 1);
+//   for (int i = RAM_SIZE-1; i > getY(); i--) {
+//     ram.state[CODE][i] = ram.state[CODE][i-1];
+//   }
+//   ram.state[CODE][getY()] = EMPTY_WORD;
+//   return true;
+// }
+
 /*
  * Retruns whether the operation was successful.
  */
 bool Cursor::insertByteAndMoveRestDown() {
-  if (addrSpace != CODE) {
-    return false;
-  }
-  bool lastWordIsNotEmpty = ram.state[CODE][RAM_SIZE-1] != EMPTY_WORD;
+  bool lastWordIsNotEmpty = ram.state[addrSpace][RAM_SIZE-1] != EMPTY_WORD;
   if (lastWordIsNotEmpty) {
     return false;
   }
-  Address lastCodeAddress = Address(CODE, Util::getBoolNibb(RAM_SIZE-1));
-  if (addressReferenced(lastCodeAddress)) {
+  Address lastAddress = Address(addrSpace, Util::getBoolNibb(RAM_SIZE-1));
+  if (addressReferenced(lastAddress)) {
     return false;
   }
-
-  incOrDecAddressesPastTheIndex(CODE, getY(), 1);
-  for (int i = RAM_SIZE-1; i > getY(); i--) {
-    ram.state[CODE][i] = ram.state[CODE][i-1];
+  if (addrSpace == DATA) {
+    if (shouldNotInsertIntoData()) {
+      return false;
+    }
   }
-  ram.state[CODE][getY()] = EMPTY_WORD;
+  incOrDecAddressesPastTheIndex(addrSpace, getY(), 1);
+  for (int i = RAM_SIZE-1; i > getY(); i--) {
+    ram.state[addrSpace][i] = ram.state[addrSpace][i-1];
+  }
+  ram.state[addrSpace][getY()] = EMPTY_WORD;
   return true;
+}
+
+bool Cursor::shouldNotInsertIntoData() {
+  vector<Instruction> instructions = getAllInstructions();
+  for (int i = getY(); i <= LAST_XOR_OPERAND_INDEX; i++) {
+    bool addressCouldBeBound = BOUND_DATA_ADDRESSES.find(i) != 
+                               BOUND_DATA_ADDRESSES.end();
+    if (addressCouldBeBound) {
+      Instruction boundingInst = BOUND_DATA_ADDRESSES.at(i);
+      bool instructionExists = 
+          find(instructions.begin(), instructions.end(), boundingInst) != 
+          instructions.end();
+      if (instructionExists) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /*
@@ -210,7 +272,6 @@ bool Cursor::deleteByteAndMoveRestUp() {
   if (addressReferenced(getAddress())) {
     return false;
   }
-
   incOrDecAddressesPastTheIndex(CODE, getY(), -1);
   for (int i = getY(); i < RAM_SIZE-1; i++) {
     ram.state[CODE][i] = ram.state[CODE][i+1];
@@ -228,9 +289,17 @@ bool Cursor::addressReferenced(Address adr) {
 
 vector<Address> Cursor::getAddressesOfAllInstructions() {
   vector<Address> out;
-  for (vector<bool> word : ram.state[CODE]) {
-    Instruction inst = Instruction(word, EMPTY_WORD, ram);
+  for (Instruction inst : getAllInstructions()) {
     out.push_back(inst.firstOrderAdr[0]);
+  }
+  return out;
+}
+
+vector<Instruction> Cursor::getAllInstructions() {
+  vector<Instruction> out;
+  for (vector<bool> word : ram.state[CODE]) {
+    Instruction inst = Instruction(word, EMPTY_WORD, &ram);
+    out.push_back(inst);
   }
   return out;
 }
@@ -238,7 +307,7 @@ vector<Address> Cursor::getAddressesOfAllInstructions() {
 void Cursor::incOrDecAddressesPastTheIndex(AddrSpace space,
                                            int index, int delta) {
   for (vector<bool> &word : ram.state[CODE]) {
-    Instruction inst = Instruction(word, EMPTY_WORD, ram);
+    Instruction inst = Instruction(word, EMPTY_WORD, &ram);
     Address adr = inst.firstOrderAdr[0];
     int intVal = Util::getInt(adr.val);
     if (adr.space == space && intVal >= index && adr.val != LAST_ADDRESS) {

@@ -333,7 +333,7 @@ Instruction Renderer::initializeInstruction() {
   if (machineActive()) {
     return cpu.getInstruction();
   } else {
-    return Instruction(cursor.getWord(), EMPTY_WORD, ram);
+    return Instruction(cursor.getWord(), EMPTY_WORD, &ram);
   }
 }
 
@@ -404,7 +404,7 @@ vector<Instruction>* Renderer::getEffectiveInstructions() {
 vector<Instruction>* Renderer::getAllInstructions() {
   if (allInstructions.empty()) {
     for (vector<bool> word : ram.state.at(CODE)) {
-      Instruction inst = Instruction(word, cpu.getRegister(), ram);
+      Instruction inst = Instruction(word, cpu.getRegister(), &ram);
       allInstructions.push_back(inst);
     }
   }

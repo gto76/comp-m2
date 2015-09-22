@@ -7,6 +7,7 @@
 
 #include "addr_space.hpp"
 #include "axis.hpp"
+#include "instruction.hpp"
 #include "ram.hpp"
 #include "util.hpp"
 
@@ -55,6 +56,7 @@ class Cursor {
     void moveByteUp();
     void moveByteDown();
     bool insertByteAndMoveRestDown();
+    bool shouldNotInsertIntoData();
     bool deleteByteAndMoveRestUp();
 
   private:
@@ -63,9 +65,12 @@ class Cursor {
     AddrSpace addrSpace = CODE;
     // Selected bit with the cursor.
     map<AddrSpace, map<Axis, int>> cursorPosition;
+    // Map of data addresses to instructions that use them.
+    static map<int, Instruction> BOUND_DATA_ADDRESSES;
 
     bool addressReferenced(Address adr);
     vector<Address> getAddressesOfAllInstructions();
+    vector<Instruction> getAllInstructions();
     void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
     static void setAddress(vector<bool> &word, int val);
     int getBitIndex() const;

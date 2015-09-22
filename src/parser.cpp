@@ -58,7 +58,7 @@ string Parser::getData(vector<vector<bool>> data) {
 }
 
 string Parser::getLineOfCode(vector<bool> word, int index, Ram ram) {
-  Instruction inst = Instruction(word, EMPTY_WORD, ram);
+  Instruction inst = Instruction(word, EMPTY_WORD, &ram);
   string strIndex;
   if (index < 10) {
     strIndex = "0";

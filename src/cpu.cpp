@@ -34,7 +34,7 @@ void Cpu::reset() {
 Instruction Cpu::getInstruction() const {
   Address adr = Address(CODE, pc);
   vector<bool> instructionWord = ram.get(adr);
-  return Instruction(instructionWord, reg, ram);
+  return Instruction(instructionWord, reg, &ram);
 }
 
 vector<bool> Cpu::getRegister() const {

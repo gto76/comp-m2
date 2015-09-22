@@ -13,7 +13,7 @@ vector<Address> Instruction::getFirstOrderAdr(vector<bool> val) {
 }
 
 Address Instruction::getAddress(Address firstOrderAdr, const vector<bool> &reg,
-                                const Ram &ram) {
+                                const Ram *ram) {
   return inst->getAddress(firstOrderAdr, reg, ram);
 }
 

@@ -36,12 +36,16 @@ vector<Address> Read::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Read::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
-                        const Ram &ram) {
+                        const Ram *ram) {
   return firstOrderAdr;
 }
 
 string Read::getLabel() {
   return "READ  ";
+}
+
+int Read::getAdrIndex() {
+  return 4;
 }
 
 string Read::getCode(const Address &adr, int pc) {
@@ -63,12 +67,16 @@ vector<Address> Write::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Write::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
-                          const Ram &ram) {
+                          const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Write::getLabel() {
   return "WRITE  ";
+}
+
+int Write::getAdrIndex() {
+  return 4;
 }
 
 string Write::getCode(const Address &adr, int pc) {
@@ -95,12 +103,16 @@ vector<Address> Add::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Add::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
-                        const Ram &ram) {
+                        const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Add::getLabel() {
   return "ADD";
+}
+
+int Add::getAdrIndex() {
+  return 4;
 }
 
 string Add::getCode(const Address &adr, int pc) {
@@ -124,12 +136,16 @@ vector<Address> Sub::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Sub::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
-                        const Ram &ram) {
+                        const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Sub::getLabel() {
   return "SUB";
+}
+
+int Sub::getAdrIndex() {
+  return 4;
 }
 
 string Sub::getCode(const Address &adr, int pc) {
@@ -150,12 +166,16 @@ vector<Address> Jump::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Jump::getAddress(Address &firstOrderAdr, const vector<bool> &reg, 
-                         const Ram &ram) {
+                         const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Jump::getLabel() {
   return "JUMP";
+}
+
+int Jump::getAdrIndex() {
+  return 4;
 }
 
 string Jump::getCode(const Address &adr, int pc) {
@@ -180,12 +200,16 @@ vector<Address> IfMax::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address IfMax::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                          const Ram &ram) {
+                          const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string IfMax::getLabel() {
   return "IF MAX";
+}
+
+int IfMax::getAdrIndex() {
+  return 4;
 }
 
 string IfMax::getCode(const Address &adr, int pc) {
@@ -210,12 +234,16 @@ vector<Address> IfMin::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address IfMin::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                          const Ram &ram) {
+                          const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string IfMin::getLabel() {
   return "IF MIN";
+}
+
+int IfMin::getAdrIndex() {
+  return 4;
 }
 
 string IfMin::getCode(const Address &adr, int pc) {
@@ -236,12 +264,16 @@ vector<Address> JumpReg::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address JumpReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                            const Ram &ram) {
+                            const Ram *ram) {
   return Address(CODE, Util::getSecondNibble(reg));
 }
 
 string JumpReg::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int JumpReg::getAdrIndex() {
+  return -1;
 }
 
 string JumpReg::getCode(const Address &adr, int pc) {
@@ -264,12 +296,16 @@ vector<Address> ReadReg::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address ReadReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                            const Ram &ram) {
+                            const Ram *ram) {
   return Address(DATA, Util::getSecondNibble(reg));
 }
 
 string ReadReg::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int ReadReg::getAdrIndex() {
+  return -1;
 }
 
 string ReadReg::getCode(const Address &adr, int pc) {
@@ -297,12 +333,16 @@ vector<Address> InitializeFirstAddress::getFirstOrderAdr(vector<bool> &val) {
 
 Address InitializeFirstAddress::getAddress(Address &firstOrderAdr,
                                            const vector<bool> &reg,
-                                           const Ram &ram) {
+                                           const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string InitializeFirstAddress::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int InitializeFirstAddress::getAdrIndex() {
+  return -1;
 }
 
 string InitializeFirstAddress::getCode(const Address &adr, int pc) {
@@ -324,12 +364,16 @@ vector<Address> Not::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Not::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                        const Ram &ram) {
+                        const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Not::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int Not::getAdrIndex() {
+  return -1;
 }
 
 string Not::getCode(const Address &adr, int pc) {
@@ -351,12 +395,16 @@ vector<Address> ShiftLeft::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address ShiftLeft::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                              const Ram &ram) {
+                              const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string ShiftLeft::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int ShiftLeft::getAdrIndex() {
+  return -1;
 }
 
 string ShiftLeft::getCode(const Address &adr, int pc) {
@@ -378,12 +426,16 @@ vector<Address> ShiftRight::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address ShiftRight::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                               const Ram &ram) {
+                               const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string ShiftRight::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int ShiftRight::getAdrIndex() {
+  return -1;
 }
 
 string ShiftRight::getCode(const Address &adr, int pc) {
@@ -405,12 +457,16 @@ vector<Address> And::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address And::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                        const Ram &ram) {
+                        const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string And::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int And::getAdrIndex() {
+  return -1;
 }
 
 string And::getCode(const Address &adr, int pc) {
@@ -432,12 +488,16 @@ vector<Address> Or::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Or::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                       const Ram &ram) {
+                       const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Or::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int Or::getAdrIndex() {
+  return -1;
 }
 
 string Or::getCode(const Address &adr, int pc) {
@@ -461,12 +521,16 @@ vector<Address> Xor::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Xor::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                        const Ram &ram) {
+                        const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Xor::getLabel() {
   return LOGIC_OPS_INDICATOR;
+}
+
+int Xor::getAdrIndex() {
+  return 5;
 }
 
 string Xor::getCode(const Address &adr, int pc) {
@@ -489,13 +553,21 @@ vector<Address> ReadPointer::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address ReadPointer::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                                const Ram &ram) {
-  vector<bool> pointer = ram.get(firstOrderAdr);
+                                const Ram *ram) {
+  // If ram is NULL, then treat it as a empty ram.
+  if (ram == NULL) {
+    Address(DATA, FIRST_ADDRESS);
+  }
+  vector<bool> pointer = ram->get(firstOrderAdr);
   return Address(DATA, Util::getSecondNibble(pointer));
 }
 
 string ReadPointer::getLabel() {
   return "READ *";
+}
+
+int ReadPointer::getAdrIndex() {
+  return 4;
 }
 
 string ReadPointer::getCode(const Address &adr, int pc) {
@@ -520,13 +592,21 @@ vector<Address> WritePointer::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address WritePointer::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                                 const Ram &ram) {
-  vector<bool> pointer = ram.get(firstOrderAdr);
+                                 const Ram *ram) {
+  // If ram is NULL, then treat it as a empty ram.
+  if (ram == NULL) {
+    Address(DATA, FIRST_ADDRESS);
+  }
+  vector<bool> pointer = ram->get(firstOrderAdr);
   return Address(DATA, Util::getSecondNibble(pointer));
 }
 
 string WritePointer::getLabel() {
   return "WRITE *";
+}
+
+int WritePointer::getAdrIndex() {
+  return 4;
 }
 
 string WritePointer::getCode(const Address &adr, int pc) {
@@ -552,12 +632,16 @@ vector<Address> Increase::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Increase::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                             const Ram &ram) {
+                             const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Increase::getLabel() {
   return "INC/DEC";
+}
+
+int Increase::getAdrIndex() {
+  return 5;
 }
 
 string Increase::getCode(const Address &adr, int pc) {
@@ -581,12 +665,16 @@ vector<Address> Decrease::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Decrease::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                             const Ram &ram) {
+                             const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Decrease::getLabel() {
   return "INC/DEC";
+}
+
+int Decrease::getAdrIndex() {
+  return 5;
 }
 
 string Decrease::getCode(const Address &adr, int pc) {
@@ -611,12 +699,16 @@ vector<Address> Print::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address Print::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                          const Ram &ram) {
+                          const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string Print::getLabel() {
   return "PRINT";
+}
+
+int Print::getAdrIndex() {
+  return 4;
 }
 
 string Print::getCode(const Address &adr, int pc) {
@@ -643,12 +735,16 @@ vector<Address> IfNotMax::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address IfNotMax::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                             const Ram &ram) {
+                             const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string IfNotMax::getLabel() {
   return "IF NOT MAX";
+}
+
+int IfNotMax::getAdrIndex() {
+  return 4;
 }
 
 string IfNotMax::getCode(const Address &adr, int pc) {
@@ -674,12 +770,16 @@ vector<Address> IfNotMin::getFirstOrderAdr(vector<bool> &val) {
 }
 
 Address IfNotMin::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
-                             const Ram &ram) {
+                             const Ram *ram) {
   return firstOrderAdr;  
 }
 
 string IfNotMin::getLabel() {
   return "IF NOT MIN";
+}
+
+int IfNotMin::getAdrIndex() {
+  return 4;
 }
 
 string IfNotMin::getCode(const Address &adr, int pc) {

@@ -38,6 +38,16 @@ const vector<bool> FIRST_ADDRESS = { false, false, false, false };
 const vector<bool> LAST_ADDRESS = { true, true, true, true };
 const int MAX_VALUE = 255;
 
+const vector<bool> INIT_INSTRUCTION = { false, true, true, true, false, false,
+                                        true, false };
+const vector<bool> AND_INSTRUCTION = { false, true, true, true, false, true,
+                                       true, false };
+const vector<bool> OR_INSTRUCTION = { false, true, true, true, false, true,
+                                      true, true };
+const vector<bool> LAST_XOR_INSTRUCTION = { false, true, true, true, true, true,
+                                            true, true };
+const int LAST_XOR_OPERAND_INDEX = 7;                                  
+
 const int PRINTER_WIDTH = 12;
 
 const string LOGIC_OPS_INDICATOR = "JRI~<>&VX";
@@ -49,7 +59,7 @@ const int INC_DEC_OPS_INDEX = 10;
 const string LAST_CODE_ADDR_LABEL = "  STOP  ";
 const string LAST_DATA_ADDR_LABEL = " IN/OUT ";
 
-const char DEFAULT_VAR_NAME = '-';
+// const char DEFAULT_VAR_NAME = '-';
 
 const string HIGHLIGHT_ESC = "\e[7m";
 const string HIGHLIGHT_END_ESC = "\e[27m";
@@ -139,7 +149,6 @@ const string SOURCE_FOOTER_1 = ""
 "int main() {\n"
 "  while(1) {\n"
 "    cout << f";
-//"    printf(\"%d\\n\", f"; TODO!!!
 
 const string SOURCE_FOOTER_2 = "();\n"
 "  }\n"

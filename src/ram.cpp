@@ -8,7 +8,7 @@
 
 using namespace std;
 
-////// GET //////
+////// INTERFACE //////
 
 vector<bool> Ram::get(const Address &adr) const {
   AddrSpace space = adr.space;
@@ -21,18 +21,6 @@ vector<bool> Ram::get(const Address &adr) const {
   }
   return state.at(space).at(adrIndex);
 }
-
-vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
-  if (addrSpace == CODE) {
-    fprintf(stderr, "Error in function Ram::getInstruction, "
-            "invalid address");
-    exit(4);
-  } else {
-    return input->getOutput();
-  }
-}
-
-////// SET //////
 
 void Ram::set(const Address &adr, const vector<bool> &wordIn) {
   AddrSpace space = adr.space;
@@ -51,7 +39,33 @@ void Ram::set(const Address &adr, const vector<bool> &wordIn) {
   }
 }
 
-void Ram::saveWord(AddrSpace addrSpace, int address, const vector<bool> &wordIn) {
+string Ram::getString() const {
+  return stateToString(state);
+}
+
+string Ram::stateToString(map<AddrSpace, vector<vector<bool>>> state) {
+  string out;
+  out += "# Code:\n";
+  out += spaceToString(state.at(CODE));
+  out += "\n# Data:\n";
+  out += spaceToString(state.at(DATA));
+  return out;
+}
+
+/// PRIVATE ///
+
+vector<bool> Ram::getLastAddress(AddrSpace addrSpace) const {
+  if (addrSpace == CODE) {
+    fprintf(stderr, "Error in function Ram::getInstruction, "
+            "invalid address");
+    exit(4);
+  } else {
+    return input->getOutput();
+  }
+}
+
+void Ram::saveWord(AddrSpace addrSpace, int address,
+                   const vector<bool> &wordIn) {
   state[addrSpace][address] = wordIn;
 }
 
@@ -66,21 +80,6 @@ void Ram::assignToLastAddress(AddrSpace addrSpace, const vector<bool> &wordIn) {
   }
 }
 
-//// GET STRING ////
-
-string Ram::getString() const {
-  return stateToString(state);
-}
-
-string Ram::stateToString(map<AddrSpace, vector<vector<bool>>> state) {
-  string out;
-  out += "# Code:\n";
-  out += spaceToString(state.at(CODE));
-  out += "\n# Data:\n";
-  out += spaceToString(state.at(DATA));
-  return out;
-}
-
 string Ram::spaceToString(vector<vector<bool>> space) {
   string out;
   for (vector<bool> word : space) {
@@ -88,4 +87,3 @@ string Ram::spaceToString(vector<vector<bool>> space) {
   }
   return out;
 }
-
