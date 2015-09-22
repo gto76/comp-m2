@@ -356,6 +356,8 @@ bool Renderer::instructionPointingToAddress(Address adr) {
   return inst->adr == adr;
 }
 
+/// INSTRUCTION HIGHLIGHT ///
+
 set<int>* Renderer::getIndexesOfPointingInstructions() {
   if (pointingInstructions.empty()) {
     pointingInstructions = generatePointingInstructions();
@@ -379,11 +381,48 @@ set<int> Renderer::generatePointingInstructions() {
   return out;
 }
 
+/// ADDRESS INDICATOR ///
+
+bool Renderer::isAddressReferencedFirstOrder(Address adr) {
+  // cerr << "Is address referenced " << Util::getString(adr.val);
+  if (adr.space == CODE) {
+    // cerr << " CODE" << endl;
+  } else {
+    // cerr << " DATA" << endl;
+  };
+  // cerr << "======================" << endl;
+  vector<Instruction> *instructions = getEffectiveInstructions();
+  for (Instruction inst : *instructions) {
+    // cerr << "Instruction " << inst.inst->getLabel() << endl;
+    vector<Address> aaa = inst.firstOrderAdr;
+    // cerr << "has address " << Util::getString(aaa[0].val);
+    if (aaa[0].space == CODE) {
+      // cerr << " CODE" << endl;
+    } else {
+      // cerr << " DATA" << endl;
+    };
+    bool isReferenced = find(aaa.begin(), aaa.end(), adr) != aaa.end();
+    if (adr.space == DATA && adr.val == LAST_ADDRESS) {
+      cerr << "Last Data adr is referenced " << to_string(isReferenced) << endl;
+    }
+    if (isReferenced) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/// UTIL ///
+
 /*
- * Doesn't include empty instructions from last non-empty on.
+ * Doesn't include empty instructions from last non-empty forward.
  */
 vector<Instruction>* Renderer::getEffectiveInstructions() {
+  if (effectiveInstructionsInitialized) {
+    // cerr << "Effective instructions already initialized" << endl;
+  }
   if (!effectiveInstructionsInitialized) {
+    cerr << "GET EFFECTIVE INSTRUCTIONS" << endl;
     vector<Instruction> *allInstructions = getAllInstructions();
     int lastNonemptyInst = -1;
     int i = 0;
@@ -393,16 +432,26 @@ vector<Instruction>* Renderer::getEffectiveInstructions() {
       }
       i++;
     }
+    cerr << "lastNonemptyInst " << to_string(lastNonemptyInst) << endl;
     bool somePresent = lastNonemptyInst != -1;
     if (somePresent) {
-      // vector<Instruction>::iterator first = allInstructions->begin();
-      // vector<Instruction>::iterator last = first  + lastNonemptyInst + 1;
-      // effectiveInstructions = vector<Instruction>(first, last);
       effectiveInstructions = vector<Instruction>(
           allInstructions->begin(), 
           allInstructions->begin() + lastNonemptyInst+1);
     }
     effectiveInstructionsInitialized = true;
+    cerr << "LIST OF EFFECTIVE INST" << endl;
+    for (Instruction inst : effectiveInstructions) {
+      cerr << inst.inst->getLabel() << " " << Util::getString(inst.adr.val);
+      if (inst.adr.space == DATA) {
+        cerr << " DATA" << endl;
+      } else if (inst.adr.space == CODE) {
+        cerr << " CODE" << endl;
+      } else {
+        cerr << " NONE" << endl;
+      }
+    }
+    cerr << endl;
   }
   return &effectiveInstructions;
 }
@@ -415,16 +464,4 @@ vector<Instruction>* Renderer::getAllInstructions() {
     }
   }
   return &allInstructions;
-}
-
-bool Renderer::isAddressReferencedFirstOrder(Address adr) {
-  vector<Instruction> *instructions = getEffectiveInstructions();
-  for (Instruction inst : *instructions) {
-    vector<Address> aaa = inst.firstOrderAdr;
-    bool isReferenced = find(aaa.begin(), aaa.end(), adr) != aaa.end();
-    if (isReferenced) {
-      return true;
-    }
-  }
-  return false;
 }

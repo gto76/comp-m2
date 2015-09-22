@@ -21,6 +21,10 @@
 #include "renderer.hpp"
 #include "view.hpp"
 
+// remove
+#include <numeric>
+#include <iostream>
+
 using namespace std;
 
 extern "C" {
@@ -126,6 +130,12 @@ void drawScreen() {
   vector<vector<string>> buffer = Renderer::renderState(printer, computer.ram,
                                                         computer.cpu, cursor, 
                                                         *selectedView);
+  string out;
+  for (vector<string> line : buffer) {
+    string a = accumulate( line.begin(), line.end(), string("") );
+    out += a + '\n';
+  }
+  cerr << out << endl;
   int i = 0;
   for (vector<string> line : buffer) {
     replaceLine(line, i++);

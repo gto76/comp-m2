@@ -9,6 +9,8 @@
 #include "const.hpp"
 #include "instruction.hpp"
 
+using namespace std;
+
 map<int, Instruction> Cursor::BOUND_DATA_ADDRESSES = { 
     { INIT_OPERAND_INDEX, Instruction(INIT_INSTRUCTION, EMPTY_WORD, NULL) },
     { AND_OPERAND_INDEX, Instruction(AND_INSTRUCTION, EMPTY_WORD, NULL) },
@@ -240,11 +242,11 @@ bool Cursor::deleteByteAndMoveRestUp() {
 //////////////////////////////
 
 bool Cursor::addressReferenced(Address adr) {
-  vector<Address> addresses = getAddressesOfAllInstructions();
+  vector<Address> addresses = getAddressesOfEffectiveInstructions();
   return find(addresses.begin(), addresses.end(), adr) != addresses.end();
 }
 
-vector<Address> Cursor::getAddressesOfAllInstructions() {
+vector<Address> Cursor::getAddressesOfEffectiveInstructions() {
   vector<Address> out;
   for (Instruction inst : getEffectiveInstructions()) {
     out.push_back(inst.firstOrderAdr[0]);
@@ -256,8 +258,21 @@ vector<Address> Cursor::getAddressesOfAllInstructions() {
  * Doesn't include empty instructions from last non-empty on.
  */
 vector<Instruction> Cursor::getEffectiveInstructions() {
-  vector<Instruction> effectiveInstructions;
   vector<Instruction> allInstructions = getAllInstructions();
+  int lastNonemptyInst = getIndexOfLastNonEmptyInst(allInstructions);
+  vector<Instruction> effectiveInstructions = 
+      removeElementsPastIndex(allInstructions, lastNonemptyInst + 1);
+  // bool somePresent = lastNonemptyInst != -1;
+  // if (somePresent) {
+  //   effectiveInstructions = vector<Instruction>(
+  //     allInstructions.begin(), 
+  //     allInstructions.begin() + lastNonemptyInst+1);
+  // }
+  // return effectiveInstructions;
+  return effectiveInstructions;
+}
+
+int Cursor::getIndexOfLastNonEmptyInst(vector<Instruction> allInstructions) {
   int lastNonemptyInst = -1;
   int i = 0;
   for (Instruction inst : allInstructions) {
@@ -266,13 +281,11 @@ vector<Instruction> Cursor::getEffectiveInstructions() {
     }
     i++;
   }
-  bool somePresent = lastNonemptyInst != -1;
-  if (somePresent) {
-    effectiveInstructions = vector<Instruction>(
-      allInstructions.begin(), 
-      allInstructions.begin() + lastNonemptyInst+1);
-  }
-  return effectiveInstructions;
+  return lastNonemptyInst;
+}
+
+vector<Instruction> Cursor::removeElementsPastIndex(vector<Instruction> &iii, int index) {
+    return vector<Instruction>(iii.begin(), iii.begin() + index);
 }
 
 vector<Instruction> Cursor::getAllInstructions() {
@@ -313,7 +326,10 @@ bool Cursor::shouldNotModifyData(bool insert) {
 
 void Cursor::incOrDecAddressesPastTheIndex(AddrSpace space,
                                            int index, int delta) {
-  for (vector<bool> &word : ram.state[CODE]) {
+  int indexOfLastInst = getIndexOfLastNonEmptyInst(getAllInstructions());
+  for (int i = 0; i <= indexOfLastInst; i++) {
+  // for (vector<bool> &word : ram.state[CODE]) {
+    vector<bool> &word = ram.state[CODE].at(i);
     Instruction inst = Instruction(word, EMPTY_WORD, &ram);
     Address adr = inst.firstOrderAdr[0];
     int adrVal = Util::getInt(adr.val);

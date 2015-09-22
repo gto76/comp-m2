@@ -68,9 +68,12 @@ class Cursor {
     static map<int, Instruction> BOUND_DATA_ADDRESSES;
 
     bool addressReferenced(Address adr);
-    vector<Address> getAddressesOfAllInstructions();
+    vector<Address> getAddressesOfEffectiveInstructions();
     bool shouldNotModifyData(bool insert);
     vector<Instruction> getEffectiveInstructions();
+    static int getIndexOfLastNonEmptyInst(vector<Instruction> allInstructions);
+    static vector<Instruction> removeElementsPastIndex(vector<Instruction> &iii,
+                                                       int index);
     vector<Instruction> getAllInstructions();
     void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
     static void setAddress(vector<bool> &word, int val, int adrIndex);
