@@ -379,6 +379,9 @@ set<int> Renderer::generatePointingInstructions() {
   return out;
 }
 
+/*
+ * Doesn't include empty instructions from last non-empty on.
+ */
 vector<Instruction>* Renderer::getEffectiveInstructions() {
   if (!effectiveInstructionsInitialized) {
     vector<Instruction> *allInstructions = getAllInstructions();
@@ -412,7 +415,7 @@ vector<Instruction>* Renderer::getAllInstructions() {
 }
 
 bool Renderer::isAddressReferencedFirstOrder(Address adr) {
-  vector<Instruction> *instructions = getAllInstructions();
+  vector<Instruction> *instructions = getEffectiveInstructions();
   for (Instruction inst : *instructions) {
     vector<Address> aaa = inst.firstOrderAdr;
     bool isReferenced = find(aaa.begin(), aaa.end(), adr) != aaa.end();
