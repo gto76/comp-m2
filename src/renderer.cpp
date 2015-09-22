@@ -402,9 +402,9 @@ bool Renderer::isAddressReferencedFirstOrder(Address adr) {
       // cerr << " DATA" << endl;
     };
     bool isReferenced = find(aaa.begin(), aaa.end(), adr) != aaa.end();
-    if (adr.space == DATA && adr.val == LAST_ADDRESS) {
-      cerr << "Last Data adr is referenced " << to_string(isReferenced) << endl;
-    }
+    // if (adr.space == DATA && adr.val == LAST_ADDRESS) {
+    //   cerr << "Last Data adr is referenced " << to_string(isReferenced) << endl;
+    // }
     if (isReferenced) {
       return true;
     }
@@ -422,7 +422,7 @@ vector<Instruction>* Renderer::getEffectiveInstructions() {
     // cerr << "Effective instructions already initialized" << endl;
   }
   if (!effectiveInstructionsInitialized) {
-    cerr << "GET EFFECTIVE INSTRUCTIONS" << endl;
+    // cerr << "GET EFFECTIVE INSTRUCTIONS" << endl;
     vector<Instruction> *allInstructions = getAllInstructions();
     int lastNonemptyInst = -1;
     int i = 0;
@@ -432,7 +432,7 @@ vector<Instruction>* Renderer::getEffectiveInstructions() {
       }
       i++;
     }
-    cerr << "lastNonemptyInst " << to_string(lastNonemptyInst) << endl;
+    // cerr << "lastNonemptyInst " << to_string(lastNonemptyInst) << endl;
     bool somePresent = lastNonemptyInst != -1;
     if (somePresent) {
       effectiveInstructions = vector<Instruction>(
@@ -440,18 +440,18 @@ vector<Instruction>* Renderer::getEffectiveInstructions() {
           allInstructions->begin() + lastNonemptyInst+1);
     }
     effectiveInstructionsInitialized = true;
-    cerr << "LIST OF EFFECTIVE INST" << endl;
-    for (Instruction inst : effectiveInstructions) {
-      cerr << inst.inst->getLabel() << " " << Util::getString(inst.adr.val);
-      if (inst.adr.space == DATA) {
-        cerr << " DATA" << endl;
-      } else if (inst.adr.space == CODE) {
-        cerr << " CODE" << endl;
-      } else {
-        cerr << " NONE" << endl;
-      }
-    }
-    cerr << endl;
+    // cerr << "LIST OF EFFECTIVE INST" << endl;
+    // for (Instruction inst : effectiveInstructions) {
+    //   cerr << inst.inst->getLabel() << " " << Util::getString(inst.adr.val);
+    //   if (inst.adr.space == DATA) {
+    //     cerr << " DATA" << endl;
+    //   } else if (inst.adr.space == CODE) {
+    //     cerr << " CODE" << endl;
+    //   } else {
+    //     cerr << " NONE" << endl;
+    //   }
+    // }
+    // cerr << endl;
   }
   return &effectiveInstructions;
 }
