@@ -2,6 +2,7 @@
 #define DRAWING_3D_H
 
 #include <string>
+#include <vector>
 
 using namespace std;
 

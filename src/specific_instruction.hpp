@@ -1,10 +1,14 @@
 #ifndef SPECIFIC_INSTRUCTION_H
 #define SPECIFIC_INSTRUCTION_H
 
+#include <string>
 #include <vector>
 
-#include "address.hpp"
-#include "ram.hpp"
+// #include "address.hpp"
+// #include "ram.hpp"
+
+class Address;
+class Ram;
 
 using namespace std;
 

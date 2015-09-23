@@ -4,7 +4,9 @@
 #include <fstream>
 #include <string>
 
-#include "ram.hpp"
+// #include "ram.hpp"
+
+class Ram;
 
 using namespace std;
 

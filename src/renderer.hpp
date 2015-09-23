@@ -2,16 +2,29 @@
 #define RENDERER_H
 
 #include <map>
+#include <set>
 #include <string>
+#include <vector>
 
-#include "address.hpp"
-#include "cpu.hpp"
-#include "cursor.hpp"
-#include "instruction.hpp"
-#include "printer.hpp"
-#include "ram.hpp"
-#include "specific_instruction.hpp"
-#include "view.hpp"
+#include "addr_space.hpp"
+
+// #include "address.hpp"
+// #include "cpu.hpp"
+// #include "cursor.hpp"
+// #include "instruction.hpp"
+// #include "printer.hpp"
+// #include "ram.hpp"
+// #include "specific_instruction.hpp"
+// #include "view.hpp"
+
+class Address;
+class Cpu;
+class Cursor;
+class Instruction;
+class Printer;
+class Ram;
+class SpecificInstruction;
+class View;
 
 using namespace std;
 

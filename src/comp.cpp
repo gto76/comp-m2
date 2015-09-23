@@ -10,6 +10,7 @@
 #include "parser.hpp"
 #include "interactive_mode.hpp"
 #include "noninteractive_mode.hpp"
+#include "util.hpp"
 
 using namespace std;
 

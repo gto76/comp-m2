@@ -1,5 +1,8 @@
 #include "load.hpp"
 
+#include "const.hpp"
+#include "ram.hpp"
+
 using namespace std;
 
 void Load::fillRamWithFile(const char* filename, Ram &ram) {

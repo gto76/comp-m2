@@ -7,8 +7,10 @@
 #include "computer.hpp"
 #include "load.hpp"
 #include "pipe_input.hpp"
-#include "ram.hpp"
+// #include "ram.hpp"
 #include "standard_output.hpp"
+
+class Ram;
 
 using namespace std;
 

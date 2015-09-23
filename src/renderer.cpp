@@ -15,6 +15,7 @@
 #include "printer.hpp"
 #include "ram.hpp"
 #include "util.hpp"
+#include "view.hpp"
 
 using namespace std;
 

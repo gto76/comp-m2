@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "address.hpp"
+#include "const.hpp"
 #include "specific_instruction.hpp"
 #include "util.hpp"
 

@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string>
 
+#include "address.hpp"
 #include "const.hpp"
+#include "provides_output.hpp"
 #include "util.hpp"
 
 using namespace std;

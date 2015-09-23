@@ -1,16 +1,19 @@
 #ifndef CPU_H
 #define CPU_H
 
-#include <stdio.h>
-#include <map>
-#include <set>
+// #include <stdio.h>
+// #include <map>
+// #include <set>
 #include <vector>
 
-#include "addr_space.hpp"
-#include "address.hpp"
+// #include "addr_space.hpp"
+// #include "address.hpp"
+// #include "instruction.hpp"
+
 #include "const.hpp"
-#include "instruction.hpp"
 #include "ram.hpp"
+
+class Instruction;
 
 using namespace std;
 

@@ -5,9 +5,15 @@
 #include <map>
 
 #include "addr_space.hpp"
-#include "address.hpp"
+
+// #include "address.hpp"
 #include "const.hpp"
-#include "provides_output.hpp"
+// #include "provides_output.hpp"
+
+
+class Address;
+class ProvidesOutput;
+
 
 using namespace std;
 

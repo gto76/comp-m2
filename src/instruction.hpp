@@ -1,12 +1,15 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
 
+#include <string>
 #include <vector>
 
 #include "address.hpp"
-#include "ram.hpp"
+// #include "ram.hpp"
 #include "specific_instruction.hpp"
 #include "util.hpp"
+
+class Ram;
 
 using namespace std;
 
