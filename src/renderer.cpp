@@ -38,6 +38,7 @@ vector<vector<string>> Renderer::renderState(const Printer &printerIn,
 
 vector<string> Renderer::insertActualValues(vector<string> lineIn) {
   vector<bool> highlightedChars = getHighlightedLocations(lineIn);
+  vector<bool> brightChars = getBrightLocations(lineIn);
   vector<string> lineOut;
   for (string cIn : lineIn) {
     string sOut;
@@ -49,13 +50,15 @@ vector<string> Renderer::insertActualValues(vector<string> lineIn) {
     }
     lineOut.push_back(sOut);
   }
-  return insertEscSeqences(lineOut, highlightedChars);
+  return insertEscSeqences(lineOut, highlightedChars, brightChars);
 }
 
 vector<string> Renderer::insertEscSeqences(
-    vector<string> lineWithoutEscapeSeqences, vector<bool> highlightedChars) {
+    vector<string> &lineWithoutEscapeSeqences, vector<bool> &highlightedChars,
+    vector<bool> &brightChars) {
   vector<string> lineOut;
   bool insideHighlightBlock = false;
+  bool insideBrightBlock = false;
   for (size_t i = 0; i < lineWithoutEscapeSeqences.size(); i++) {
     bool firstCharInsideBlock = highlightedChars[i] && !insideHighlightBlock;
     if (firstCharInsideBlock) {
@@ -69,16 +72,40 @@ vector<string> Renderer::insertEscSeqences(
                      HIGHLIGHT_END_ESC_VEC.end());
       insideHighlightBlock = false;
     }
+    firstCharInsideBlock = brightChars[i] && !insideBrightBlock;
+    if (firstCharInsideBlock) {
+      lineOut.insert(lineOut.end(), BRIGHT_ESC_VEC.begin(),   
+                     BRIGHT_ESC_VEC.end());
+      insideBrightBlock = true;
+    }
+    firstCharOutsideBlock = !brightChars[i] && insideBrightBlock;
+    if (firstCharOutsideBlock) {
+      lineOut.insert(lineOut.end(), BRIGHT_END_ESC_VEC.begin(), 
+                     BRIGHT_END_ESC_VEC.end());
+      insideBrightBlock = false;
+    }
     lineOut.push_back(lineWithoutEscapeSeqences[i]);
   }
   return lineOut;
+}
+
+////////////////////////////
+/// GET BRIGHT LOCATIONS ///
+////////////////////////////
+
+vector<bool> Renderer::getBrightLocations(vector<string> &lineIn) {
+  vector<bool> brightLocations (lineIn.size(), false);
+  if (BRIGHTER_CURSOR) {
+    highlightCursor(brightLocations, lineIn);
+  }
+  return brightLocations;
 }
 
 /////////////////////////////////
 /// GET HIGHLIGHTED LOCATIONS ///
 /////////////////////////////////
 
-vector<bool> Renderer::getHighlightedLocations(vector<string> lineIn) {
+vector<bool> Renderer::getHighlightedLocations(vector<string> &lineIn) {
   vector<bool> highlightedLocations (lineIn.size(), false);
   highlightPc(highlightedLocations, lineIn);
   if (executionEnded()) {
@@ -118,8 +145,8 @@ void Renderer::highlightPc(vector<bool> &highlightedLocations,
 }
 
 void Renderer::highlightCursor(vector<bool> &highlightedLocations,
-                                       vector<string> &lineIn) {
-  if (!executionHasntStarted() || cursorHighlighted) {
+                               vector<string> &lineIn) {
+  if (!executionHasntStarted()) {
     return;
   }
   if (cursor.getAddressSpace() == CODE) {
@@ -137,7 +164,6 @@ void Renderer::findCursor(vector<bool> &highlightedLocations,
       int lightbulbIndex = switchIndex[c] + indexDelta++;
       if (cursor.getAbsoluteBitIndex() == lightbulbIndex) {
         highlightedLocations[i] = true;
-        cursorHighlighted = true;
         return;
       }
     }

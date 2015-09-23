@@ -53,13 +53,14 @@ class Renderer {
 
     // RENDER STATE
     vector<string> insertActualValues(vector<string> lineIn);
-    vector<string> insertEscSeqences(vector<string> lineWithoutEscapeSeqences,
-                                     vector<bool> highlightedChars);
+    vector<string> insertEscSeqences(vector<string> &lineWithoutEscapeSeqences,
+                                     vector<bool> &highlightedChars,
+                                     vector<bool> &brightChars);
 
     // GET HIGHLIGHTED LOCATIONS
     bool pcHighlighted = false;
-    bool cursorHighlighted = false;
-    vector<bool> getHighlightedLocations(vector<string> lineIn);
+    vector<bool> getHighlightedLocations(vector<string> &lineIn);
+    vector<bool> getBrightLocations(vector<string> &lineIn);
     void highlightPc(vector<bool> &highlightedLocations,
                      vector<string> &lineIn);
     void highlightCursor(vector<bool> &highlightedLocations,

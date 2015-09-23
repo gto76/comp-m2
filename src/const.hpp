@@ -26,6 +26,8 @@ const int OR_OPERAND_INDEX = 3;
 
 const string GCC_COMMAND = "g++ -std=c++11 -g -O2 -o";
 
+const bool BRIGHTER_CURSOR = true;
+
 // Folowing constants will probably break code if changed.
 
 const int WORD_SIZE = 8;
@@ -66,6 +68,9 @@ const string HIGHLIGHT_END_ESC = "\e[27m";
 
 const vector<string> HIGHLIGHT_ESC_VEC = { "\e", "[", "7", "m" };
 const vector<string> HIGHLIGHT_END_ESC_VEC = { "\e", "[", "2", "7", "m" };
+
+const vector<string> BRIGHT_ESC_VEC = { "\e", "[", "9", "7", "m" };
+const vector<string> BRIGHT_END_ESC_VEC = { "\e", "[", "3", "7", "m" };
 
 const string CODE_INDICATOR = "a";
 const string DATA_INDICATOR = "b";

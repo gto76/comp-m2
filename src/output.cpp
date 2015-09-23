@@ -27,6 +27,8 @@ void updateConsoleSize(void);
 void setLine(vector<string> line, int y);
 void printLine(vector<string> lineVec, int lineNo);
 vector<string> resizeLine(vector<string> line, int size);
+int insertEscSeqAndReturnLength(vector<string> &lineOut, 
+                                vector<string> const &escSeq);
 bool isEscSeqence(vector<string> line, vector<string> seqence, int index);
 
 ////////////////////////////
@@ -56,7 +58,7 @@ void setOutput(callback_function drawScreenThat, int width, int height) {
   registerSigWinChCatcher();
   updateConsoleSize();
   // Sets colors.
-  printf("\e[%dm\e[%dm", 37, 40);
+  printf("\e[37m\e[40m");
 }
 
 //////////////////
@@ -135,20 +137,25 @@ vector<string> resizeLine(vector<string> line, int size) {
   }
   vector<string> lineOut;
   bool insideHighlightedText = false;
+  bool insideBrightText = false;
   int counter = 0;
   for (size_t i = 0; i < line.size(); i++) {
     if (line[i] == ESCAPE) {
       if (isEscSeqence(line, HIGHLIGHT_ESC_VEC, i)) {
-        i += HIGHLIGHT_ESC_VEC.size()-1;
+        i += insertEscSeqAndReturnLength(lineOut, HIGHLIGHT_ESC_VEC);
         insideHighlightedText = true;
-        lineOut.insert(lineOut.end(), HIGHLIGHT_ESC_VEC.begin(), 
-                       HIGHLIGHT_ESC_VEC.end());
         continue;
       } else if (isEscSeqence(line, HIGHLIGHT_END_ESC_VEC, i)) {
-        i += HIGHLIGHT_END_ESC_VEC.size()-1;
+        i += insertEscSeqAndReturnLength(lineOut, HIGHLIGHT_END_ESC_VEC);
         insideHighlightedText = false;
-        lineOut.insert(lineOut.end(), HIGHLIGHT_END_ESC_VEC.begin(), 
-                       HIGHLIGHT_END_ESC_VEC.end());
+        continue;
+      } else if (isEscSeqence(line, BRIGHT_ESC_VEC, i)) {
+        i += insertEscSeqAndReturnLength(lineOut, BRIGHT_ESC_VEC);
+        insideBrightText = true;
+        continue;
+      } else if (isEscSeqence(line, BRIGHT_END_ESC_VEC, i)) {
+        i += insertEscSeqAndReturnLength(lineOut, BRIGHT_END_ESC_VEC);
+        insideBrightText = false;
         continue;
       }
     }
@@ -157,11 +164,22 @@ vector<string> resizeLine(vector<string> line, int size) {
         lineOut.insert(lineOut.end(), HIGHLIGHT_END_ESC_VEC.begin(), 
                        HIGHLIGHT_END_ESC_VEC.end());
       }
+      if  (insideBrightText) {
+        lineOut.insert(lineOut.end(), BRIGHT_END_ESC_VEC.begin(), 
+                       BRIGHT_END_ESC_VEC.end());
+      }
       return lineOut;
     }
     lineOut.push_back(line[i]);
   }
   return lineOut;
+}
+
+int insertEscSeqAndReturnLength(vector<string> &lineOut, 
+                                vector<string> const &escSeq) {
+  lineOut.insert(lineOut.end(), escSeq.begin(), 
+                 escSeq.end());
+  return escSeq.size()-1;
 }
 
 bool isEscSeqence(vector<string> line, vector<string> seqence, int index) {
