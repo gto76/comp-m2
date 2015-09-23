@@ -4,6 +4,7 @@ tmp
 cat-vs-mouse
 test
 punchcard*
+.DS_Store
 
 # Compiled Object files
 *.slo
