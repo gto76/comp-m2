@@ -195,7 +195,9 @@ int coordinatesOutOfBounds(int x, int y) {
   return x >= columns || y >= rows || x < 0 || y < 0;
 }
 
+////////////////////////////
 /////////// DRAW ///////////
+////////////////////////////
 
 void refresh() {
   for (size_t i = 0; i < screenBuffer.size(); i++) {

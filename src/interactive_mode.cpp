@@ -56,7 +56,7 @@ string getFreeFileName();
 string getGenericFileName(int index);
 void saveRamToFile(string filename);
 // KEY READER
-char readStdin(bool drawCursor);
+char readStdin();
 
 //////////////////////
 //////// VARS ////////
@@ -161,7 +161,7 @@ void run() {
   if (executionCanceled) {
     executionCanceled = false;
   } else {
-    readStdin(false);
+    readStdin();
   }
   computer.ram.state = savedRamState;
   computer.cpu.reset();
@@ -186,7 +186,7 @@ void sleepAndCheckForKey() {
       return;
     }
     // "Press key to continue."
-    keyCode = readStdin(false);
+    keyCode = readStdin();
     // Cancels execution if escape or tab was pressed.
     if (keyCode == 27 || keyCode == 9) {
       executionCanceled = true;
@@ -210,7 +210,7 @@ void sleepAndCheckForKey() {
 
 void userInput() {
   while(1) {
-    char c = readStdin(true);
+    char c = readStdin();
     if (insertChar) {
       isertCharIntoRam(c);
       fileSaved = false;
@@ -395,6 +395,8 @@ void userInput() {
           }
           break;
         }
+        default:
+          continue;
       }
     }
     redrawScreen();
@@ -537,7 +539,7 @@ void saveRamToFile(string fileName) {
 /// KEY READER ///
 //////////////////
 
-char readStdin(bool drawCursor) {
+char readStdin() {
   char c = 0;
   errno = 0;
   ssize_t num = read(0, &c, 1);
@@ -546,8 +548,8 @@ char readStdin(bool drawCursor) {
     if (pleaseExit) {
       exit(0);
     }
-    redrawScreen();
-    return readStdin(drawCursor);
+    // redrawScreen();
+    return readStdin();
   }
   return c;
 }
