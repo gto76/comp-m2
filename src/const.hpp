@@ -26,7 +26,8 @@ const int OR_OPERAND_INDEX = 3;
 
 const string GCC_COMMAND = "g++ -std=c++11 -g -O2 -o";
 
-const bool BRIGHTER_CURSOR = true;
+const bool BRIGHTEN_CURSOR = false;
+const bool BRIGHTEN_LIGHTBULBS = false;
 
 // Folowing constants will probably break code if changed.
 
@@ -77,10 +78,10 @@ const string DATA_INDICATOR = "b";
 const string CODE_ADR_INDICATOR = "g";
 const string DATA_ADR_INDICATOR = "v";
 const string REGISTER_INDICATOR = "r";
+const set<string> LIGHTBULB_INDICATORS = { CODE_INDICATOR, DATA_INDICATOR, CODE_ADR_INDICATOR,
+                             DATA_ADR_INDICATOR, REGISTER_INDICATOR };
+
 const string OUTPUT_INDICATOR = "o";
-const set<string> ALL_INDICATORS = { CODE_INDICATOR, DATA_INDICATOR, CODE_ADR_INDICATOR,
-                             DATA_ADR_INDICATOR, REGISTER_INDICATOR, 
-                             OUTPUT_INDICATOR };
 
 const string NEW_LINE_FIRST = u8"\u000D";
 const string NEW_LINE_SECOND = u8"\u000A";

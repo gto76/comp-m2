@@ -40,15 +40,25 @@ vector<string> Renderer::insertActualValues(vector<string> lineIn) {
   vector<bool> highlightedChars = getHighlightedLocations(lineIn);
   vector<bool> brightChars = getBrightLocations(lineIn);
   vector<string> lineOut;
+  int i = 0;
   for (string cIn : lineIn) {
     string sOut;
-    bool charIsALightbulb = ALL_INDICATORS.count(cIn);
+    bool charIsALightbulb = LIGHTBULB_INDICATORS.count(cIn);
     if (charIsALightbulb) {
-      sOut = getLightbulb(cIn);
+      bool state = getLightbulb(cIn);
+      if (BRIGHTEN_LIGHTBULBS) {
+        if (state) {
+          brightChars[i] = true;
+        }
+      }
+      sOut = view.getLightbulb(state);
+    } else if (cIn == OUTPUT_INDICATOR) {
+      sOut = getFormattedOutput(switchIndex[cIn]++);
     } else {
       sOut = cIn;
     }
     lineOut.push_back(sOut);
+    i++;
   }
   return insertEscSeqences(lineOut, highlightedChars, brightChars);
 }
@@ -95,7 +105,7 @@ vector<string> Renderer::insertEscSeqences(
 
 vector<bool> Renderer::getBrightLocations(vector<string> &lineIn) {
   vector<bool> brightLocations (lineIn.size(), false);
-  if (BRIGHTER_CURSOR) {
+  if (BRIGHTEN_CURSOR) {
     highlightCursor(brightLocations, lineIn);
   }
   return brightLocations;
@@ -267,38 +277,35 @@ void Renderer::highlightLabel(vector<bool> &highlightedLocations,
 /// GET LIGHTBULB ///
 /////////////////////
 
-string Renderer::getLightbulb(string cIn) {
+bool Renderer::getLightbulb(string cIn) {
   int i = switchIndex[cIn]++;
   if (cIn == CODE_INDICATOR) {
       return getCodeBit(i);
   } else if (cIn == DATA_INDICATOR) {
       return getDataBit(i);
   } else if (cIn == REGISTER_INDICATOR) {
-      return view.getLightbulb(cpu.getRegister().at(i));
+      return cpu.getRegister().at(i);
   } else if (cIn == CODE_ADR_INDICATOR) {
       return getAdrIndicator(CODE, i);
   } else if (cIn == DATA_ADR_INDICATOR) {
       return getAdrIndicator(DATA, i);
-  } else if (cIn == OUTPUT_INDICATOR) {
-      return getFormattedOutput(i);
   }
   cerr << "There was an error parsing a drawing file.";
   cerr << " Problem with char" << cIn << ". Will ignore it.";
-  return " ";
+  return false;
 }
 
-string Renderer::getCodeBit(int i) {
+bool Renderer::getCodeBit(int i) {
   return getBit(CODE, i);
 }
 
-string Renderer::getDataBit(int i) {
+bool Renderer::getDataBit(int i) {
   return getBit(DATA, i);
 }
 
-string Renderer::getBit(AddrSpace space, int i) {
+bool Renderer::getBit(AddrSpace space, int i) {
   pair<int, int> coord = convertIndexToCoordinates(i);
-  bool state = ram.state.at(space).at(coord.second).at(coord.first);
-  return view.getLightbulb(state);
+  return ram.state.at(space).at(coord.second).at(coord.first);
 }
 
 pair<int, int> Renderer::convertIndexToCoordinates(int index) {
@@ -314,11 +321,14 @@ bool Renderer::pcPointingToAddress(int adr) {
   return Util::getInt(cpu.getPc()) == adr;
 }
 
-string Renderer::getAdrIndicator(AddrSpace addrSpace, int index) {
+bool Renderer::getAdrIndicator(AddrSpace addrSpace, int index) {
   Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
-  bool addressReferenced = isAddressReferencedFirstOrder(indicatorsAddress);
-  return view.getLightbulb(addressReferenced);
+  return isAddressReferencedFirstOrder(indicatorsAddress);
 }
+
+//////////////////
+/// GET OUTPUT ///
+//////////////////
 
 string Renderer::getFormattedOutput(int i) {
   if (printer.getPrinterOutput().length() <= (unsigned) i) {

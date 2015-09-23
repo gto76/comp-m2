@@ -83,13 +83,15 @@ class Renderer {
                         vector<string> exclude);
 
     // GET LIGHTBULB
-    string getLightbulb(string cIn);
-    string getCodeBit(int i);
-    string getDataBit(int i);
-    string getBit(AddrSpace space, int i);
+    bool getLightbulb(string cIn);
+    bool getCodeBit(int i);
+    bool getDataBit(int i);
+    bool getBit(AddrSpace space, int i);
     static pair<int, int> convertIndexToCoordinates(int index);
     bool pcPointingToAddress(int adr);
-    string getAdrIndicator(AddrSpace addrSpace, int index);
+    bool getAdrIndicator(AddrSpace addrSpace, int index);
+
+    // GET OUTPUT
     string getFormattedOutput(int i);
     
     // GET INSTRUCTION
