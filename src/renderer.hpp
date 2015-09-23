@@ -8,14 +8,7 @@
 
 #include "addr_space.hpp"
 
-// #include "address.hpp"
-// #include "cpu.hpp"
-// #include "cursor.hpp"
-// #include "instruction.hpp"
-// #include "printer.hpp"
-// #include "ram.hpp"
-// #include "specific_instruction.hpp"
-// #include "view.hpp"
+using namespace std;
 
 class Address;
 class Cpu;
@@ -25,8 +18,6 @@ class Printer;
 class Ram;
 class SpecificInstruction;
 class View;
-
-using namespace std;
 
 class Renderer {
   public:

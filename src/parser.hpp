@@ -4,11 +4,9 @@
 #include <string>
 #include <vector>
 
-// #include "ram.hpp"
+using namespace std;
 
 class Ram;
-
-using namespace std;
 
 class Parser {
   public:

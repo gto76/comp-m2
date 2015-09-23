@@ -5,13 +5,12 @@
 #include <vector>
 
 #include "address.hpp"
-// #include "ram.hpp"
 #include "specific_instruction.hpp"
 #include "util.hpp"
 
-class Ram;
-
 using namespace std;
+
+class Ram;
 
 class Instruction {
   public:

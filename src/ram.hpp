@@ -5,17 +5,12 @@
 #include <map>
 
 #include "addr_space.hpp"
-
-// #include "address.hpp"
 #include "const.hpp"
-// #include "provides_output.hpp"
 
+using namespace std;
 
 class Address;
 class ProvidesOutput;
-
-
-using namespace std;
 
 class Ram {
   public:

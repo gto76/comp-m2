@@ -4,13 +4,10 @@
 #include <string>
 #include <vector>
 
-// #include "address.hpp"
-// #include "ram.hpp"
+using namespace std;
 
 class Address;
 class Ram;
-
-using namespace std;
 
 class SpecificInstruction {
   public:

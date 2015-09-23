@@ -4,11 +4,9 @@
 #include <fstream>
 #include <string>
 
-// #include "ram.hpp"
+using namespace std;
 
 class Ram;
-
-using namespace std;
 
 class Load {
   public:
