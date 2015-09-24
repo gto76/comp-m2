@@ -54,7 +54,7 @@ class Renderer {
     vector<Instruction> instruction;
     // vector<Instruction> allInstructions;
     set<int> pointingInstructions;
-    bool effectiveInstructionsInitialized;
+    bool effectiveInstructionsInitialized = false;
     vector<Instruction> effectiveInstructions;
     // Counts occurances of a char in a drawing.
     map<string, int> switchIndex;

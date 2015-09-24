@@ -87,6 +87,7 @@ bool insertChar = false;
 bool insertNumber = false;
 vector<int> digits;
 bool shiftPressed = false;
+// volatile sig_atomic_t shiftPressed = 0;
 // Copy/paste.
 vector<bool> clipboard = EMPTY_WORD;
 
@@ -209,6 +210,7 @@ void sleepAndCheckForKey() {
 void userInput() {
   while(1) {
     char c = readStdin();
+    // cerr << to_string(c) << " ";
     if (insertChar) {
       isertCharIntoRam(c);
       fileSaved = false;
@@ -229,6 +231,7 @@ void userInput() {
         continue;
       }
     }
+    // cerr << "redrawing " + to_string(c) << endl;
     redrawScreen();
   }
 }
@@ -242,7 +245,7 @@ bool switchKey(char c) {
 
     // MODES
     case 50:   // 2
-      shiftPressed = true;
+      shiftPressed = 1;
       return true;
     case 105:  // i
       engageInsertCharMode();
@@ -326,7 +329,8 @@ bool switchKey(char c) {
       cursor.goToBeginningOfNextWord();
       break;
     case 97:   // a
-      cursor.setBitIndex(4);
+      cursor.insertByteAndMoveRestDown();
+      // cursor.setBitIndex(4);
       break;
     case 122:  // z
     case 90:   // shift + tab
@@ -425,7 +429,7 @@ void isertCharIntoRam(char c) {
  * Returns whether it found a key.
  */
 bool processInputWithShift(char c) {
-  shiftPressed = false;
+  shiftPressed = 0;
   if (c == 65) {           // A, part of up arrow
     cursor.moveByteUp();
     fileSaved = false;
@@ -434,10 +438,10 @@ bool processInputWithShift(char c) {
     cursor.moveByteDown();
     fileSaved = false;
     return true;
-  } else if (c == 126) {   // ~, part of insert key (also is 2)
-    cursor.insertByteAndMoveRestDown();
-    fileSaved = false;
-    return true;
+  // } else if (c == 126) {   // ~, part of insert key (also is 2)
+  //   cursor.insertByteAndMoveRestDown();
+  //   fileSaved = false;
+  //   return true;
   } else {
     return false;
   }
