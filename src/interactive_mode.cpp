@@ -43,6 +43,7 @@ void exec();
 void sleepAndCheckForKey();
 // EDIT MODE
 void userInput();
+bool switchKey(char c);
 void isertCharIntoRam(char c);
 bool processInputWithShift(char c);
 bool insertNumberIntoRam(char c);
@@ -223,184 +224,192 @@ void userInput() {
           continue;
         }
       }
-      switch (c) {
-        // BEGIN EXECUTION
-        case 10:   // enter
-          run();
-          break;
-
-        // MODES
-        case 50:   // 2
-          shiftPressed = true;
-          continue;
-        case 105:  // i
-          engageInsertCharMode();
-          break;
-        case 73:   // I
-          engageInsertNumberMode();
-          break;
-
-        // VIEWS
-        case 44:   // ,
-          switchDrawing(false);
-          break;
-        case 46:   // .
-          switchDrawing(true);
-          break;
-
-        // SAVE
-        case 115:  // s
-          save();
-          break;
-        case 83:   // S
-          saveAs();
-          break;
-
-        // QUIT
-        case 81:   // Q
-          exit(0);
-          break;
-        case 113: { // q
-          if (!fileSaved) {
-            saveAs();
-          }
-          exit(0);
-          break;
-        }
-
-        // BASIC MOVEMENT
-        case 107:  // k
-        case 65:   // A, part of escape seqence of up arrow
-          cursor.decreaseY();
-          break;
-        case 106:  // j
-        case 66:   // B, part of escape seqence of down arrow
-          cursor.increaseY();
-          break;
-        case 108:  // l
-        case 67:   // C, part of escape seqence of rigth arrow
-          cursor.increaseX();
-          break;
-        case 104:  // h
-        case 68:   // D, part of escape seqence of left arrow
-          cursor.decreaseX();
-          break;
-        case 116:  // t
-        case 9:    // tab
-          cursor.switchAddressSpace();
-          break;
-        case 72:   // H (home)
-        case 94:   // ^
-          cursor.setBitIndex(0);
-          break;
-        case 70:   // F (end)
-        case 36:   // $
-          cursor.setBitIndex(WORD_SIZE-1);
-          break;
-
-        // VIM MOVEMENT
-        case 103:  // g
-          cursor.setByteIndex(0);
-          break;
-        case 71:   // G
-          cursor.setByteIndex(RAM_SIZE-1);
-          break;
-        case 101:  // e
-          cursor.goToEndOfWord();
-          break;
-        case 98:   // b
-          cursor.goToBeginningOfWord();
-          break;
-        case 119:  // w
-          cursor.goToBeginningOfNextWord();
-          break;
-        case 97:   // a
-          cursor.setBitIndex(4);
-          break;
-        case 122:  // z
-        case 90:   // shift + tab
-        case 84:   // T
-          cursor.goToInstructionsAddress();
-          break;
-
-        // BASIC MANIPULATION
-        case 32:   // space
-          cursor.switchBit();
-          fileSaved = false;
-          break;
-        case 51:   // 3, part of escape seqence of delete key
-        case 88: { // X
-          vector<bool> temp = cursor.getWord();
-          bool success = cursor.deleteByteAndMoveRestUp();
-          if (success) {
-            clipboard = temp;
-            fileSaved = false;
-          }
-          break;
-        }
-        case 75:   // K
-        case 53:   // 5, part of escape seqence of page up
-          cursor.moveByteUp();
-          fileSaved = false;
-          break;
-        case 74:   // J
-        case 54:   // 6, part of escape seqence of page down
-          cursor.moveByteDown();
-          fileSaved = false;
-          break;
-
-        // VIM MANIPULATION
-        case 102:  // f
-          cursor.setBit(true);
-          cursor.increaseX();
-          fileSaved = false;
-          break;
-        case 100:  // d
-          cursor.setBit(false);
-          cursor.increaseX();
-          fileSaved = false;
-          break;
-        case 120: { // x
-          clipboard = cursor.getWord();
-          cursor.eraseByte();
-          fileSaved = false;
-          // cursor.setBitIndex(0);
-          break;
-        } 
-        case 111: { // o
-          cursor.increaseY();
-          bool success = cursor.insertByteAndMoveRestDown();
-          if (success) {
-            cursor.setBitIndex(0);
-            fileSaved = false;
-          } else {
-            cursor.decreaseY();
-          }
-          break;
-        }
-        case 99:   // c
-        case 121:  // y
-          clipboard = cursor.getWord();
-          break;
-        case 118:  // v
-        case 112:  // p
-          cursor.setWord(clipboard);
-          fileSaved = false;
-          break;
-        case 80: { // P
-          bool success = cursor.insertByteAndMoveRestDown();
-          if (success) {
-            cursor.setWord(clipboard);
-          fileSaved = false;
-          }
-          break;
-        }
-        default:
-          continue;
+      bool shouldContinue = switchKey(c);
+      if (shouldContinue) {
+        continue;
       }
     }
     redrawScreen();
   }
+}
+
+bool switchKey(char c) {
+  switch (c) {
+    // BEGIN EXECUTION
+    case 10:   // enter
+      run();
+      break;
+
+    // MODES
+    case 50:   // 2
+      shiftPressed = true;
+      return true;
+    case 105:  // i
+      engageInsertCharMode();
+      break;
+    case 73:   // I
+      engageInsertNumberMode();
+      break;
+
+    // VIEWS
+    case 44:   // ,
+      switchDrawing(false);
+      break;
+    case 46:   // .
+      switchDrawing(true);
+      break;
+
+    // SAVE
+    case 115:  // s
+      save();
+      break;
+    case 83:   // S
+      saveAs();
+      break;
+
+    // QUIT
+    case 81:   // Q
+      exit(0);
+      break;
+    case 113: { // q
+      if (!fileSaved) {
+        saveAs();
+      }
+      exit(0);
+      break;
+    }
+
+    // BASIC MOVEMENT
+    case 107:  // k
+    case 65:   // A, part of escape seqence of up arrow
+      cursor.decreaseY();
+      break;
+    case 106:  // j
+    case 66:   // B, part of escape seqence of down arrow
+      cursor.increaseY();
+      break;
+    case 108:  // l
+    case 67:   // C, part of escape seqence of rigth arrow
+      cursor.increaseX();
+      break;
+    case 104:  // h
+    case 68:   // D, part of escape seqence of left arrow
+      cursor.decreaseX();
+      break;
+    case 116:  // t
+    case 9:    // tab
+      cursor.switchAddressSpace();
+      break;
+    case 72:   // H (home)
+    case 94:   // ^
+      cursor.setBitIndex(0);
+      break;
+    case 70:   // F (end)
+    case 36:   // $
+      cursor.setBitIndex(WORD_SIZE-1);
+      break;
+
+    // VIM MOVEMENT
+    case 103:  // g
+      cursor.setByteIndex(0);
+      break;
+    case 71:   // G
+      cursor.setByteIndex(RAM_SIZE-1);
+      break;
+    case 101:  // e
+      cursor.goToEndOfWord();
+      break;
+    case 98:   // b
+      cursor.goToBeginningOfWord();
+      break;
+    case 119:  // w
+      cursor.goToBeginningOfNextWord();
+      break;
+    case 97:   // a
+      cursor.setBitIndex(4);
+      break;
+    case 122:  // z
+    case 90:   // shift + tab
+    case 84:   // T
+      cursor.goToInstructionsAddress();
+      break;
+
+    // BASIC MANIPULATION
+    case 32:   // space
+      cursor.switchBit();
+      fileSaved = false;
+      break;
+    case 51:   // 3, part of escape seqence of delete key
+    case 88: { // X
+      vector<bool> temp = cursor.getWord();
+      bool success = cursor.deleteByteAndMoveRestUp();
+      if (success) {
+        clipboard = temp;
+        fileSaved = false;
+      }
+      break;
+    }
+    case 75:   // K
+    case 53:   // 5, part of escape seqence of page up
+      cursor.moveByteUp();
+      fileSaved = false;
+      break;
+    case 74:   // J
+    case 54:   // 6, part of escape seqence of page down
+      cursor.moveByteDown();
+      fileSaved = false;
+      break;
+
+    // VIM MANIPULATION
+    case 102:  // f
+      cursor.setBit(true);
+      cursor.increaseX();
+      fileSaved = false;
+      break;
+    case 100:  // d
+      cursor.setBit(false);
+      cursor.increaseX();
+      fileSaved = false;
+      break;
+    case 120: { // x
+      clipboard = cursor.getWord();
+      cursor.eraseByte();
+      fileSaved = false;
+      // cursor.setBitIndex(0);
+      break;
+    } 
+    case 111: { // o
+      cursor.increaseY();
+      bool success = cursor.insertByteAndMoveRestDown();
+      if (success) {
+        cursor.setBitIndex(0);
+        fileSaved = false;
+      } else {
+        cursor.decreaseY();
+      }
+      break;
+    }
+    case 99:   // c
+    case 121:  // y
+      clipboard = cursor.getWord();
+      break;
+    case 118:  // v
+    case 112:  // p
+      cursor.setWord(clipboard);
+      fileSaved = false;
+      break;
+    case 80: { // P
+      bool success = cursor.insertByteAndMoveRestDown();
+      if (success) {
+        cursor.setWord(clipboard);
+      fileSaved = false;
+      }
+      break;
+    }
+    default:
+      return true;
+  }
+  return false;
 }
 
 void isertCharIntoRam(char c) {
