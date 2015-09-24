@@ -138,7 +138,7 @@ void updateBuffer() {
   // cerr << out << endl;
   int i = 0;
   for (vector<string> line : tmp) {
-    replaceLine(line, i++);
+    replaceBufferLine(line, i++);
   }
 }
 
@@ -565,7 +565,6 @@ char readStdin() {
     if (screenResized) {
       redrawScreen();
     }
-    // redrawScreen();
     return readStdin();
   }
   return c;

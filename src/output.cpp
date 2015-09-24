@@ -19,19 +19,17 @@
 void registerSigWinChCatcher(void);
 void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
-void refreshScreen();
 void updateScreenAndPrintChanges();
 void printLine(vector<string> lineVec, int lineNo);
+int getAbsoluteX(int x);
+int getAbsoluteY(int y);
+int getAbsoluteCoordinate(int value, int console, int track);
 int coordinatesOutOfBounds(int x, int y);
 vector<string> resizeLine(vector<string> line, int size);
 bool isEscSeqence(vector<string> line, vector<string> seqence, int index);
 int insertEscSeqAndReturnLength(vector<string> &lineOut, 
                                 vector<string> const &escSeq);
-void setLine(vector<string> line, int y);
-int getAbsoluteX(int x);
-int getAbsoluteY(int y);
-int getAbsoluteCoordinate(int value, int console, int track);
-void setBuffer(vector<string> s, int x, int y);
+void setBufferLine(vector<string> line, int y);
 
 ////////////////////////////
 
@@ -68,10 +66,6 @@ void initOutput(callback_function updateBufferThat, int width, int height) {
 }
 
 void redrawScreen() {
-  // if (screenResized == 1) {
-  //   screenResized = 0;
-  //   refreshScreen();
-  // } else {
   screenResized = 0;
   updateConsoleSize();
   if (columnsLast != columns || rowsLast != rows) {
@@ -82,30 +76,26 @@ void redrawScreen() {
   fflush(stdout);
 }
 
-  // updateConsoleSize();
-  // clearScreen(); // !!!
-  // updateBuffer();
-  // updateScreenAndPrintChanges();
-  // fflush(stdout);
-
 void clearScreen(void) {
   screen = vector<vector<string>>();
   buffer = vector<vector<string>>();
   printf("\e[1;1H\e[2J");
 }
 
-void replaceLine(vector<string> line, int y) {
+void replaceBufferLine(vector<string> line, int y) {
   int x = 0;
   if (coordinatesOutOfBounds(x, y)) {
     return;
   }
   line = resizeLine(line, columns - x - 1);
-  setLine(line, y);
+  setBufferLine(line, y);
 }
 
 /////////////////////////////
 ////////// PRIVATE //////////
 /////////////////////////////
+
+/// INIT OUTPUT ///
 
 void registerSigWinChCatcher() {
   struct sigaction action;
@@ -134,13 +124,7 @@ void updateConsoleSize() {
   rows = w.ws_row;
 }
 
-// void refreshScreen() {
-//   updateConsoleSize();
-//   clearScreen();
-//   updateBuffer();
-//   updateScreenAndPrintChanges();
-//   fflush(stdout);
-// }
+/// UPDATE SCREEN AND PRINT CHANGES ///
 
 void updateScreenAndPrintChanges() {
   for (size_t i = 0; i < buffer.size(); i++) {
@@ -160,6 +144,27 @@ void printLine(vector<string> lineVec, int lineNo) {
                       to_string(getAbsoluteX(0)) + "H" + line;
   cout << controlSeq;
 }
+
+int getAbsoluteX(int x) {
+  int absC = getAbsoluteCoordinate(x, columns, pictureWidth);
+  return absC;
+}
+
+int getAbsoluteY(int y) {
+  return getAbsoluteCoordinate(y, rows, pictureHeight);
+}
+
+int getAbsoluteCoordinate(int value, int console, int track) {
+  int offset = 0;
+  if (PRINT_IN_CENTER) {
+    offset = ((console - track) / 2) + ((console - track) % 2);
+    if (offset < 0)
+      offset = 0;
+  }
+  return value + 1 + offset;
+}
+
+/// REPLACE BUFFER LINE ///
 
 int coordinatesOutOfBounds(int x, int y) {
   return x >= columns || y >= rows || x < 0 || y < 0;
@@ -224,7 +229,7 @@ int insertEscSeqAndReturnLength(vector<string> &lineOut,
   return escSeq.size()-1;
 }
 
-void setLine(vector<string> line, int y) {
+void setBufferLine(vector<string> line, int y) {
   int size = buffer.size();
   if (size <= y) {
     for (int i = size; i <= y+1; i++) {
@@ -233,35 +238,3 @@ void setLine(vector<string> line, int y) {
   }
   buffer.at(y) = line;
 }
-
-int getAbsoluteX(int x) {
-  int absC = getAbsoluteCoordinate(x, columns, pictureWidth);
-  return absC;
-}
-
-int getAbsoluteY(int y) {
-  return getAbsoluteCoordinate(y, rows, pictureHeight);
-}
-
-int getAbsoluteCoordinate(int value, int console, int track) {
-  int offset = 0;
-  if (PRINT_IN_CENTER) {
-    offset = ((console - track) / 2) + ((console - track) % 2);
-    if (offset < 0)
-      offset = 0;
-  }
-  return value + 1 + offset;
-}
-
-void setBuffer(vector<string> s, int x, int y) {
-  int size = buffer.size();
-  if (size <= y) {
-    for (int i = size; i <= y+1; i++) {
-      buffer.push_back({});
-    }
-  }
-  for (size_t j = 0; j < s.size(); j++) {
-    buffer[y][j+x] = s[j]; 
-  }
-}
-

@@ -13,7 +13,7 @@ typedef void (*callback_function)(void);
 void initOutput(callback_function drawScreen, int width, int height);
 void redrawScreen();
 void clearScreen();
-void replaceLine(vector<string> s, int y);
+void replaceBufferLine(vector<string> s, int y);
 
 extern volatile sig_atomic_t screenResized;
  
