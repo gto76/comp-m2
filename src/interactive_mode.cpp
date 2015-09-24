@@ -130,12 +130,6 @@ void updateBuffer() {
   vector<vector<string>> tmp = Renderer::renderState(printer, computer.ram,
                                                         computer.cpu, cursor, 
                                                         *selectedView);
-  // string out;
-  // for (vector<string> line : buffer) {
-  //   string a = accumulate( line.begin(), line.end(), string("") );
-  //   out += a + '\n';
-  // }
-  // cerr << out << endl;
   int i = 0;
   for (vector<string> line : tmp) {
     replaceBufferLine(line, i++);
@@ -238,7 +232,7 @@ void userInput() {
         // MODES
         case 50:   // 2
           shiftPressed = true;
-          break;
+          continue;
         case 105:  // i
           engageInsertCharMode();
           break;
@@ -300,7 +294,7 @@ void userInput() {
           cursor.setBitIndex(0);
           break;
         case 70:   // F (end)
-        // case 36:   // $
+        case 36:   // $
           cursor.setBitIndex(WORD_SIZE-1);
           break;
 

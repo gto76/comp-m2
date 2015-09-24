@@ -32,7 +32,6 @@ vector<vector<string>> Renderer::renderState(const Printer &printerIn,
   vector<vector<string>> out;
   for (vector<string> line : viewIn.lines) {
     out.push_back(instance.insertActualValues(line));
-    // cerr << endl;
   }
   return out;
 }
@@ -290,10 +289,6 @@ bool Renderer::getLightbulb(string cIn) {
     return getAdrIndicator(CODE, i);
   } else if (cIn == DATA_ADR_INDICATOR) {
     bool val = getAdrIndicator(DATA, i);
-    cerr << to_string(val);
-    if (i == 15) {
-      cerr << endl;
-    }
     return val;
   }
   cerr << "There was an error parsing a drawing file.";
@@ -427,27 +422,10 @@ set<int> Renderer::generatePointingInstructions() {
 /// ADDRESS INDICATOR ///
 
 bool Renderer::isAddressReferencedFirstOrder(Address adr) {
-  // cerr << "Is address referenced " << Util::getString(adr.val);
-  // if (adr.space == CODE) {
-  //   cerr << " CODE" << endl;
-  // } else {
-  //   cerr << " DATA" << endl;
-  // };
-  // cerr << "======================" << endl;
   vector<Instruction> *instructions = getEffectiveInstructions();
   for (Instruction inst : *instructions) {
-    // cerr << "Instruction " << inst.inst->getLabel() << endl;
     vector<Address> aaa = inst.firstOrderAdr;
-    // cerr << "has address " << Util::getString(aaa[0].val);
-    // if (aaa[0].space == CODE) {
-    //   cerr << " CODE" << endl;
-    // } else {
-    //   cerr << " DATA" << endl;
-    // };
     bool isReferenced = find(aaa.begin(), aaa.end(), adr) != aaa.end();
-    // if (adr.space == DATA && adr.val == LAST_ADDRESS) {
-    //   cerr << "Last Data adr is referenced " << to_string(isReferenced) << endl;
-    // }
     if (isReferenced) {
       return true;
     }
@@ -457,28 +435,10 @@ bool Renderer::isAddressReferencedFirstOrder(Address adr) {
 
 /// UTIL ///
 
-void printInstructions(vector<Instruction> effectiveInstructions) {
-  cerr << "LIST OF EFFECTIVE INST" << endl;
-  for (Instruction inst : effectiveInstructions) {
-    cerr << inst.inst->getLabel() << " " << Util::getString(inst.adr.val);
-    if (inst.adr.space == DATA) {
-      cerr << " DATA" << endl;
-    } else if (inst.adr.space == CODE) {
-      cerr << " CODE" << endl;
-    } else {
-      cerr << " NONE" << endl;
-    }
-  }
-  cerr << endl;
-}
-
 /*
  * Doesn't include empty instructions from last non-empty forward.
  */
 vector<Instruction>* Renderer::getEffectiveInstructions() {
-  if (effectiveInstructionsInitialized) {
-    // cerr << "Effective instructions already initialized" << endl;
-  }
   if (!effectiveInstructionsInitialized) {
     effectiveInstructions =
         Instruction::getEffectiveInstructions(ram, cpu.getRegister());
