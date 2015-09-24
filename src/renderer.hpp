@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "addr_space.hpp"
+#include "const.hpp"
 
 using namespace std;
 
@@ -39,7 +40,14 @@ class Renderer {
           ram(ramIn),
           cpu(cpuIn),
           cursor(cursorIn),
-          view(viewIn) { }
+          view(viewIn) { 
+      // switchIndex[CODE_INDICATOR] = 0;
+      // switchIndex[DATA_INDICATOR] = 0;
+      // switchIndex[CODE_ADR_INDICATOR] = 0;
+      // switchIndex[DATA_ADR_INDICATOR] = 0;
+      // switchIndex[REGISTER_INDICATOR] = 0;
+      // switchIndex[OUTPUT_INDICATOR] = 0;
+    }
     // Just a way to leave instruction uninitialized at Renderers creation, and
     // optionaly create it later (intended to hold only zero or one 
     // instruction).

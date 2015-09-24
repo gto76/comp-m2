@@ -30,6 +30,10 @@ vector<string> resizeLine(vector<string> line, int size);
 int insertEscSeqAndReturnLength(vector<string> &lineOut, 
                                 vector<string> const &escSeq);
 bool isEscSeqence(vector<string> line, vector<string> seqence, int index);
+void refreshScreen();
+void updateScreen();
+void setBuffer(vector<string> s, int x, int y);
+void refresh();
 
 ////////////////////////////
 
@@ -43,16 +47,18 @@ int pictureHeight = DEFAULT_HEIGHT;
 int columns = DEFAULT_WIDTH;
 int rows = DEFAULT_HEIGHT;
 
-callback_function drawScreen;
+callback_function updateBuffer;
 volatile sig_atomic_t screenResized = 0;
 
 vector<vector<string>> screenBuffer;
 vector<vector<string>> onScreen;
 
-////////// PUBLIC //////////
+//////////////////////////
+////////// INIT //////////
+//////////////////////////
 
-void setOutput(callback_function drawScreenThat, int width, int height) {
-  drawScreen = drawScreenThat;
+void setOutput(callback_function updateBufferThat, int width, int height) {
+  updateBuffer = updateBufferThat;
   pictureWidth = width;
   pictureHeight = height;
   registerSigWinChCatcher();
@@ -61,7 +67,108 @@ void setOutput(callback_function drawScreenThat, int width, int height) {
   printf("\e[37m\e[40m");
 }
 
-//////////////////
+///////////////////////////////
+////////// INTERFACE //////////
+///////////////////////////////
+
+void redrawScreen() {
+  if (screenResized == 1) {
+    refreshScreen();
+  } else {
+    updateConsoleSize();
+    updateBuffer();
+    updateScreen();
+    fflush(stdout);
+  }
+}
+
+void clearScreen(void) {
+  onScreen = vector<vector<string>>();
+  screenBuffer = vector<vector<string>>();
+  printf("\e[1;1H\e[2J");
+}
+
+void replaceLine(vector<string> line, int y) {
+  int x = 0;
+  if (coordinatesOutOfBounds(x, y)) {
+    return;
+  }
+  line = resizeLine(line, columns - x - 1);
+  setLine(line, y);
+}
+
+void printString(vector<string> sss, int x, int y) {
+  if (coordinatesOutOfBounds(x, y)) {
+    return;
+  }
+  sss = resizeLine(sss, columns - x - 1);
+  setBuffer(sss, x, y);
+}
+
+void printChar(string c, int x, int y) {
+  if (coordinatesOutOfBounds(x, y)) {
+    return;
+  }
+  setBuffer({ c }, x, y);
+}
+
+/////////////////////////////
+////////// PRIVATE //////////
+/////////////////////////////
+
+void registerSigWinChCatcher() {
+  struct sigaction action;
+  sigemptyset(&action.sa_mask);
+  action.sa_flags = 0;
+  action.sa_handler = sigWinChCatcher;
+  sigaction(SIGWINCH, &action, NULL);
+}
+
+/*
+ * Fires when window size changes.
+ */
+void sigWinChCatcher(int signum) {
+  screenResized = 1;
+}
+
+/*
+ * Asks system about window size.
+ */
+void updateConsoleSize() {
+  struct winsize w;
+  ioctl(0, TIOCGWINSZ, &w);
+  columns = w.ws_col;
+  rows = w.ws_row;
+}
+
+void refreshScreen() {
+  screenResized = 0;
+  updateConsoleSize();
+  clearScreen();
+  updateBuffer();
+  refresh();
+  fflush(stdout);
+}
+
+void refresh() {
+  for (size_t i = 0; i < screenBuffer.size(); i++) {
+    if (onScreen.size() <= i) {
+      onScreen.push_back({});
+    }
+    printLine(screenBuffer.at(i), i);
+    if (screenBuffer.at(i) != onScreen.at(i)) {
+      onScreen.at(i) = screenBuffer.at(i);
+    }
+  }
+}
+
+void printLine(vector<string> lineVec, int lineNo) {
+  string line = accumulate(lineVec.begin(), lineVec.end(), string(""));
+  string controlSeq = "\033[" + to_string(getAbsoluteY(lineNo)) + ";" + 
+                      to_string(getAbsoluteX(0)) + "H" + line;
+  cout << controlSeq;
+}
+
 void updateScreen() {
   for (size_t i = 0; i < screenBuffer.size(); i++) {
     if (onScreen.size() <= i) {
@@ -75,60 +182,8 @@ void updateScreen() {
   }
 }
 
-void printLine(vector<string> lineVec, int lineNo) {
-  string line = accumulate(lineVec.begin(), lineVec.end(), string(""));
-  string controlSeq = "\033[" + to_string(getAbsoluteY(lineNo)) + ";" + 
-                      to_string(getAbsoluteX(0)) + "H" + line;
-  cout << controlSeq;
-}
-
-void setBuffer(vector<string> s, int x, int y) {
-  int size = screenBuffer.size();
-  if (size <= y) {
-    for (int i = size; i <= y+1; i++) {
-      screenBuffer.push_back({});
-    }
-  }
-  for (size_t j = 0; j < s.size(); j++) {
-    screenBuffer[y][j+x] = s[j]; 
-  }
-}
-
-void printCharXY(string c, int x, int y) {
-  if (coordinatesOutOfBounds(x, y)) {
-    return;
-  }
-  setBuffer({ c }, x, y);
-}
-
-void printString(vector<string> sss, int x, int y) {
-  if (coordinatesOutOfBounds(x, y)) {
-    return;
-  }
-  sss = resizeLine(sss, columns - x - 1);
-  setBuffer(sss, x, y);
-}
-
-/////////////////////////////
-// NEW:
-void setLine(vector<string> line, int y) {
-  int size = screenBuffer.size();
-  if (size <= y) {
-    for (int i = size; i <= y+1; i++) {
-      screenBuffer.push_back({});
-    }
-  }
-  screenBuffer.at(y) = line;
-}
-
-// NEW:
-void replaceLine(vector<string> line, int y) {
-  int x = 0;
-  if (coordinatesOutOfBounds(x, y)) {
-    return;
-  }
-  line = resizeLine(line, columns - x - 1);
-  setLine(line, y);
+int coordinatesOutOfBounds(int x, int y) {
+  return x >= columns || y >= rows || x < 0 || y < 0;
 }
 
 vector<string> resizeLine(vector<string> line, int size) {
@@ -175,6 +230,14 @@ vector<string> resizeLine(vector<string> line, int size) {
   return lineOut;
 }
 
+bool isEscSeqence(vector<string> line, vector<string> seqence, int index) {
+  bool lineTooShort = line.size() < index + seqence.size();
+  if (lineTooShort) {
+    return false;
+  }
+  return equal(seqence.begin(), seqence.end(), line.begin()+index);
+}
+
 int insertEscSeqAndReturnLength(vector<string> &lineOut, 
                                 vector<string> const &escSeq) {
   lineOut.insert(lineOut.end(), escSeq.begin(), 
@@ -182,12 +245,14 @@ int insertEscSeqAndReturnLength(vector<string> &lineOut,
   return escSeq.size()-1;
 }
 
-bool isEscSeqence(vector<string> line, vector<string> seqence, int index) {
-  bool lineTooShort = line.size() < index + seqence.size();
-  if (lineTooShort) {
-    return false;
+void setLine(vector<string> line, int y) {
+  int size = screenBuffer.size();
+  if (size <= y) {
+    for (int i = size; i <= y+1; i++) {
+      screenBuffer.push_back({});
+    }
   }
-  return equal(seqence.begin(), seqence.end(), line.begin()+index);
+  screenBuffer.at(y) = line;
 }
 
 int getAbsoluteX(int x) {
@@ -209,78 +274,15 @@ int getAbsoluteCoordinate(int value, int console, int track) {
   return value + 1 + offset;
 }
 
-int coordinatesOutOfBounds(int x, int y) {
-  return x >= columns || y >= rows || x < 0 || y < 0;
-}
-
-////////////////////////////
-/////////// DRAW ///////////
-////////////////////////////
-
-void refresh() {
-  for (size_t i = 0; i < screenBuffer.size(); i++) {
-    if (onScreen.size() <= i) {
-      onScreen.push_back({});
-    }
-    printLine(screenBuffer.at(i), i);
-    if (screenBuffer.at(i) != onScreen.at(i)) {
-      onScreen.at(i) = screenBuffer.at(i);
+void setBuffer(vector<string> s, int x, int y) {
+  int size = screenBuffer.size();
+  if (size <= y) {
+    for (int i = size; i <= y+1; i++) {
+      screenBuffer.push_back({});
     }
   }
-}
-
-void clearScreen(void) {
-  onScreen = vector<vector<string>>();
-  screenBuffer = vector<vector<string>>();
-  printf("\e[1;1H\e[2J");
-}
-
-void refreshScreen() {
-  screenResized = 0;
-  updateConsoleSize();
-  clearScreen();
-  drawScreen();
-  refresh();
-  fflush(stdout);
-}
-
-void redrawScreen() {
-  if (screenResized == 1) {
-    refreshScreen();
-  } else {
-    updateConsoleSize();
-    drawScreen();
-    updateScreen();
-    fflush(stdout);
+  for (size_t j = 0; j < s.size(); j++) {
+    screenBuffer[y][j+x] = s[j]; 
   }
 }
-
-///////// SIGNALS //////////
-
-void registerSigWinChCatcher() {
-  struct sigaction action;
-  sigemptyset(&action.sa_mask);
-  action.sa_flags = 0;
-  action.sa_handler = sigWinChCatcher;
-  sigaction(SIGWINCH, &action, NULL);
-}
-
-/*
- * Fires when window size changes.
- */
-void sigWinChCatcher(int signum) {
-  screenResized = 1;
-}
-
-/*
- * Asks system about window size.
- */
-void updateConsoleSize() {
-  struct winsize w;
-  ioctl(0, TIOCGWINSZ, &w);
-  columns = w.ws_col;
-  rows = w.ws_row;
-}
-
-
 

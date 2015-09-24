@@ -32,6 +32,7 @@ vector<vector<string>> Renderer::renderState(const Printer &printerIn,
   vector<vector<string>> out;
   for (vector<string> line : viewIn.lines) {
     out.push_back(instance.insertActualValues(line));
+    // cerr << endl;
   }
   return out;
 }
@@ -280,15 +281,20 @@ void Renderer::highlightLabel(vector<bool> &highlightedLocations,
 bool Renderer::getLightbulb(string cIn) {
   int i = switchIndex[cIn]++;
   if (cIn == CODE_INDICATOR) {
-      return getCodeBit(i);
+    return getCodeBit(i);
   } else if (cIn == DATA_INDICATOR) {
-      return getDataBit(i);
+    return getDataBit(i);
   } else if (cIn == REGISTER_INDICATOR) {
-      return cpu.getRegister().at(i);
+    return cpu.getRegister().at(i);
   } else if (cIn == CODE_ADR_INDICATOR) {
-      return getAdrIndicator(CODE, i);
+    return getAdrIndicator(CODE, i);
   } else if (cIn == DATA_ADR_INDICATOR) {
-      return getAdrIndicator(DATA, i);
+    bool val = getAdrIndicator(DATA, i);
+    cerr << to_string(val);
+    if (i == 15) {
+      cerr << endl;
+    }
+    return val;
   }
   cerr << "There was an error parsing a drawing file.";
   cerr << " Problem with char" << cIn << ". Will ignore it.";
@@ -406,10 +412,10 @@ set<int>* Renderer::getIndexesOfPointingInstructions() {
 }
 
 set<int> Renderer::generatePointingInstructions() {
-  vector<Instruction> *allInstructions = getEffectiveInstructions();
+  vector<Instruction> *instructions = getEffectiveInstructions();
   set<int> out;
   int i = 0;
-  for (Instruction inst : *allInstructions) {
+  for (Instruction inst : *instructions) {
     if (inst.adr == cursor.getAddress()) {
       out.insert(i);
     }
@@ -422,22 +428,22 @@ set<int> Renderer::generatePointingInstructions() {
 
 bool Renderer::isAddressReferencedFirstOrder(Address adr) {
   // cerr << "Is address referenced " << Util::getString(adr.val);
-  if (adr.space == CODE) {
-    // cerr << " CODE" << endl;
-  } else {
-    // cerr << " DATA" << endl;
-  };
+  // if (adr.space == CODE) {
+  //   cerr << " CODE" << endl;
+  // } else {
+  //   cerr << " DATA" << endl;
+  // };
   // cerr << "======================" << endl;
   vector<Instruction> *instructions = getEffectiveInstructions();
   for (Instruction inst : *instructions) {
     // cerr << "Instruction " << inst.inst->getLabel() << endl;
     vector<Address> aaa = inst.firstOrderAdr;
     // cerr << "has address " << Util::getString(aaa[0].val);
-    if (aaa[0].space == CODE) {
-      // cerr << " CODE" << endl;
-    } else {
-      // cerr << " DATA" << endl;
-    };
+    // if (aaa[0].space == CODE) {
+    //   cerr << " CODE" << endl;
+    // } else {
+    //   cerr << " DATA" << endl;
+    // };
     bool isReferenced = find(aaa.begin(), aaa.end(), adr) != aaa.end();
     // if (adr.space == DATA && adr.val == LAST_ADDRESS) {
     //   cerr << "Last Data adr is referenced " << to_string(isReferenced) << endl;

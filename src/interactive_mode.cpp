@@ -36,7 +36,7 @@ extern "C" {
 void startInteractiveMode(string filename);
 void selectView();
 void prepareOutput();
-void drawScreen();
+void updateBuffer();
 // EXECUTION MODE
 void run();
 void exec();
@@ -44,7 +44,7 @@ void sleepAndCheckForKey();
 // EDIT MODE
 void userInput();
 void isertCharIntoRam(char c);
-void processInputWithShift(char c);
+bool processInputWithShift(char c);
 bool insertNumberIntoRam(char c);
 void engageInsertCharMode();
 void engageInsertNumberMode();
@@ -123,11 +123,11 @@ void selectView() {
  * screen redraw.
  */
 void prepareOutput() {
-  setOutput(&drawScreen, selectedView->width, selectedView->height);
+  setOutput(&updateBuffer, selectedView->width, selectedView->height);
 }
 
-void drawScreen() {
-  vector<vector<string>> buffer = Renderer::renderState(printer, computer.ram,
+void updateBuffer() {
+  vector<vector<string>> tmp = Renderer::renderState(printer, computer.ram,
                                                         computer.cpu, cursor, 
                                                         *selectedView);
   // string out;
@@ -137,7 +137,7 @@ void drawScreen() {
   // }
   // cerr << out << endl;
   int i = 0;
-  for (vector<string> line : buffer) {
+  for (vector<string> line : tmp) {
     replaceLine(line, i++);
   }
 }
@@ -215,7 +215,10 @@ void userInput() {
       isertCharIntoRam(c);
       fileSaved = false;
     } else if (shiftPressed) {
-      processInputWithShift(c);
+      bool shouldContinue = !processInputWithShift(c);
+      if (shouldContinue) {
+        continue;
+      }
     } else {
       if (insertNumber) {
         if (insertNumberIntoRam(c)) {
@@ -294,7 +297,7 @@ void userInput() {
           cursor.setBitIndex(0);
           break;
         case 70:   // F (end)
-        case 36:   // $
+        // case 36:   // $
           cursor.setBitIndex(WORD_SIZE-1);
           break;
 
@@ -412,17 +415,25 @@ void isertCharIntoRam(char c) {
   cursor.increaseY();
 }
 
-void processInputWithShift(char c) {
+/*
+ * Returns whether it found a key.
+ */
+bool processInputWithShift(char c) {
   shiftPressed = false;
   if (c == 65) {           // A, part of up arrow
     cursor.moveByteUp();
     fileSaved = false;
+    return true;
   } else if (c == 66) {    // B, part of down arrow
     cursor.moveByteDown();
     fileSaved = false;
+    return true;
   } else if (c == 126) {   // ~, part of insert key (also is 2)
     cursor.insertByteAndMoveRestDown();
     fileSaved = false;
+    return true;
+  } else {
+    return false;
   }
 }
 

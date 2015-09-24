@@ -251,7 +251,7 @@ vector<Address> Cursor::getAddressesOfEffectiveInstructions() {
   vector<Instruction> instructions = 
       Instruction::getEffectiveInstructions(ram, EMPTY_WORD);
   for (Instruction inst : instructions) {
-    out.push_back(inst.firstOrderAdr[0]);
+    out.push_back(inst.firstOrderAdr.back()); // USED TO BE [0]!!!
   }
   return out;
 }

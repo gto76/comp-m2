@@ -42,6 +42,7 @@ class Instruction {
     void exec(vector<bool> &pc, vector<bool> &reg, Ram &ram);
     bool isLogic();
     string getCode(int pc);
+    
     static vector<Instruction> getEffectiveInstructions(
         const Ram &ram, const vector<bool> &reg);
     static vector<Instruction> getAllInstructions(const Ram &ram, 
