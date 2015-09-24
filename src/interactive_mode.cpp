@@ -210,7 +210,6 @@ void sleepAndCheckForKey() {
 void userInput() {
   while(1) {
     char c = readStdin();
-    // cerr << to_string(c) << " ";
     if (insertChar) {
       isertCharIntoRam(c);
       fileSaved = false;
@@ -231,7 +230,6 @@ void userInput() {
         continue;
       }
     }
-    // cerr << "redrawing " + to_string(c) << endl;
     redrawScreen();
   }
 }
@@ -329,8 +327,7 @@ bool switchKey(char c) {
       cursor.goToBeginningOfNextWord();
       break;
     case 97:   // a
-      cursor.insertByteAndMoveRestDown();
-      // cursor.setBitIndex(4);
+      cursor.setBitIndex(4);
       break;
     case 122:  // z
     case 90:   // shift + tab
@@ -438,10 +435,10 @@ bool processInputWithShift(char c) {
     cursor.moveByteDown();
     fileSaved = false;
     return true;
-  // } else if (c == 126) {   // ~, part of insert key (also is 2)
-  //   cursor.insertByteAndMoveRestDown();
-  //   fileSaved = false;
-  //   return true;
+  } else if (c == 126) {   // ~, part of insert key (also is 2)
+    cursor.insertByteAndMoveRestDown();
+    fileSaved = false;
+    return true;
   } else {
     return false;
   }

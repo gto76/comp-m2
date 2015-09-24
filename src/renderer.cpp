@@ -324,16 +324,7 @@ bool Renderer::pcPointingToAddress(int adr) {
 
 bool Renderer::getAdrIndicator(AddrSpace addrSpace, int index) {
   Address indicatorsAddress = Address(addrSpace, Util::getBoolNibb(index));
-  // cerr << to_string(Util::getInt(indicatorsAddress.val));
-  // if (indicatorsAddress.space == CODE) {
-  //   cerr << " CODE";
-  // } else {
-  //   cerr << " DATA";
-  // }
-  // cerr << endl;
-  bool retVal = isAddressReferencedFirstOrder(indicatorsAddress);
-  cerr << to_string(index) << " " << to_string(retVal) << endl;
-  return retVal;
+  return isAddressReferencedFirstOrder(indicatorsAddress);
 }
 
 //////////////////
@@ -433,15 +424,12 @@ set<int> Renderer::generatePointingInstructions() {
 bool Renderer::isAddressReferencedFirstOrder(Address adr) {
   vector<Instruction> *instructions = getEffectiveInstructions();
   for (Instruction inst : *instructions) {
-    // cerr << inst.inst->getLabel() << " ";
     vector<Address> aaa = inst.firstOrderAdr;
     bool isReferenced = find(aaa.begin(), aaa.end(), adr) != aaa.end();
     if (isReferenced) {
-      cerr << endl;
       return true;
     }
   }
-  cerr << endl;
   return false;
 }
 
@@ -452,7 +440,6 @@ bool Renderer::isAddressReferencedFirstOrder(Address adr) {
  */
 vector<Instruction>* Renderer::getEffectiveInstructions() {
   if (!effectiveInstructionsInitialized) {
-    cerr << "Inst not init" << endl;
     effectiveInstructions =
         Instruction::getEffectiveInstructions(ram, cpu.getRegister());
     effectiveInstructionsInitialized = true;

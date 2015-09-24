@@ -40,14 +40,7 @@ class Renderer {
           ram(ramIn),
           cpu(cpuIn),
           cursor(cursorIn),
-          view(viewIn) { 
-      // switchIndex[CODE_INDICATOR] = 0;
-      // switchIndex[DATA_INDICATOR] = 0;
-      // switchIndex[CODE_ADR_INDICATOR] = 0;
-      // switchIndex[DATA_ADR_INDICATOR] = 0;
-      // switchIndex[REGISTER_INDICATOR] = 0;
-      // switchIndex[OUTPUT_INDICATOR] = 0;
-    }
+          view(viewIn) { }
     // Just a way to leave instruction uninitialized at Renderers creation, and
     // optionaly create it later (intended to hold only zero or one 
     // instruction).
@@ -113,7 +106,6 @@ class Renderer {
     set<int>* getIndexesOfPointingInstructions();
     set<int> generatePointingInstructions();
     vector<Instruction>* getEffectiveInstructions();
-    // vector<Instruction>* getAllInstructions();
     bool isAddressReferencedFirstOrder(Address adr);
 };
 
