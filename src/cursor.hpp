@@ -69,11 +69,7 @@ class Cursor {
     bool addressReferenced(Address adr);
     vector<Address> getAddressesOfEffectiveInstructions();
     bool shouldNotModifyData(bool insert);
-    vector<Instruction> getEffectiveInstructions();
-    static int getIndexOfLastNonEmptyInst(vector<Instruction> allInstructions);
-    static vector<Instruction> removeElementsPastIndex(vector<Instruction> &iii,
-                                                       int index);
-    vector<Instruction> getAllInstructions();
+    // vector<Instruction> getEffectiveInstructions();
     void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
     static void setAddress(vector<bool> &word, int val, int adrIndex);
     void actuallyInsert();

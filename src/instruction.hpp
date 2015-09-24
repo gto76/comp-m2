@@ -42,6 +42,14 @@ class Instruction {
     void exec(vector<bool> &pc, vector<bool> &reg, Ram &ram);
     bool isLogic();
     string getCode(int pc);
+    static vector<Instruction> getEffectiveInstructions(
+        const Ram &ram, const vector<bool> &reg);
+    static vector<Instruction> getAllInstructions(const Ram &ram, 
+                                                  const vector<bool> &reg);
+    static int getIndexOfLastNonEmptyInst(
+        const vector<Instruction> &allInstructions);
+    static vector<Instruction> removeElementsPastIndex(vector<Instruction> &iii,
+                                                       int index);
 
   private:
     vector<Address> getFirstOrderAdr(vector<bool> val);

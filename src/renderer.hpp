@@ -44,7 +44,7 @@ class Renderer {
     // optionaly create it later (intended to hold only zero or one 
     // instruction).
     vector<Instruction> instruction;
-    vector<Instruction> allInstructions;
+    // vector<Instruction> allInstructions;
     set<int> pointingInstructions;
     bool effectiveInstructionsInitialized;
     vector<Instruction> effectiveInstructions;
@@ -105,7 +105,7 @@ class Renderer {
     set<int>* getIndexesOfPointingInstructions();
     set<int> generatePointingInstructions();
     vector<Instruction>* getEffectiveInstructions();
-    vector<Instruction>* getAllInstructions();
+    // vector<Instruction>* getAllInstructions();
     bool isAddressReferencedFirstOrder(Address adr);
 };
 

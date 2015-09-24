@@ -4,19 +4,15 @@
 
 #include "address.hpp"
 #include "const.hpp"
+#include "ram.hpp"
 #include "specific_instruction.hpp"
 #include "util.hpp"
 
 using namespace std;
 
-vector<Address> Instruction::getFirstOrderAdr(vector<bool> val) {
-  return inst->getFirstOrderAdr(val);
-}
-
-Address Instruction::getAddress(Address firstOrderAdr, const vector<bool> &reg,
-                                const Ram *ram) {
-  return inst->getAddress(firstOrderAdr, reg, ram);
-}
+/////////////////
+/// INTERFACE ///
+/////////////////
 
 void Instruction::exec(vector<bool> &pc, vector<bool> &reg, Ram &ram) {
   inst->exec(adr, pc, reg, ram);
@@ -28,6 +24,60 @@ bool Instruction::isLogic() {
 
 string Instruction::getCode(int pc) {
   return inst->getCode(firstOrderAdr[0], pc);
+}
+
+/*
+ * Doesn't include empty instructions from last non-empty on.
+ */
+vector<Instruction> Instruction::getEffectiveInstructions(const Ram &ram, 
+                                                     const vector<bool> &reg) {
+  vector<Instruction> allInstructions = Instruction::getAllInstructions(ram, 
+                                                                        reg);
+  int lastNonemptyInst = 
+      Instruction::getIndexOfLastNonEmptyInst(allInstructions);
+  return Instruction::removeElementsPastIndex(allInstructions,
+                                              lastNonemptyInst + 1);
+}
+
+vector<Instruction> Instruction::getAllInstructions(const Ram &ram, 
+                                                    const vector<bool> &reg) {
+  vector<Instruction> out;
+  for (vector<bool> word : ram.state.at(CODE)) {
+    Instruction inst = Instruction(word, EMPTY_WORD, &ram);
+    out.push_back(inst);
+  }
+  return out;
+}
+
+int Instruction::getIndexOfLastNonEmptyInst(
+    const vector<Instruction> &allInstructions) {
+  int lastNonemptyInst = -1;
+  int i = 0;
+  for (Instruction inst : allInstructions) {
+    if (inst.val != EMPTY_WORD) {
+      lastNonemptyInst = i;
+    }
+    i++;
+  }
+  return lastNonemptyInst;
+}
+
+vector<Instruction> Instruction::removeElementsPastIndex(
+    vector<Instruction> &iii, int index) {
+  return vector<Instruction>(iii.begin(), iii.begin() + index);
+}
+
+///////////////
+/// PRIVATE ///
+///////////////
+
+vector<Address> Instruction::getFirstOrderAdr(vector<bool> val) {
+  return inst->getFirstOrderAdr(val);
+}
+
+Address Instruction::getAddress(Address firstOrderAdr, const vector<bool> &reg,
+                                const Ram *ram) {
+  return inst->getAddress(firstOrderAdr, reg, ram);
 }
 
 SpecificInstruction * Instruction::getInstruction() {

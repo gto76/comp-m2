@@ -451,6 +451,21 @@ bool Renderer::isAddressReferencedFirstOrder(Address adr) {
 
 /// UTIL ///
 
+void printInstructions(vector<Instruction> effectiveInstructions) {
+  cerr << "LIST OF EFFECTIVE INST" << endl;
+  for (Instruction inst : effectiveInstructions) {
+    cerr << inst.inst->getLabel() << " " << Util::getString(inst.adr.val);
+    if (inst.adr.space == DATA) {
+      cerr << " DATA" << endl;
+    } else if (inst.adr.space == CODE) {
+      cerr << " CODE" << endl;
+    } else {
+      cerr << " NONE" << endl;
+    }
+  }
+  cerr << endl;
+}
+
 /*
  * Doesn't include empty instructions from last non-empty forward.
  */
@@ -459,46 +474,10 @@ vector<Instruction>* Renderer::getEffectiveInstructions() {
     // cerr << "Effective instructions already initialized" << endl;
   }
   if (!effectiveInstructionsInitialized) {
-    // cerr << "GET EFFECTIVE INSTRUCTIONS" << endl;
-    vector<Instruction> *allInstructions = getAllInstructions();
-    int lastNonemptyInst = -1;
-    int i = 0;
-    for (Instruction inst : *allInstructions) {
-      if (inst.val != EMPTY_WORD) {
-        lastNonemptyInst = i;
-      }
-      i++;
-    }
-    // cerr << "lastNonemptyInst " << to_string(lastNonemptyInst) << endl;
-    bool somePresent = lastNonemptyInst != -1;
-    if (somePresent) {
-      effectiveInstructions = vector<Instruction>(
-          allInstructions->begin(), 
-          allInstructions->begin() + lastNonemptyInst+1);
-    }
+    effectiveInstructions =
+        Instruction::getEffectiveInstructions(ram, cpu.getRegister());
     effectiveInstructionsInitialized = true;
-    // cerr << "LIST OF EFFECTIVE INST" << endl;
-    // for (Instruction inst : effectiveInstructions) {
-    //   cerr << inst.inst->getLabel() << " " << Util::getString(inst.adr.val);
-    //   if (inst.adr.space == DATA) {
-    //     cerr << " DATA" << endl;
-    //   } else if (inst.adr.space == CODE) {
-    //     cerr << " CODE" << endl;
-    //   } else {
-    //     cerr << " NONE" << endl;
-    //   }
-    // }
-    // cerr << endl;
   }
   return &effectiveInstructions;
 }
 
-vector<Instruction>* Renderer::getAllInstructions() {
-  if (allInstructions.empty()) {
-    for (vector<bool> word : ram.state.at(CODE)) {
-      Instruction inst = Instruction(word, cpu.getRegister(), &ram);
-      allInstructions.push_back(inst);
-    }
-  }
-  return &allInstructions;
-}

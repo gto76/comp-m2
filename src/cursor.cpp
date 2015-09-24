@@ -248,51 +248,10 @@ bool Cursor::addressReferenced(Address adr) {
 
 vector<Address> Cursor::getAddressesOfEffectiveInstructions() {
   vector<Address> out;
-  for (Instruction inst : getEffectiveInstructions()) {
+  vector<Instruction> instructions = 
+      Instruction::getEffectiveInstructions(ram, EMPTY_WORD);
+  for (Instruction inst : instructions) {
     out.push_back(inst.firstOrderAdr[0]);
-  }
-  return out;
-}
-
-/*
- * Doesn't include empty instructions from last non-empty on.
- */
-vector<Instruction> Cursor::getEffectiveInstructions() {
-  vector<Instruction> allInstructions = getAllInstructions();
-  int lastNonemptyInst = getIndexOfLastNonEmptyInst(allInstructions);
-  vector<Instruction> effectiveInstructions = 
-      removeElementsPastIndex(allInstructions, lastNonemptyInst + 1);
-  // bool somePresent = lastNonemptyInst != -1;
-  // if (somePresent) {
-  //   effectiveInstructions = vector<Instruction>(
-  //     allInstructions.begin(), 
-  //     allInstructions.begin() + lastNonemptyInst+1);
-  // }
-  // return effectiveInstructions;
-  return effectiveInstructions;
-}
-
-int Cursor::getIndexOfLastNonEmptyInst(vector<Instruction> allInstructions) {
-  int lastNonemptyInst = -1;
-  int i = 0;
-  for (Instruction inst : allInstructions) {
-    if (inst.val != EMPTY_WORD) {
-      lastNonemptyInst = i;
-    }
-    i++;
-  }
-  return lastNonemptyInst;
-}
-
-vector<Instruction> Cursor::removeElementsPastIndex(vector<Instruction> &iii, int index) {
-    return vector<Instruction>(iii.begin(), iii.begin() + index);
-}
-
-vector<Instruction> Cursor::getAllInstructions() {
-  vector<Instruction> out;
-  for (vector<bool> word : ram.state[CODE]) {
-    Instruction inst = Instruction(word, EMPTY_WORD, &ram);
-    out.push_back(inst);
   }
   return out;
 }
@@ -301,7 +260,8 @@ vector<Instruction> Cursor::getAllInstructions() {
  * True means insert, false delete.
  */
 bool Cursor::shouldNotModifyData(bool insert) {
-  vector<Instruction> instructions = getEffectiveInstructions();
+  vector<Instruction> instructions = 
+      Instruction::getEffectiveInstructions(ram, EMPTY_WORD);
   int lastAddressToCheck = LAST_XOR_OPERAND_INDEX;
   // For delete we don't need to check if there exists xor instruction, that
   // has 8th address.
@@ -326,9 +286,11 @@ bool Cursor::shouldNotModifyData(bool insert) {
 
 void Cursor::incOrDecAddressesPastTheIndex(AddrSpace space,
                                            int index, int delta) {
-  int indexOfLastInst = getIndexOfLastNonEmptyInst(getAllInstructions());
+  vector<Instruction> allInstructions = 
+      Instruction::getAllInstructions(ram, EMPTY_WORD);
+  int indexOfLastInst = 
+      Instruction::getIndexOfLastNonEmptyInst(allInstructions);
   for (int i = 0; i <= indexOfLastInst; i++) {
-  // for (vector<bool> &word : ram.state[CODE]) {
     vector<bool> &word = ram.state[CODE].at(i);
     Instruction inst = Instruction(word, EMPTY_WORD, &ram);
     Address adr = inst.firstOrderAdr[0];
