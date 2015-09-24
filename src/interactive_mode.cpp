@@ -123,7 +123,7 @@ void selectView() {
  * screen redraw.
  */
 void prepareOutput() {
-  setOutput(&updateBuffer, selectedView->width, selectedView->height);
+  initOutput(&updateBuffer, selectedView->width, selectedView->height);
 }
 
 void updateBuffer() {
@@ -177,6 +177,9 @@ void sleepAndCheckForKey() {
   // Exits if ctrl-c was pressed.
   if (pleaseExit) {
     exit(0);
+  }
+  if (screenResized) {
+    redrawScreen();
   }
   // Pauses execution if a key was hit, and waits for another key hit.
   if (int keyCode = Util::getKey()) {
@@ -558,6 +561,9 @@ char readStdin() {
     // Exits if ctrl-c was pressed.
     if (pleaseExit) {
       exit(0);
+    }
+    if (screenResized) {
+      redrawScreen();
     }
     // redrawScreen();
     return readStdin();

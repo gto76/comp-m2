@@ -14,26 +14,24 @@
 
 #include "const.hpp"
 
-////////////////////////////
+////// PRIVATE ///////
 
-int getAbsoluteX(int x);
-int getAbsoluteY(int y);
-int getAbsoluteCoordinate(int value, int console, int track);
-int coordinatesOutOfBounds(int x, int y);
-void clearScreen(void);
 void registerSigWinChCatcher(void);
 void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
-void setLine(vector<string> line, int y);
+void refreshScreen();
+void updateScreenAndPrintChanges();
 void printLine(vector<string> lineVec, int lineNo);
+int coordinatesOutOfBounds(int x, int y);
 vector<string> resizeLine(vector<string> line, int size);
+bool isEscSeqence(vector<string> line, vector<string> seqence, int index);
 int insertEscSeqAndReturnLength(vector<string> &lineOut, 
                                 vector<string> const &escSeq);
-bool isEscSeqence(vector<string> line, vector<string> seqence, int index);
-void refreshScreen();
-void updateScreen();
+void setLine(vector<string> line, int y);
+int getAbsoluteX(int x);
+int getAbsoluteY(int y);
+int getAbsoluteCoordinate(int value, int console, int track);
 void setBuffer(vector<string> s, int x, int y);
-void refresh();
 
 ////////////////////////////
 
@@ -46,18 +44,20 @@ int pictureHeight = DEFAULT_HEIGHT;
 
 int columns = DEFAULT_WIDTH;
 int rows = DEFAULT_HEIGHT;
+int columnsLast = columns;
+int rowsLast = rows;
 
 callback_function updateBuffer;
 volatile sig_atomic_t screenResized = 0;
 
-vector<vector<string>> screenBuffer;
-vector<vector<string>> onScreen;
+vector<vector<string>> buffer;
+vector<vector<string>> screen;
 
-//////////////////////////
-////////// INIT //////////
-//////////////////////////
+///////////////////////////////
+////////// INTERFACE //////////
+///////////////////////////////
 
-void setOutput(callback_function updateBufferThat, int width, int height) {
+void initOutput(callback_function updateBufferThat, int width, int height) {
   updateBuffer = updateBufferThat;
   pictureWidth = width;
   pictureHeight = height;
@@ -67,24 +67,30 @@ void setOutput(callback_function updateBufferThat, int width, int height) {
   printf("\e[37m\e[40m");
 }
 
-///////////////////////////////
-////////// INTERFACE //////////
-///////////////////////////////
-
 void redrawScreen() {
-  if (screenResized == 1) {
-    refreshScreen();
-  } else {
-    updateConsoleSize();
-    updateBuffer();
-    updateScreen();
-    fflush(stdout);
+  // if (screenResized == 1) {
+  //   screenResized = 0;
+  //   refreshScreen();
+  // } else {
+  screenResized = 0;
+  updateConsoleSize();
+  if (columnsLast != columns || rowsLast != rows) {
+    clearScreen();
   }
+  updateBuffer();
+  updateScreenAndPrintChanges();
+  fflush(stdout);
 }
 
+  // updateConsoleSize();
+  // clearScreen(); // !!!
+  // updateBuffer();
+  // updateScreenAndPrintChanges();
+  // fflush(stdout);
+
 void clearScreen(void) {
-  onScreen = vector<vector<string>>();
-  screenBuffer = vector<vector<string>>();
+  screen = vector<vector<string>>();
+  buffer = vector<vector<string>>();
   printf("\e[1;1H\e[2J");
 }
 
@@ -95,21 +101,6 @@ void replaceLine(vector<string> line, int y) {
   }
   line = resizeLine(line, columns - x - 1);
   setLine(line, y);
-}
-
-void printString(vector<string> sss, int x, int y) {
-  if (coordinatesOutOfBounds(x, y)) {
-    return;
-  }
-  sss = resizeLine(sss, columns - x - 1);
-  setBuffer(sss, x, y);
-}
-
-void printChar(string c, int x, int y) {
-  if (coordinatesOutOfBounds(x, y)) {
-    return;
-  }
-  setBuffer({ c }, x, y);
 }
 
 /////////////////////////////
@@ -137,27 +128,28 @@ void sigWinChCatcher(int signum) {
 void updateConsoleSize() {
   struct winsize w;
   ioctl(0, TIOCGWINSZ, &w);
+  columnsLast = columns;
   columns = w.ws_col;
+  rowsLast = rows;
   rows = w.ws_row;
 }
 
-void refreshScreen() {
-  screenResized = 0;
-  updateConsoleSize();
-  clearScreen();
-  updateBuffer();
-  refresh();
-  fflush(stdout);
-}
+// void refreshScreen() {
+//   updateConsoleSize();
+//   clearScreen();
+//   updateBuffer();
+//   updateScreenAndPrintChanges();
+//   fflush(stdout);
+// }
 
-void refresh() {
-  for (size_t i = 0; i < screenBuffer.size(); i++) {
-    if (onScreen.size() <= i) {
-      onScreen.push_back({});
-    }
-    printLine(screenBuffer.at(i), i);
-    if (screenBuffer.at(i) != onScreen.at(i)) {
-      onScreen.at(i) = screenBuffer.at(i);
+void updateScreenAndPrintChanges() {
+  for (size_t i = 0; i < buffer.size(); i++) {
+    if (screen.size() <= i) {
+      screen.push_back({});
+      printLine(buffer.at(i), i);
+    } else if (buffer.at(i) != screen.at(i)) {
+      screen.at(i) = buffer.at(i);
+      printLine(buffer.at(i), i);
     }
   }
 }
@@ -167,19 +159,6 @@ void printLine(vector<string> lineVec, int lineNo) {
   string controlSeq = "\033[" + to_string(getAbsoluteY(lineNo)) + ";" + 
                       to_string(getAbsoluteX(0)) + "H" + line;
   cout << controlSeq;
-}
-
-void updateScreen() {
-  for (size_t i = 0; i < screenBuffer.size(); i++) {
-    if (onScreen.size() <= i) {
-      onScreen.push_back({});
-    }
-    if (screenBuffer.at(i) != onScreen.at(i)) {
-      onScreen.at(i) = screenBuffer.at(i);
-      vector<string> lineVec = screenBuffer.at(i);
-      printLine(lineVec, i);
-    }
-  }
 }
 
 int coordinatesOutOfBounds(int x, int y) {
@@ -246,13 +225,13 @@ int insertEscSeqAndReturnLength(vector<string> &lineOut,
 }
 
 void setLine(vector<string> line, int y) {
-  int size = screenBuffer.size();
+  int size = buffer.size();
   if (size <= y) {
     for (int i = size; i <= y+1; i++) {
-      screenBuffer.push_back({});
+      buffer.push_back({});
     }
   }
-  screenBuffer.at(y) = line;
+  buffer.at(y) = line;
 }
 
 int getAbsoluteX(int x) {
@@ -275,14 +254,14 @@ int getAbsoluteCoordinate(int value, int console, int track) {
 }
 
 void setBuffer(vector<string> s, int x, int y) {
-  int size = screenBuffer.size();
+  int size = buffer.size();
   if (size <= y) {
     for (int i = size; i <= y+1; i++) {
-      screenBuffer.push_back({});
+      buffer.push_back({});
     }
   }
   for (size_t j = 0; j < s.size(); j++) {
-    screenBuffer[y][j+x] = s[j]; 
+    buffer[y][j+x] = s[j]; 
   }
 }
 

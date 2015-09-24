@@ -10,15 +10,10 @@ using namespace std;
 
 typedef void (*callback_function)(void);
 
-// INIT
-void setOutput(callback_function drawScreen, int width, int height);
-
-// API
+void initOutput(callback_function drawScreen, int width, int height);
 void redrawScreen();
 void clearScreen();
 void replaceLine(vector<string> s, int y);
-void printString(vector<string> s, int x, int y);
-void printChar(string c, int x, int y);
 
 extern volatile sig_atomic_t screenResized;
  
