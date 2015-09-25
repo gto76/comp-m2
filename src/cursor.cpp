@@ -200,12 +200,8 @@ void Cursor::moveByteDown() {
  * Retruns whether the operation was successful.
  */
 bool Cursor::insertByteAndMoveRestDown() {
-  bool lastWordIsNotEmpty = ram.state[addrSpace][RAM_SIZE-1] != EMPTY_WORD;
-  if (lastWordIsNotEmpty) {
-    return false;
-  }
   Address lastAddress = Address(addrSpace, Util::getBoolNibb(RAM_SIZE-1));
-  if (addressReferenced(lastAddress)) {
+  if (isAddressUsed(lastAddress)) {
     return false;
   }
   if (addrSpace == DATA) {
@@ -216,6 +212,20 @@ bool Cursor::insertByteAndMoveRestDown() {
   incOrDecAddressesPastTheIndex(addrSpace, getY(), 1);
   actuallyInsert();
   return true;
+}
+
+/*
+ * Returns whether value at address is either non-empty or referenced.
+ */
+bool Cursor::isAddressUsed(Address adr) {
+  bool valueNonEmpty = ram.get(adr) != EMPTY_WORD;
+  if (valueNonEmpty) {
+    return true;
+  }
+  if (addressReferenced(adr)) {
+    return true;
+  }
+  return false;
 }
 
 /*
