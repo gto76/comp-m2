@@ -159,12 +159,10 @@ void Cursor::eraseByte() {
 }
 
 vector<bool> Cursor::getWord() const {
-  // Address adr = Address(addrSpace, getAddr());
   return ram.get(getAddress());
 }
 
 void Cursor::setWord(vector<bool> word) {
-  // Address adr = Address(addrSpace, getAddr());
   ram.set(getAddress(), word);
 }
 
@@ -195,59 +193,6 @@ void Cursor::moveByteDown() {
   setWord(tmp2);
   increaseY();
 }
-
-// Address Cursor::getLastRedundandAdr() {
-//   for (int i = RAM_SIZE-1; i >= 1; i--) {
-//     bool adrNotUsed = isAddressUsed(Address(addrSpace, i));
-//     if (adrNotUsed) {
-//       if (addrSpace == CODE) {
-//         bool valueBeforeNorEmpty = ram.get(Address(addrSpace, i-1)) != EMPTY_WORD;
-//         if (valueBeforeNorEmpty) {
-//           continue;
-//         }
-//         return address;
-//       }
-      
-//     }
-//   }
-//   return Address(NONE, 0);
-// }
-
-/*
- * Retruns whether the operation was successful.
- */
-// bool Cursor::deleteByteAndMoveRestUp() {
-//   if (isAddressUsed(getAddress())) {
-//     eraseByte();
-//     return false;
-//   }
-//   if (addrSpace == DATA) {
-//     if (shouldNotModifyData(false, getY())) {
-//       return false;
-//     }
-//   }
-//   incOrDecAddressesPastTheIndex(addrSpace, getY(), -1);
-//   actuallyDelete();
-//   return true;
-// }
-
-// bool Cursor::insertByteAndMoveRestDown() {
-//   Address lastAddress = Address(addrSpace, RAM_SIZE-1);
-//   if (isAddressUsed(lastAddress)) {
-//     // Address redundandAdr = getLastRedundandAdr();
-//     // if (redundandAdr.space == NONE) {
-//       return false;
-//     // }
-//   }
-//   if (addrSpace == DATA) {
-//     if (shouldNotModifyData(true, getY())) {
-//       return false;
-//     }
-//   } 
-//   incOrDecAddressesPastTheIndex(addrSpace, getY(), 1);
-//   actuallyInsert();
-//   return true;
-// }
 
 /*
  * Retruns whether the operation was successful.
