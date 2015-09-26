@@ -55,8 +55,8 @@ class Cursor {
     void moveByteUp();
     void moveByteDown();
     bool insertByteAndMoveRestDown();
-    bool isAddressUsed(Address adr);
     bool deleteByteAndMoveRestUp();
+    bool isAddressUsed(Address adr);
 
   private:
     Ram &ram;
