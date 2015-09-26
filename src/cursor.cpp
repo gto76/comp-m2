@@ -159,13 +159,13 @@ void Cursor::eraseByte() {
 }
 
 vector<bool> Cursor::getWord() const {
-  Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
-  return ram.get(adr);
+  // Address adr = Address(addrSpace, getAddr());
+  return ram.get(getAddress());
 }
 
 void Cursor::setWord(vector<bool> word) {
-  Address adr = Address(addrSpace, Util::getBoolNibb(getAddr()));
-  ram.set(adr, word);
+  // Address adr = Address(addrSpace, getAddr());
+  ram.set(getAddress(), word);
 }
 
 void Cursor::moveByteUp() {
@@ -196,46 +196,124 @@ void Cursor::moveByteDown() {
   increaseY();
 }
 
+// Address Cursor::getLastRedundandAdr() {
+//   for (int i = RAM_SIZE-1; i >= 1; i--) {
+//     bool adrNotUsed = isAddressUsed(Address(addrSpace, i));
+//     if (adrNotUsed) {
+//       if (addrSpace == CODE) {
+//         bool valueBeforeNorEmpty = ram.get(Address(addrSpace, i-1)) != EMPTY_WORD;
+//         if (valueBeforeNorEmpty) {
+//           continue;
+//         }
+//         return address;
+//       }
+      
+//     }
+//   }
+//   return Address(NONE, 0);
+// }
+
+/*
+ * Retruns whether the operation was successful.
+ */
+// bool Cursor::deleteByteAndMoveRestUp() {
+//   if (isAddressUsed(getAddress())) {
+//     eraseByte();
+//     return false;
+//   }
+//   if (addrSpace == DATA) {
+//     if (shouldNotModifyData(false, getY())) {
+//       return false;
+//     }
+//   }
+//   incOrDecAddressesPastTheIndex(addrSpace, getY(), -1);
+//   actuallyDelete();
+//   return true;
+// }
+
+// bool Cursor::insertByteAndMoveRestDown() {
+//   Address lastAddress = Address(addrSpace, RAM_SIZE-1);
+//   if (isAddressUsed(lastAddress)) {
+//     // Address redundandAdr = getLastRedundandAdr();
+//     // if (redundandAdr.space == NONE) {
+//       return false;
+//     // }
+//   }
+//   if (addrSpace == DATA) {
+//     if (shouldNotModifyData(true, getY())) {
+//       return false;
+//     }
+//   } 
+//   incOrDecAddressesPastTheIndex(addrSpace, getY(), 1);
+//   actuallyInsert();
+//   return true;
+// }
+
 /*
  * Retruns whether the operation was successful.
  */
 bool Cursor::insertByteAndMoveRestDown() {
-  Address lastAddress = Address(addrSpace, Util::getBoolNibb(RAM_SIZE-1));
-  if (isAddressUsed(lastAddress)) {
-    return false;
-  }
-  if (addrSpace == DATA) {
-    if (shouldNotModifyData(true)) {
-      return false;
-    }
-  }
-  incOrDecAddressesPastTheIndex(addrSpace, getY(), 1);
-  actuallyInsert();
-  return true;
+  return insertByteAndMoveRestDown(getAddress());
 }
 
 /*
  * Retruns whether the operation was successful.
  */
 bool Cursor::deleteByteAndMoveRestUp() {
-  if (isAddressUsed(getAddress())) {
-    eraseByte();
+  return deleteByteAndMoveRestUp(getAddress());
+}
+
+//////////////////////////////
+/////////// PRIVATE //////////
+//////////////////////////////
+
+/*
+ * Retruns whether the operation was successful.
+ */
+bool Cursor::insertByteAndMoveRestDown(Address adr) {
+  if (shouldNotModify(true, adr)) {
     return false;
   }
-  if (addrSpace == DATA) {
-    if (shouldNotModifyData(false)) {
-      return false;
-    }
+  incOrDecAddressesPastTheIndex(adr.space, Util::getInt(adr.val), 1);
+  actuallyInsert();
+  return true;
+}
+
+bool Cursor::deleteByteAndMoveRestUp(Address adr) {
+  if (shouldNotModify(false, adr)) {
+    return false;
   }
-  incOrDecAddressesPastTheIndex(addrSpace, getY(), -1);
+  incOrDecAddressesPastTheIndex(adr.space, Util::getInt(adr.val), -1);
   actuallyDelete();
   return true;
+}
+
+bool Cursor::shouldNotModify(bool insert, Address adr) {
+  bool adrUsed;
+  if (insert) {
+    Address lastAdr = Address(adr.space, Util::getBoolNibb(RAM_SIZE-1));
+    adrUsed = addressUsed(lastAdr);
+  } else {
+    adrUsed = addressUsed(adr);
+  }
+  if (adrUsed) {
+    if (!insert) {
+      ram.set(adr, EMPTY_WORD);
+    }
+    return true;
+  }
+  if (adr.space == DATA) {
+    if (shouldNotModifyData(insert, Util::getInt(adr.val))) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /*
  * Returns whether value at address is either non-empty or referenced.
  */
-bool Cursor::isAddressUsed(Address adr) {
+bool Cursor::addressUsed(Address adr) {
   bool valueNonEmpty = ram.get(adr) != EMPTY_WORD;
   if (valueNonEmpty) {
     return true;
@@ -245,10 +323,6 @@ bool Cursor::isAddressUsed(Address adr) {
   }
   return false;
 }
-
-//////////////////////////////
-/////////// PRIVATE //////////
-//////////////////////////////
 
 bool Cursor::addressReferenced(Address adr) {
   vector<Address> addresses = getAddressesOfEffectiveInstructions();
@@ -268,7 +342,7 @@ vector<Address> Cursor::getAddressesOfEffectiveInstructions() {
 /*
  * True means insert, false delete.
  */
-bool Cursor::shouldNotModifyData(bool insert) {
+bool Cursor::shouldNotModifyData(bool insert, int y) {
   vector<Instruction> instructions = 
       Instruction::getEffectiveInstructions(ram, EMPTY_WORD);
   int lastAddressToCheck = LAST_XOR_OPERAND_INDEX;
@@ -277,7 +351,7 @@ bool Cursor::shouldNotModifyData(bool insert) {
   if (!insert) {
     lastAddressToCheck--;
   }
-  for (int i = getY(); i <= lastAddressToCheck; i++) {
+  for (int i = y; i <= lastAddressToCheck; i++) {
     bool addressCouldBeBound = BOUND_DATA_ADDRESSES.find(i) != 
                                BOUND_DATA_ADDRESSES.end();
     if (addressCouldBeBound) {

@@ -1,3 +1,4 @@
+
 #ifndef ADDRESS_H
 #define ADDRESS_H
 
@@ -5,12 +6,13 @@
 #include <vector>
 
 #include "addr_space.hpp"
+// #include "util.hpp"
 
 using namespace std;
 
 class Address {
   public:
-    Address(AddrSpace spaceIn, vector<bool> valIn)
+    Address(const AddrSpace spaceIn, vector<bool> valIn)
         : space(spaceIn), 
           val(valIn) { }
     bool operator == (const Address& other) const {

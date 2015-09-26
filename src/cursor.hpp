@@ -56,7 +56,6 @@ class Cursor {
     void moveByteDown();
     bool insertByteAndMoveRestDown();
     bool deleteByteAndMoveRestUp();
-    bool isAddressUsed(Address adr);
 
   private:
     Ram &ram;
@@ -67,9 +66,14 @@ class Cursor {
     // Map of data addresses to instructions that use them.
     static map<int, Instruction> BOUND_DATA_ADDRESSES;
 
+    bool insertByteAndMoveRestDown(Address adr);
+    bool deleteByteAndMoveRestUp(Address adr);
+    bool shouldNotModify(bool insert, Address adr);
+    bool addressUsed(Address adr);
     bool addressReferenced(Address adr);
     vector<Address> getAddressesOfEffectiveInstructions();
-    bool shouldNotModifyData(bool insert);
+    // bool shouldNotModifyData(bool insert);
+    bool shouldNotModifyData(bool insert, int y);
     // vector<Instruction> getEffectiveInstructions();
     void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
     static void setAddress(vector<bool> &word, int val, int adrIndex);
