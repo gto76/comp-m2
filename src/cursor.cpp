@@ -236,6 +236,11 @@ bool Cursor::deleteByteAndMoveRestUp(Address adr) {
 }
 
 bool Cursor::shouldNotModify(bool insert, Address adr) {
+  if (adr.space == DATA) {
+    if (shouldNotModifyData(insert, Util::getInt(adr.val))) {
+      return true;
+    }
+  }
   bool adrUsed;
   if (insert) {
     Address lastAdr = Address(adr.space, Util::getBoolNibb(RAM_SIZE-1));
@@ -244,12 +249,7 @@ bool Cursor::shouldNotModify(bool insert, Address adr) {
     adrUsed = addressUsed(adr);
   }
   if (adrUsed) {
-    if (insert) {    
-      if (adr.space == DATA) {
-        if (shouldNotModifyData(insert, Util::getInt(adr.val))) {
-          return true;
-        }
-      }
+    if (insert) {
       Address redundandAdr = getLastRedundandAdr(adr.space);
       bool redundandAdrBeforAdr = Util::getInt(redundandAdr.val) <=
                                   Util::getInt(adr.val) + 1; 
