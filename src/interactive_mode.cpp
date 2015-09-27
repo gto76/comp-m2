@@ -341,7 +341,9 @@ bool switchKey(char c) {
       fileSaved = false;
       break;
     case 51:   // 3, part of escape seqence of delete key
-    case 88: { // X
+    // case 88: { // X
+    // case 22: // find backspace
+    case 120: { // x
       vector<bool> temp = cursor.getWord();
       bool success = cursor.deleteByteAndMoveRestUp();
       if (success) {
@@ -372,22 +374,26 @@ bool switchKey(char c) {
       cursor.increaseX();
       fileSaved = false;
       break;
-    case 120: { // x
-      clipboard = cursor.getWord();
-      cursor.eraseByte();
-      fileSaved = false;
-      // cursor.setBitIndex(0);
-      break;
-    } 
+    // case 120: { // x
+      // clipboard = cursor.getWord();
+      // cursor.eraseByte();
+      // fileSaved = false;
+      // break;
+    // } 
     case 111: { // o
-      cursor.increaseY();
-      bool success = cursor.insertByteAndMoveRestDown();
-      if (success) {
-        cursor.setBitIndex(0);
-        fileSaved = false;
-      } else {
-        cursor.decreaseY();
-      }
+      // cursor.increaseY();
+      // bool success = cursor.insertByteAndMoveRestDown();
+      // if (success) {
+      //   cursor.setBitIndex(0);
+      //   fileSaved = false;
+      // } else {
+      //   cursor.decreaseY();
+      // }
+      // break;
+      // Temporary solution until I find a better key for keyboards without
+      // insert key:
+      cursor.insertByteAndMoveRestDown();
+      fileSaved = false;
       break;
     }
     case 99:   // c
