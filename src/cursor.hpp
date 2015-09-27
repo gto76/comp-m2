@@ -74,9 +74,10 @@ class Cursor {
     vector<Address> getAddressesOfEffectiveInstructions();
     bool shouldNotModifyData(bool insert, int y);
     void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
+    Address getLastRedundandAdr(AddrSpace addrSpaceIn);
     static void setAddress(vector<bool> &word, int val, int adrIndex);
-    void actuallyInsert();
-    void actuallyDelete();
+    void actuallyInsert(Address adr);
+    void actuallyDelete(Address adr);
     int getBitIndex() const;
     int getAddr() const;
     void setAddr(int addr);
