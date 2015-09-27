@@ -218,7 +218,8 @@ bool Cursor::deleteByteAndMoveRestUp() {
  * Retruns whether the operation was successful.
  */
 bool Cursor::insertByteAndMoveRestDown(Address adr) {
-  if (shouldNotModify(true, adr)) {
+  int modifyTo = canModify(true, adr);
+  if (!modifyTo) {
     return false;
   }
   incOrDecAddressesPastTheIndex(adr.space, Util::getInt(adr.val), 1);
@@ -227,7 +228,8 @@ bool Cursor::insertByteAndMoveRestDown(Address adr) {
 }
 
 bool Cursor::deleteByteAndMoveRestUp(Address adr) {
-  if (shouldNotModify(false, adr)) {
+  int modifyTo = canModify(false, adr);
+  if (!modifyTo) {
     return false;
   }
   incOrDecAddressesPastTheIndex(adr.space, Util::getInt(adr.val), -1);
@@ -235,11 +237,19 @@ bool Cursor::deleteByteAndMoveRestUp(Address adr) {
   return true;
 }
 
-bool Cursor::shouldNotModify(bool insert, Address adr) {
+/*
+ * Return 0 if it should not modify,
+ * or index of the address until which should be modified
+ */
+int Cursor::canModify(bool insert, Address adr) {
   if (adr.space == DATA) {
     int offendingAdr = shouldNotModifyData(insert, Util::getInt(adr.val));
     if (offendingAdr) {
-      return true;
+      // todo delete
+      // for i in offendingAdr .. adr
+        // if i not used
+          // move down from i to adr
+      return 0;
     }
   }
   bool adrUsed;
@@ -255,16 +265,16 @@ bool Cursor::shouldNotModify(bool insert, Address adr) {
       bool redundandAdrBeforAdr = Util::getInt(redundandAdr.val) <=
                                   Util::getInt(adr.val) + 1; 
       if (redundandAdr.space == NONE || redundandAdrBeforAdr) {
-        return true;
+        return 0;
       } else {
         deleteByteAndMoveRestUp(redundandAdr);
       }
     } else {
       ram.set(adr, EMPTY_WORD);
-      return true;
+      return 0;
     }
   }
-  return false;
+  return RAM_SIZE-1;
 }
 
 /*

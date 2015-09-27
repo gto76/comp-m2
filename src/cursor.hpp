@@ -68,7 +68,7 @@ class Cursor {
 
     bool insertByteAndMoveRestDown(Address adr);
     bool deleteByteAndMoveRestUp(Address adr);
-    bool shouldNotModify(bool insert, Address adr);
+    int canModify(bool insert, Address adr);
     bool addressUsed(Address adr);
     bool addressReferenced(Address adr);
     vector<Address> getAddressesOfEffectiveInstructions();
