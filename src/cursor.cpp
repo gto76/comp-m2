@@ -237,7 +237,8 @@ bool Cursor::deleteByteAndMoveRestUp(Address adr) {
 
 bool Cursor::shouldNotModify(bool insert, Address adr) {
   if (adr.space == DATA) {
-    if (shouldNotModifyData(insert, Util::getInt(adr.val))) {
+    int offendingAdr = shouldNotModifyData(insert, Util::getInt(adr.val));
+    if (offendingAdr) {
       return true;
     }
   }
@@ -297,8 +298,9 @@ vector<Address> Cursor::getAddressesOfEffectiveInstructions() {
 
 /*
  * True means insert, false delete.
+ * Returns offending address index or 0 if ok.
  */
-bool Cursor::shouldNotModifyData(bool insert, int y) {
+int Cursor::shouldNotModifyData(bool insert, int y) {
   vector<Instruction> instructions = 
       Instruction::getEffectiveInstructions(ram, EMPTY_WORD);
   int lastAddressToCheck = LAST_XOR_OPERAND_INDEX;
@@ -316,11 +318,11 @@ bool Cursor::shouldNotModifyData(bool insert, int y) {
           find(instructions.begin(), instructions.end(), boundingInst) != 
           instructions.end();
       if (instructionExists) {
-        return true;
+        return i;
       }
     }
   }
-  return false;
+  return 0;
 }
 
 Address Cursor::getLastRedundandAdr(AddrSpace addrSpaceIn) {
