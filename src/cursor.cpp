@@ -219,21 +219,23 @@ bool Cursor::deleteByteAndMoveRestUp() {
  */
 bool Cursor::insertByteAndMoveRestDown(Address adr) {
   int modifyTo = canModify(true, adr);
+  cerr << "modifyTo " << to_string(modifyTo) << endl;
   if (!modifyTo) {
     return false;
   }
-  incOrDecAddressesPastTheIndex(adr.space, Util::getInt(adr.val), 1);
-  actuallyInsert(adr);
+  incOrDecAddressesInRange(adr.space, Util::getInt(adr.val), modifyTo, 1);
+  actuallyInsert(adr, modifyTo);
   return true;
 }
 
 bool Cursor::deleteByteAndMoveRestUp(Address adr) {
   int modifyTo = canModify(false, adr);
+  cerr << "modifyTo " << to_string(modifyTo) << endl;
   if (!modifyTo) {
     return false;
   }
-  incOrDecAddressesPastTheIndex(adr.space, Util::getInt(adr.val), -1);
-  actuallyDelete(adr);
+  incOrDecAddressesInRange(adr.space, Util::getInt(adr.val), modifyTo, -1);
+  actuallyDelete(adr, modifyTo);
   return true;
 }
 
@@ -244,11 +246,22 @@ bool Cursor::deleteByteAndMoveRestUp(Address adr) {
 int Cursor::canModify(bool insert, Address adr) {
   if (adr.space == DATA) {
     int offendingAdr = shouldNotModifyData(insert, Util::getInt(adr.val));
+    cerr << "offendingAdr " << to_string(offendingAdr) << endl;
     if (offendingAdr) {
-      // todo delete
-      // for i in offendingAdr .. adr
-        // if i not used
-          // move down from i to adr
+      if (insert) {
+        for (int i = offendingAdr; i > Util::getInt(adr.val); i--) {
+          if (!addressUsed(Address(DATA, Util::getBoolNibb(i)))) {
+            return i;
+          }
+        }
+      } else {
+        if (addressUsed(adr)) {
+          ram.set(adr, EMPTY_WORD);
+          return 0;
+        } else {
+          return offendingAdr-1;
+        }
+      }
       return 0;
     }
   }
@@ -353,8 +366,8 @@ Address Cursor::getLastRedundandAdr(AddrSpace addrSpaceIn) {
   return Address(NONE, FIRST_ADDRESS);
 }
 
-void Cursor::incOrDecAddressesPastTheIndex(AddrSpace space,
-                                           int index, int delta) {
+void Cursor::incOrDecAddressesInRange(AddrSpace space, int indexStart, 
+                                      int indexEnd, int delta) {
   vector<Instruction> allInstructions = 
       Instruction::getAllInstructions(ram, EMPTY_WORD);
   int indexOfLastInst = 
@@ -365,9 +378,10 @@ void Cursor::incOrDecAddressesPastTheIndex(AddrSpace space,
     Address adr = inst.firstOrderAdr[0];
     int adrVal = Util::getInt(adr.val);
     bool instPointingToSpace = adr.space == space;
-    bool adrPastTheIndex = adrVal >= index;
+    bool adrPastTheStart = adrVal >= indexStart;
+    bool adrBeforeTheEnd = adrVal < indexEnd;
     bool notLastAdr = adr.val != LAST_ADDRESS;
-    if (instPointingToSpace && adrPastTheIndex && notLastAdr) {
+    if (instPointingToSpace && adrPastTheStart && adrBeforeTheEnd && notLastAdr) {
       int newVal = adrVal + delta;
       setAddress(word, newVal, inst.inst->getAdrIndex());
     }
@@ -388,11 +402,12 @@ void Cursor::setAddress(vector<bool> &word, int newAdrVal, int adrIndex) {
 //   ram.state[addrSpace][getY()] = EMPTY_WORD;
 // }
 
-void Cursor::actuallyInsert(Address adr) {
-  for (int i = RAM_SIZE-1; i > Util::getInt(adr.val); i--) {
+void Cursor::actuallyInsert(Address adr, int until) {
+  int adrVal = Util::getInt(adr.val);
+  for (int i = until; i > adrVal; i--) {
     ram.state[adr.space][i] = ram.state[adr.space][i-1];
   }
-  ram.state[adr.space][getY()] = EMPTY_WORD;
+  ram.state[adr.space][adrVal] = EMPTY_WORD;
 }
 
 // void Cursor::actuallyDelete() {
@@ -402,11 +417,11 @@ void Cursor::actuallyInsert(Address adr) {
 //   ram.state[addrSpace][RAM_SIZE-1] = EMPTY_WORD;
 // }
 
-void Cursor::actuallyDelete(Address adr) {
-  for (int i = Util::getInt(adr.val); i < RAM_SIZE-1; i++) {
+void Cursor::actuallyDelete(Address adr, int until) {
+  for (int i = Util::getInt(adr.val); i < until; i++) {
     ram.state[adr.space][i] = ram.state[adr.space][i+1];
   }
-  ram.state[adr.space][RAM_SIZE-1] = EMPTY_WORD;
+  ram.state[adr.space][until] = EMPTY_WORD;
 }
 
 int Cursor::getBitIndex() const {
