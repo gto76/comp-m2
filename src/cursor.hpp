@@ -68,12 +68,14 @@ class Cursor {
 
     bool insertByteAndMoveRestDown(Address adr);
     bool deleteByteAndMoveRestUp(Address adr);
-    int canModify(bool insert, Address adr);
+    int canModifyTo(bool insert, Address adr);
+    int canModifyDataWithBoundAdrTo(bool inset, int boundAdr, Address adr);
+    int canInsertTo(Address adr);
+    int canDeleteTo(Address adr);
     bool addressUsed(Address adr);
     bool addressReferenced(Address adr);
     vector<Address> getAddressesOfEffectiveInstructions();
-    int shouldNotModifyData(bool insert, int y);
-    // void incOrDecAddressesPastTheIndex(AddrSpace space, int index, int delta);
+    int getFirstBoundDataAdr(bool insert, int y);
     void incOrDecAddressesInRange(AddrSpace space, int indexStart, 
                                       int indexEnd, int delta);
     Address getLastRedundandAdr(AddrSpace addrSpaceIn);
