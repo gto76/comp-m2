@@ -341,7 +341,7 @@ bool switchKey(char c) {
       fileSaved = false;
       break;
     case 51:   // 3, part of escape seqence of delete key
-    case 8:    // backspace
+    case 127:    // backspace
     case 120: { // x
       vector<bool> temp = cursor.getWord();
       bool success = cursor.deleteByteAndMoveRestUp();

@@ -177,7 +177,6 @@ void Cursor::moveByteUp() {
     return;
   }
   int predecessor = getIndexOfMovable(true);
-  cerr << "predecessor " << to_string(predecessor) << endl;
   if (predecessor == -1) {
     return;
   }
@@ -191,7 +190,6 @@ void Cursor::moveByteDown() {
     return;
   }
   int descendant = getIndexOfMovable(false);
-  cerr << "descendant " << to_string(descendant) << endl;
   if (descendant == -1) {
     return;
   }
