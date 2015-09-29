@@ -8,6 +8,7 @@
 
 #include "const.hpp"
 #include "instruction.hpp"
+#include "specific_instruction.hpp"
 
 using namespace std;
 
@@ -18,6 +19,10 @@ map<int, Instruction> Cursor::BOUND_DATA_ADDRESSES = {
     { LAST_XOR_OPERAND_INDEX, 
       Instruction(LAST_XOR_INSTRUCTION, EMPTY_WORD, NULL) }
 };
+
+// map<SpecificInstruction, set<int>> Cursor::VALID_ADDRESSES = {
+//   { Read, { 0, 1, 2} }
+// }
 
 ///////////////////////////////
 /////// ADDR SPACE API ////////
@@ -159,12 +164,10 @@ void Cursor::eraseByte() {
 }
 
 vector<bool> Cursor::getWord() const {
-  // Address adr = Address(addrSpace, getAddr());
   return ram.get(getAddress());
 }
 
 void Cursor::setWord(vector<bool> word) {
-  // Address adr = Address(addrSpace, getAddr());
   ram.set(getAddress(), word);
 }
 
@@ -173,27 +176,111 @@ void Cursor::moveByteUp() {
   if (atFirstAddress) {
     return;
   }
-  vector<bool> tmp = getWord();
-  decreaseY();
-  vector<bool> tmp2 = getWord();
-  setWord(tmp);
-  increaseY();
-  setWord(tmp2);
+  // vector<bool> tmp = getWord();
+  // decreaseY();
+  // vector<bool> tmp2 = getWord();
+  // setWord(tmp);
+  // increaseY();
+  // setWord(tmp2);
+  // decreaseY();
+  int predecessor = getIndexOfMovable(true);
+  if (predecessor == -1) {
+    return;
+  }
+  swithcValuesAndReferences(addrSpace, getY(), predecessor);
   decreaseY();
 }
+
 
 void Cursor::moveByteDown() {
   bool atLastAddress = getAddr() >= RAM_SIZE-1;
   if (atLastAddress) {
     return;
   }
-  vector<bool> tmp = getWord();
+  // vector<bool> tmp = getWord();
+  // increaseY();
+  // vector<bool> tmp2 = getWord();
+  // setWord(tmp);
+  // decreaseY();
+  // setWord(tmp2);
+  // increaseY();
+  int descendant = getIndexOfMovable(false);
+  cerr << "descendant " << to_string(descendant) << endl;
+  if (descendant == -1) {
+    return;
+  }
+  swithcValuesAndReferences(addrSpace, getY(), descendant);
   increaseY();
-  vector<bool> tmp2 = getWord();
-  setWord(tmp);
-  decreaseY();
-  setWord(tmp2);
-  increaseY();
+}
+
+int Cursor::getIndexOfMovable(bool predecessor) {
+  Address curAdr = getAddress();
+  vector<Instruction> instructions = 
+      Instruction::getEffectiveInstructions(ram, EMPTY_WORD);
+  if (predecessor) {
+    for (int i = getY()-1; i >= 0; i--) {
+      if (adrMovableTo(curAdr, i, instructions)) {
+        return i;
+      }
+    }
+    return -1;
+  } else {
+    for (int i = getY()+1; i < RAM_SIZE; i++) {
+      if (adrMovableTo(curAdr, i, instructions)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+}
+
+/*
+ * Returns whether word at address can be moved up or down one spot.
+ */
+bool Cursor::adrMovableTo(Address &adr, bool toIndex,  
+                          vector<Instruction> &instructions) {
+  bool indexOutOfBounds = toIndex < 0 || toIndex >= RAM_SIZE;
+  bool invalidAddress = adr.space == NONE;
+  if (indexOutOfBounds || invalidAddress) {
+    return false;
+  }
+  int index = Util::getInt(adr.val);
+  if (index == toIndex) {
+    return true;
+  }
+  if (adr.space != DATA) {
+    return true;
+  }
+  bool up = toIndex < index;
+  // Do not check xor's index, because it only limits down movement.
+  if (up) {
+    if (index == LAST_XOR_OPERAND_INDEX) {
+      return true;
+    }
+  }
+  if (!addressCouldBeBound(index)) {
+    return true;
+  }
+  Instruction boundingInst = BOUND_DATA_ADDRESSES.at(index);
+  if (instructionExists(boundingInst, instructions)) {
+    return false;
+  }
+  // Check if it is bound by xor instruction and toIndex is past 
+  // LAST_XOR_OPERAND_INDEX.
+  if (!up) {
+    if (index > LAST_XOR_OPERAND_INDEX) {
+      return true;
+    }
+    Instruction xorInstruction = 
+        Instruction( { false, true, true, true, true, adr.val[1], adr.val[2], 
+                       adr.val[3]}, EMPTY_WORD, &ram);
+    if (instructionExists(xorInstruction, instructions)) {
+      if (toIndex > LAST_XOR_OPERAND_INDEX) {
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 /*
@@ -242,7 +329,7 @@ bool Cursor::deleteByteAndMoveRestUp(Address adr) {
 
 /*
  * Return 0 if it should not modify,
- * or index of the address until which should be modified
+ * or index of the address until which ram should be modified.
  */
 int Cursor::canModifyTo(bool insert, Address adr) {
   if (adr.space == DATA) {
@@ -342,19 +429,24 @@ int Cursor::getFirstBoundDataAdr(bool insert, int y) {
     lastAddressToCheck--;
   }
   for (int i = y; i <= lastAddressToCheck; i++) {
-    bool addressCouldBeBound = BOUND_DATA_ADDRESSES.find(i) != 
-                               BOUND_DATA_ADDRESSES.end();
-    if (addressCouldBeBound) {
+    if (addressCouldBeBound(i)) {
       Instruction boundingInst = BOUND_DATA_ADDRESSES.at(i);
-      bool instructionExists = 
-          find(instructions.begin(), instructions.end(), boundingInst) != 
-          instructions.end();
-      if (instructionExists) {
+      if (instructionExists(boundingInst, instructions)) {
         return i;
       }
     }
   }
   return 0;
+}
+
+bool Cursor::addressCouldBeBound(int index) {
+  return BOUND_DATA_ADDRESSES.find(index) != BOUND_DATA_ADDRESSES.end();
+}
+
+bool Cursor::instructionExists(Instruction &inst, 
+                               vector<Instruction> &instructions) {
+  return find(instructions.begin(), instructions.end(), inst) != 
+              instructions.end();
 }
 
 Address Cursor::getLastRedundandAdr(AddrSpace addrSpaceIn) {
@@ -397,6 +489,34 @@ void Cursor::incOrDecAddressesInRange(AddrSpace space, int indexStart,
   }
 }
 
+void Cursor::swithcValuesAndReferences(AddrSpace space, int from, int to) {
+  updateAddresses(space, from, to);
+  actuallyMove(space, from, to);
+}
+
+// TODO: HEAVY DUPLICATION!
+void Cursor::updateAddresses(AddrSpace space, int from, int to) {
+  cerr << "space " << Address::toString(space) << " from " << to_string(from)
+      << " to " << to_string(to) << endl;
+  vector<Instruction> allInstructions = 
+      Instruction::getAllInstructions(ram, EMPTY_WORD);
+  int indexOfLastInst = 
+      Instruction::getIndexOfLastNonEmptyInst(allInstructions);
+  for (int i = 0; i <= indexOfLastInst; i++) {
+    vector<bool> &word = ram.state[CODE].at(i);
+    Instruction inst = Instruction(word, EMPTY_WORD, &ram);
+    Address adr = inst.firstOrderAdr[0];
+    int adrVal = Util::getInt(adr.val);
+    bool instPointingToSpace = adr.space == space;
+    if (instPointingToSpace && adrVal == from) {
+      setAddress(word, to, inst.inst->getAdrIndex());
+    }
+    if (instPointingToSpace && adrVal == to) {
+      setAddress(word, from, inst.inst->getAdrIndex());
+    }
+  }
+}
+
 void Cursor::setAddress(vector<bool> &word, int newAdrVal, int adrIndex) {
   int adrLength = WORD_SIZE-adrIndex;
   vector<bool> newAdr = Util::getBool(newAdrVal, adrLength);
@@ -417,6 +537,12 @@ void Cursor::actuallyDelete(Address adr, int until) {
     ram.state[adr.space][i] = ram.state[adr.space][i+1];
   }
   ram.state[adr.space][until] = EMPTY_WORD;
+}
+
+void Cursor::actuallyMove(AddrSpace space, int from, int to) {
+  vector<bool> temp = ram.state[space][from];
+  ram.state[space][from] = ram.state[space][to];
+  ram.state[space][to] = temp;
 }
 
 int Cursor::getBitIndex() const {

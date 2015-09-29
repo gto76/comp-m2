@@ -20,6 +20,7 @@ class Address {
     string getIntStr() const;
     AddrSpace const space;
     vector<bool> const val;
+    static string toString(AddrSpace space);
 };
 
 #endif

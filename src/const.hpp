@@ -39,6 +39,7 @@ const vector<bool> EMPTY_WORD = { false, false, false, false, false, false,
                                   false, false };
 const vector<bool> FIRST_ADDRESS = { false, false, false, false };
 const vector<bool> LAST_ADDRESS = { true, true, true, true };
+const vector<bool> ONE_BEFORE_LAST_ADDRESS = { true, true, true, false };
 const int MAX_VALUE = 255;
 
 const vector<bool> INIT_INSTRUCTION = { false, true, true, true, false, false,
