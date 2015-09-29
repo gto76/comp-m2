@@ -69,7 +69,7 @@ class Cursor {
     // static map<SpecificInstruction, set<int>> VALID_ADDRESSES;
 
     int getIndexOfMovable(bool predecessor);
-    bool adrMovableTo(Address &adr, bool toIndex,  
+    bool adrMovableTo(Address &from, Address &to,  
                       vector<Instruction> &instructions);
     bool insertByteAndMoveRestDown(Address adr);
     bool deleteByteAndMoveRestUp(Address adr);
