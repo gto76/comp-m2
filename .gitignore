@@ -5,6 +5,7 @@ cat-vs-mouse
 test
 punchcard*
 .DS_Store
+err
 
 # Compiled Object files
 *.slo
