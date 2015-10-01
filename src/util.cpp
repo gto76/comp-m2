@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -400,6 +401,15 @@ bool Util::isADir(string filename) {
     cout << "Could not open file " << filename << "." << endl;
     exit(1);
   }
+}
+
+bool Util::contains(vector<string> options, const char* arg) {
+  for (string option : options) {
+    if (strcmp(arg, option.c_str()) == 0) {
+      return true;
+    }
+  }
+  return false;
 }
 
 

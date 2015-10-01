@@ -10,20 +10,16 @@ using namespace std;
 
 class StandardOutput {
   public:
-    StandardOutput(bool outputCharsIn, bool bufferOutputIn) 
-        : outputChars(outputCharsIn),
-          bufferOutput(bufferOutputIn) { }
+    StandardOutput(bool outputNumbersIn, bool outputCharsIn) 
+        : outputNumbers(outputNumbersIn), outputChars(outputCharsIn) { }
     void run();
 
     ProvidesOutput *input = NULL;
     
   private:
-    vector<char> buffer;
+    const bool outputNumbers;
     const bool outputChars;
-    const bool bufferOutput;
     void printBool(vector<bool> wordIn);
-    void printChar(char c);
-    void checkBuffer();
 };
 
 #endif

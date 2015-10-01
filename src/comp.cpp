@@ -25,15 +25,23 @@ string getFirstFilename();
 
 vector<string> filenames;
 string dirname;
+bool interactivieMode = true;
 bool outputChars = false;
-bool bufferOutput = false;
+bool outputNumbers = false;
+bool inputChars = false;
+bool rawInput = false;
 bool compile = false;
 bool parse = false;
 
 int main(int argc, const char* argv[]) {
   srand(time(NULL));
-  bool interactivieMode = inputIsNotPiped();
   processArguments(argc, argv);
+  if (interactivieMode == true) {
+    interactivieMode = inputIsNotPiped();
+  }
+  if (outputChars == false) {
+    outputNumbers = !Util::outputIsPiped();
+  }
   if (compile) {
     assertFilenames();
     string filenameOut = getFilenameOut();
@@ -50,8 +58,9 @@ int main(int argc, const char* argv[]) {
     InteractiveMode::startInteractiveMode(getFirstFilename());
   } else {
     assertFilenames();
-    NoninteractiveMode mode = NoninteractiveMode(filenames, outputChars,
-                                                 bufferOutput);
+    NoninteractiveMode mode = NoninteractiveMode(filenames, outputNumbers,
+                                                 outputChars, inputChars, 
+                                                 rawInput);
     mode.run();
   }
 }
@@ -72,15 +81,25 @@ void processArguments(int argc, const char* argv[]) {
     return;
   }
   for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-c") == 0) {
+    const char *arg = argv[i];
+    if (Util::contains({ "-n", "--noninteractive"}, arg)) {
+      interactivieMode = false;
+    } else if (Util::contains({ "-c", "--char-output"}, arg)) {
+      interactivieMode = false;
       outputChars = true;
-    } else if (strcmp(argv[i], "compile") == 0) {
+    } else if (Util::contains({ "-f", "--filter"}, arg)) {
+      interactivieMode = false;
+      outputChars = true;
+      inputChars = true;
+    } else if (Util::contains({ "-g", "--game"}, arg)) {
+      interactivieMode = false;
+      outputChars = true;
+      inputChars = true;
+      rawInput = true;
+    } else if (Util::contains({ "compile" }, arg)) {
       compile = true;
-    } else if (strcmp(argv[i], "parse") == 0) {
+    } else if (Util::contains({ "parse" }, arg)) {
       parse = true;
-    } else if (strcmp(argv[i], "-C") == 0) {
-      outputChars = true;
-      bufferOutput = true;
     } else {
       processFilename(argv[i]);
     }

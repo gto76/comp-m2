@@ -15,10 +15,11 @@ class Ram;
 
 class NoninteractiveMode {
   public:
-    NoninteractiveMode(vector<string> filenamesIn, bool outputCharsIn,
-                       bool bufferOutput) 
+    NoninteractiveMode(vector<string> filenamesIn, bool outputNumbers, 
+                       bool outputChars, bool inputChars, bool rawInput) 
         : computerChain(vector<Computer>(filenamesIn.size())),
-          output(StandardOutput(outputCharsIn, bufferOutput)) 
+          output(StandardOutput(outputNumbers, outputChars)),
+          input(PipeInput(inputChars, rawInput))
     { 
       // Fills rams with contents of files.
       for (size_t i = 0; i < filenamesIn.size(); i++) {
@@ -35,9 +36,9 @@ class NoninteractiveMode {
     void run();
 
   private:
-    PipeInput input;
     vector<Computer> computerChain;
     StandardOutput output;
+    PipeInput input;
 };
 
 #endif
