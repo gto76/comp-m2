@@ -43,7 +43,12 @@ string Parser::parse(vector<string> filenamesIn, bool outputChars,
   for (size_t i = 0; i < filenamesIn.size(); i++) {
     source += getComputerFunction(rams[i], i)+ "\n\n";
   }
-  source += SOURCE_FOOTER_1 + to_string(filenamesIn.size()) + 
+  if (rawInput) {
+    source += SOURCE_FOOTER_1_RAW;
+  } else {
+    source += SOURCE_FOOTER_1;
+  }
+  source += to_string(filenamesIn.size()) + 
             SOURCE_FOOTER_2 + "\n";
   return source;
 }

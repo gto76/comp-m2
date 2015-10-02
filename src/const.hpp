@@ -92,13 +92,17 @@ const string LOWERCASE_M = u8"\u006D";
 const string SOURCE_INCLUDES= ""
 "#include <stdio.h>\n"
 "#include <stdlib.h>\n"
+"#include <unistd.h>\n"
 "\n"
 "#include <bitset>\n"
 "#include <iostream>\n"
 "#include <string>";
 
+
 const string SOURCE_HEADER = ""
 "using namespace std;\n"
+"\n"
+"bool outputNumbers = false;\n"
 "\n"
 "unsigned char sadd(unsigned char a, unsigned char b) {\n"
 "  return (a > 255 - b) ? 255 : a + b;\n"
@@ -146,12 +150,22 @@ const string SOURCE_HEADER = ""
 "  string out;\n"
 "  for (size_t i = 0; i < 8; i++) {\n"
 "    if (x[i]) {\n"
-"      out += "*";\n"
+"      out += \"*\";\n"
 "    } else {\n"
-"      out += "-";\n"
+"      out += \"-\";\n"
 "    }\n"
 "  }\n"
 "  return out;\n"
+"}\n"
+"\n"
+"string getFormatedInt(unsigned char c) {\n"
+"  char formatedInt [4];\n"
+"  sprintf(formatedInt, \"%3d\", c);\n"
+"  return formatedInt;\n"
+"}\n"
+"\n"
+"string getStringWithFormatedInt(unsigned char c) {\n"
+"  return getString(c) + \" \" + getFormatedInt(c) + \"\\n\";\n"
 "}";
 
 const string PRINT_BASIC = ""
@@ -159,20 +173,20 @@ const string PRINT_BASIC = ""
 "  if (outputNumbers) {\n"
 "    cout << getStringWithFormatedInt(c);\n"
 "  } else {\n"
-"    cout << getString(c) + "\n";\n"
+"    cout << getString(c) + \"\n\";\n"
 "  }\n"
 "}";
 
 const string PRINT_OUTPUT_CHARS = ""
 "void print(unsigned char c) {\n"
 "  cout << c;\n"
-"}"
+"}";
 
 const string PRINT_RAW = ""
 "void print(unsigned char c) {\n"
 "  cout << c;\n"
 "  fflush(stdout);\n"
-"}"
+"}";
 
 const string F0_BASIC = ""
 "unsigned char f0() { {\n"
@@ -186,12 +200,12 @@ const string F0_BASIC = ""
 
 const string F0_INPUT_CHARS = ""
 "unsigned char f0() {\n"
-"  int c = getchar();\n"
+"  unsigned char c = getchar();\n"
 "  if (c == EOF) {\n"
 "    cout << endl;\n"
 "    exit(0);\n"
 "  }\n"
-"  return getBoolByte(c);\n"
+"  return c;\n"
 "}";
 
 const string F0_RAW = ""
@@ -211,6 +225,14 @@ const string F0_RAW = ""
 
 const string SOURCE_FOOTER_1 = ""
 "int main() {\n"
+"  outputNumbers = isatty(fileno(stdout));\n"
+"  while(1) {\n"
+"    print(f";
+
+const string SOURCE_FOOTER_1_RAW = ""
+"int main() {\n"
+"  setEnvironment();\n"
+"  outputNumbers = isatty(fileno(stdout));\n"
 "  while(1) {\n"
 "    print(f";
 
