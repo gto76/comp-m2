@@ -1,9 +1,11 @@
 #include "parser.hpp"
 
+#include <numeric>
 #include <string>
 #include <vector>
 
 #include "const.hpp"
+#include "environment_const_string.hpp"
 #include "instruction.hpp"
 #include "load.hpp"
 #include "ram.hpp"
@@ -17,8 +19,27 @@ string Parser::parse(vector<string> filenamesIn, bool outputChars,
   for (size_t i = 0; i < filenamesIn.size(); i++) {
     Load::fillRamWithFile(filenamesIn[i].c_str(), rams[i]);
   }
-  string source;
-  source = SOURCE_HEADER+ "\n\n";
+  string source = SOURCE_INCLUDES + "\n\n";
+  if (rawInput) {
+    string environment = accumulate(environmentConstString.begin(),
+                                    environmentConstString.end(), string(""));
+    source += environment;
+  }
+  source += SOURCE_HEADER + "\n\n";
+  if (rawInput) {
+    source += PRINT_RAW + "\n\n";
+  } else if (outputChars) {
+    source += PRINT_OUTPUT_CHARS + "\n\n";
+  } else {
+    source += PRINT_BASIC + "\n\n";
+  }
+  if (rawInput) {
+    source += F0_RAW + "\n\n";
+  } else if (inputChars) {
+    source += F0_INPUT_CHARS + "\n\n";
+  } else {
+    source += F0_BASIC + "\n\n";
+  }
   for (size_t i = 0; i < filenamesIn.size(); i++) {
     source += getComputerFunction(rams[i], i)+ "\n\n";
   }

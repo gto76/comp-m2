@@ -130,8 +130,8 @@ void prepareOutput() {
 
 void updateBuffer() {
   vector<vector<string>> tmp = Renderer::renderState(printer, computer.ram,
-                                                        computer.cpu, cursor, 
-                                                        *selectedView);
+                                                     computer.cpu, cursor, 
+                                                     *selectedView);
   int i = 0;
   for (vector<string> line : tmp) {
     replaceBufferLine(line, i++);

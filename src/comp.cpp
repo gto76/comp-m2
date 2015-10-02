@@ -52,7 +52,7 @@ int main(int argc, const char* argv[]) {
   } else if (parse) {
     assertFilenames();
     string filenameOut = getFilenameOut();
-    cout << filenameOut << endl;
+    cout << "Source saved to " + filenameOut + ".cpp" << endl;
     saveSourceToFile(filenameOut+".cpp");
   } else if (interactivieMode) {
     InteractiveMode::startInteractiveMode(getFirstFilename());

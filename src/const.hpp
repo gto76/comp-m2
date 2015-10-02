@@ -93,8 +93,9 @@ const string SOURCE_INCLUDES= ""
 "#include <stdio.h>\n"
 "#include <stdlib.h>\n"
 "\n"
+"#include <bitset>\n"
 "#include <iostream>\n"
-"#include <string>"
+"#include <string>";
 
 const string SOURCE_HEADER = ""
 "using namespace std;\n"
@@ -140,25 +141,80 @@ const string SOURCE_HEADER = ""
 "  }\n"
 "}\n"
 "\n"
-"unsigned char readWordFromPipe() {\n"
+"string getString(unsigned char c) {\n"
+"  std::bitset<8> x(c);\n"
+"  string out;\n"
+"  for (size_t i = 0; i < 8; i++) {\n"
+"    if (x[i]) {\n"
+"      out += "*";\n"
+"    } else {\n"
+"      out += "-";\n"
+"    }\n"
+"  }\n"
+"  return out;\n"
+"}";
+
+const string PRINT_BASIC = ""
+"void print(unsigned char c) {\n"
+"  if (outputNumbers) {\n"
+"    cout << getStringWithFormatedInt(c);\n"
+"  } else {\n"
+"    cout << getString(c) + "\n";\n"
+"  }\n"
+"}";
+
+const string PRINT_OUTPUT_CHARS = ""
+"void print(unsigned char c) {\n"
+"  cout << c;\n"
+"}"
+
+const string PRINT_RAW = ""
+"void print(unsigned char c) {\n"
+"  cout << c;\n"
+"  fflush(stdout);\n"
+"}"
+
+const string F0_BASIC = ""
+"unsigned char f0() { {\n"
 "  string word;\n"
 "  cin >> word;\n"
 "  if (!cin) {\n"
 "    exit(0);\n"
 "  }\n"
 "  return parseWord(word);\n"
-"}\n"
-"\n"
+"}";
+
+const string F0_INPUT_CHARS = ""
 "unsigned char f0() {\n"
-"  return readWordFromPipe();\n"
+"  int c = getchar();\n"
+"  if (c == EOF) {\n"
+"    cout << endl;\n"
+"    exit(0);\n"
+"  }\n"
+"  return getBoolByte(c);\n"
+"}";
+
+const string F0_RAW = ""
+"unsigned char f0() {\n"
+"  unsigned char c = 0;\n"
+"  errno = 0;\n"
+"  ssize_t num = read(0, &c, 1);\n"
+"  if (num == -1 && errno == EINTR) {\n"
+"    // Exits if ctrl-c was pressed.\n"
+"    if (pleaseExit) {\n"
+"      exit(0);\n"
+"    }\n"
+"    return f0();\n"
+"  }\n"
+"  return c;\n"
 "}";
 
 const string SOURCE_FOOTER_1 = ""
 "int main() {\n"
 "  while(1) {\n"
-"    cout << f";
+"    print(f";
 
-const string SOURCE_FOOTER_2 = "();\n"
+const string SOURCE_FOOTER_2 = "());\n"
 "  }\n"
 "}";
 
