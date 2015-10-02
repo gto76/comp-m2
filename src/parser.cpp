@@ -10,7 +10,8 @@
 
 using namespace std;
 
-string Parser::parse(vector<string> filenamesIn, bool outputChars) {
+string Parser::parse(vector<string> filenamesIn, bool outputChars, 
+                     bool inputChars, bool rawInput) {
   vector<Ram> rams = vector<Ram>(filenamesIn.size());
   // Fills rams with contents of files.
   for (size_t i = 0; i < filenamesIn.size(); i++) {

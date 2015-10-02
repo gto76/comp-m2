@@ -89,13 +89,14 @@ const string NEW_LINE_SECOND = u8"\u000A";
 const string ESCAPE = u8"\u001B";
 const string LOWERCASE_M = u8"\u006D";
 
-const string SOURCE_HEADER = ""
+const string SOURCE_INCLUDES= ""
 "#include <stdio.h>\n"
 "#include <stdlib.h>\n"
 "\n"
 "#include <iostream>\n"
-"#include <string>\n"
-"\n"
+"#include <string>"
+
+const string SOURCE_HEADER = ""
 "using namespace std;\n"
 "\n"
 "unsigned char sadd(unsigned char a, unsigned char b) {\n"

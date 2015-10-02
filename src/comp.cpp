@@ -152,7 +152,7 @@ string getFilenameOut() {
 }
 
 void saveSourceToFile(string filenameOut) {
-  string source = Parser::parse(filenames, outputChars);
+  string source = Parser::parse(filenames, outputChars, inputChars, rawInput);
   ofstream out(filenameOut);
   out << source;
   out.close();

@@ -58,3 +58,8 @@ src/drawing2D.hpp: src/resources/drawing2D
 	./tools/parseDrawing drawing2D > /tmp/drawing.hpp
 	mv -f /tmp/drawing.hpp src/drawing2D.hpp
 
+# Convert environment.c to environment_const_string.hpp,
+# containing that file in a string constant.
+src/environment_const_string.hpp: src/environment.c
+	./tools/parseEnvironment > /tmp/environment_const_string.hpp
+	mv -f /tmp/environment_const_string.hpp src/environment_const_string.hpp
