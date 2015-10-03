@@ -21,10 +21,6 @@
 #include "renderer.hpp"
 #include "view.hpp"
 
-// remove
-#include <numeric>
-#include <iostream>
-
 using namespace std;
 
 extern "C" {
@@ -87,7 +83,6 @@ bool insertChar = false;
 bool insertNumber = false;
 vector<int> digits;
 bool shiftPressed = false;
-// volatile sig_atomic_t shiftPressed = 0;
 // Copy/paste.
 vector<bool> clipboard = EMPTY_WORD;
 
