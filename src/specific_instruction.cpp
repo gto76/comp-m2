@@ -1,5 +1,6 @@
 #include "specific_instruction.hpp"
 
+#include <string>
 #include <vector>
 
 #include "address.hpp"
@@ -8,8 +9,6 @@
 #include "util.hpp"
 
 using namespace std;
-
-const string LOGIC_OPS_INDICATOR_LOCAL = "JRI~<>&VX";
 
 // UTIL FUNCTIONS
 static void increasePc(vector<bool> &pc);
@@ -271,7 +270,7 @@ Address JumpReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string JumpReg::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int JumpReg::getAdrIndex() {
@@ -303,7 +302,7 @@ Address ReadReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string ReadReg::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int ReadReg::getAdrIndex() {
@@ -340,7 +339,7 @@ Address InitializeFirstAddress::getAddress(Address &firstOrderAdr,
 }
 
 string InitializeFirstAddress::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int InitializeFirstAddress::getAdrIndex() {
@@ -371,7 +370,7 @@ Address Not::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string Not::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int Not::getAdrIndex() {
@@ -402,7 +401,7 @@ Address ShiftLeft::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string ShiftLeft::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int ShiftLeft::getAdrIndex() {
@@ -433,7 +432,7 @@ Address ShiftRight::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string ShiftRight::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int ShiftRight::getAdrIndex() {
@@ -464,7 +463,7 @@ Address And::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string And::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int And::getAdrIndex() {
@@ -495,7 +494,7 @@ Address Or::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string Or::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int Or::getAdrIndex() {
@@ -528,7 +527,7 @@ Address Xor::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string Xor::getLabel() {
-  return LOGIC_OPS_INDICATOR_LOCAL;
+  return LOGIC_OPS_INDICATOR;
 }
 
 int Xor::getAdrIndex() {
