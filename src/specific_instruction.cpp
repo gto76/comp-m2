@@ -11,6 +11,7 @@
 using namespace std;
 
 // UTIL FUNCTIONS
+static string getLogicOpsIndicator();
 static void increasePc(vector<bool> &pc);
 static Address getThreeBitAddress(const vector<bool> &val);
 static void addOrSubtract(const Address &adr, vector<bool> &reg, Ram &ram, bool add);
@@ -270,7 +271,7 @@ Address JumpReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string JumpReg::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int JumpReg::getAdrIndex() {
@@ -302,7 +303,7 @@ Address ReadReg::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string ReadReg::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int ReadReg::getAdrIndex() {
@@ -339,7 +340,7 @@ Address InitializeFirstAddress::getAddress(Address &firstOrderAdr,
 }
 
 string InitializeFirstAddress::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int InitializeFirstAddress::getAdrIndex() {
@@ -370,7 +371,7 @@ Address Not::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string Not::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int Not::getAdrIndex() {
@@ -401,7 +402,7 @@ Address ShiftLeft::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string ShiftLeft::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int ShiftLeft::getAdrIndex() {
@@ -432,7 +433,7 @@ Address ShiftRight::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string ShiftRight::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int ShiftRight::getAdrIndex() {
@@ -463,7 +464,7 @@ Address And::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string And::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int And::getAdrIndex() {
@@ -494,7 +495,7 @@ Address Or::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string Or::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int Or::getAdrIndex() {
@@ -527,7 +528,7 @@ Address Xor::getAddress(Address &firstOrderAdr, const vector<bool> &reg,
 }
 
 string Xor::getLabel() {
-  return LOGIC_OPS_INDICATOR;
+  return getLogicOpsIndicator();
 }
 
 int Xor::getAdrIndex() {
@@ -790,6 +791,10 @@ string IfNotMin::getCode(const Address &adr, int pc) {
 //////////
 // UTIL //
 //////////
+
+string getLogicOpsIndicator() {
+  return LOGIC_OPS_INDICATOR;
+}
 
 void increasePc(vector<bool> &pc) {
   pc = Util::getBoolNibb(Util::getInt(pc) + 1);
