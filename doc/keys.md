@@ -1,14 +1,17 @@
 Keys
 ----
 
-### Common
+### Main
 _Key_           | _Description_
 :-------------- | ----------------------------------
 Enter           | Start/pause execution.
 Esc             | Cancel execution.
-s               | Save to new file.
-S               | Save.
-Period (.)      | Change scene (character set).
+s               | Save.
+S               | Save as.
+q               | Save and quit.
+Q               | Quit without saving.
+Comma (,)       | Switch to simpler view (character set).
+Period (.)      | Switch to more complex view (character set).
 
 ### Movement
  _Key_          |  _Vim Key_  | _Description_
@@ -22,7 +25,7 @@ Shift-Tab       | T, z        | Go to instructions address.
 Home            | ^           | Go to beginning of word.
 End             | $           | Go to end of word.
 
-### Movement (Vim only)
+#### Movement (Vim only)
  _Vim Key_  | _Description_
 :---------- | ---------------------------------------------------
 g           | Go to first word.
@@ -30,27 +33,26 @@ G           | Go to last word.
 e           | Go to end of current word, or end of next if already at end.
 b           | Go to beginning of current word, or beginning of last if already at beginning.
 w           | Go to beginning of next word.
-a           | Go to fourth bit of instruction.
+a           | Go to fourth bit of a word (address part).
 
 ### Manipulation
  _Key_          |  _Vim Key_  | _Description_
 :-------------- | ----------- | ----------------------------------
-Space           |             | Change bits value.
-Insert          |             | Insert blank word and move all following words one spot lower.
-Delete          | X           | Delete word, and move all following words one spot higher. Word gets copied to clipboard.
-Page Up, Shift–Up Arrow | K           | Move current word up, and the preceding word down.
-Page Down, Shift–Down Arrow | J           | Move current word down, and the following word up.
+Space           |             | Flip bit.
+Insert          | ;           | Insert blank word and move all following words one spot lower and update addresses.
+Delete, Backspace | x           | Delete word and copy to clipboard if not empty, or move all following words one spot higher if empty. All addresses get updated.
+Page Up, Shift–Up Arrow | K           | Switch current and preceding word. All addresses get updated.
+Page Down, Shift–Down Arrow | J           | Switch current and following word. All addresses get updated.
 c               | y           | Copy word.
 v               | p           | Paste word.
 
-### Manipulation (Vim only)
+#### Manipulation (Vim only)
  _Vim Key_ | _Description_
 :--------- | ---------------------------------------------------
 f          | Switch current bit on, and move cursor one spot to the right.
 d          | Switch current bit off, and move cursor one spot to the right.
-x          | Delete word and copy it to clipboard.
-o          | Move to next word and insert blank word. Move all following words one spot lower.
-P          | Paste word and move all following words one spot lower.
+o          | Move to next word and insert blank word. Move all following words one spot lower. All addresses get updated.
+P          | Paste word and move all following words one spot lower. All addresses get updated.
 
 ### Value insertion (works only on DATA)
  _Vim Key_ | _Description_
