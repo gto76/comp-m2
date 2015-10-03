@@ -793,7 +793,7 @@ string IfNotMin::getCode(const Address &adr, int pc) {
 //////////
 
 string getLogicOpsIndicator() {
-  return LOGIC_OPS_INDICATOR;
+  return "JRI~<>&VX";
 }
 
 void increasePc(vector<bool> &pc) {
