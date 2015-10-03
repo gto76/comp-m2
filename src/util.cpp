@@ -360,8 +360,8 @@ size_t Util::getSizeOfLargestElement(vector<vector<string>> lines) {
  */
 vector<string> Util::getFilesInDirectory(const string &directory) {
   DIR *dir;
-  class dirent *ent;
-  class stat st;
+  struct dirent *ent;
+  struct stat st;
   vector<string> out;
   dir = opendir(directory.c_str());
   while ((ent = readdir(dir)) != NULL) {

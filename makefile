@@ -12,6 +12,8 @@ EXECUTABLE=comp
 
 all: $(OBJDIR) $(SOURCES_CPP) $(SOURCES_C) $(EXECUTABLE) 
     
+# Compiles all files with first level of optimization, instead
+# of none.
 optimize: $(OBJDIR) $(SOURCES_CPP) $(SOURCES_C) $(EXECUTABLE) 
 
 $(EXECUTABLE): $(OBJECTS) 
