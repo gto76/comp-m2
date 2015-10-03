@@ -48,8 +48,10 @@ int main(int argc, const char* argv[]) {
     string sourceNameOut = "/tmp/"+filenameOut+".cpp";
     saveSourceToFile(sourceNameOut);
     string command = GCC_COMMAND+" "+filenameOut+" "+sourceNameOut;
-    system(command.c_str());
-    cout << "Compiled as " + filenameOut << endl;
+    int statusCode = system(command.c_str());
+    if (statusCode == 0) {
+      cout << "Compiled as " + filenameOut << endl;
+    }  
   } else if (parse) {
     assertFilenames();
     string filenameOut = getFilenameOut();
