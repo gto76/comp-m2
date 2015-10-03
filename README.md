@@ -60,9 +60,9 @@ Detailed descriptions of all keys can be found [**HERE**](doc/keys.md).
 
 Options
 -------
-* `--non-interactive`, `-n` – Run program in non-interactive mode (not necessary if any other option is present).
+* `--non-interactive`, `-n` – Run program in non-interactive mode (not necessary if any other option is present, or if input is piped).
 * `--char-output`, `-c` – Convert words to characters when printing to *stdout*.
-* `--filter`, `-f` – Convert characters to words when reading from *stdin*, and convert words to characters when printing to *stdout*.
+* `--filter`, `-f` – Convert characters to words when reading from *stdin*, and words to characters when printing to *stdout*.
 * `--game`, `-g` – Same as *filter*, but read characters directly from keyboard.
 * `parse` – Convert program to c++ code (other options may be specified).
 * `compile` – Compile program (other options may be specified).
@@ -83,20 +83,62 @@ $ cd comp-m2
 $ ./run
 ```
 
-Example Programs
+Examples
 --------
+
+#### Fibonacci Sequence
+```
+$ ./comp -n examples/fibonacci.cm2
+-------*   1
+-------*   1
+------*-   2
+------**   3
+-----*-*   5
+----*---   8
+...
+```
+
 #### Multiply
 ```
-$ echo "3 4" | ./comp examples/multiply
+$ echo "3 4" | ./comp examples/multiply.cm2
 ----**--  12
 ```
 
-#### Random Dot
+#### Hello World
 ```
-$ examples/keyFilter | ./comp examples/randomDot
-----*---   8
------*--   4
-----*---   8
----*----  16
-...
+$ ./comp -c examples/hello-world.cm2
+Hello world
+```
+
+#### To Upper Case
+```
+$ echo "Hello world" | ./comp -f examples/to-upper-case.cm2
+HELLO WORLD
+```
+
+#### Cat vs Mouse
+```
+$ ./comp compile -g examples/cat-vs-mouse/
+Compiled as cat-vs-mouse
+$ ./cat-vs-mouse
+```
+```
+##################
+#                #
+#  C             #
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+#             m  #
+#                #
+##################
 ```
