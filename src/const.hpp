@@ -173,7 +173,7 @@ const string PRINT_BASIC = ""
 "  if (outputNumbers) {\n"
 "    cout << getStringWithFormatedInt(c);\n"
 "  } else {\n"
-"    cout << getString(c) + \"\n\";\n"
+"    cout << getString(c) + \"\\n\";\n"
 "  }\n"
 "}";
 
@@ -189,7 +189,7 @@ const string PRINT_RAW = ""
 "}";
 
 const string F0_BASIC = ""
-"unsigned char f0() { {\n"
+"unsigned char f0() {\n"
 "  string word;\n"
 "  cin >> word;\n"
 "  if (!cin) {\n"
@@ -200,12 +200,12 @@ const string F0_BASIC = ""
 
 const string F0_INPUT_CHARS = ""
 "unsigned char f0() {\n"
-"  unsigned char c = getchar();\n"
+"  int c = getchar();\n"
 "  if (c == EOF) {\n"
 "    cout << endl;\n"
 "    exit(0);\n"
 "  }\n"
-"  return c;\n"
+"  return (unsigned char) c;\n"
 "}";
 
 const string F0_RAW = ""

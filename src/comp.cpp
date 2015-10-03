@@ -49,11 +49,12 @@ int main(int argc, const char* argv[]) {
     saveSourceToFile(sourceNameOut);
     string command = GCC_COMMAND+" "+filenameOut+" "+sourceNameOut;
     system(command.c_str());
+    cout << "Compiled as " + filenameOut << endl;
   } else if (parse) {
     assertFilenames();
     string filenameOut = getFilenameOut();
-    cout << "Source saved to " + filenameOut + ".cpp" << endl;
     saveSourceToFile(filenameOut+".cpp");
+    cout << "Source saved to " + filenameOut + ".cpp" << endl;
   } else if (interactivieMode) {
     InteractiveMode::startInteractiveMode(getFirstFilename());
   } else {
