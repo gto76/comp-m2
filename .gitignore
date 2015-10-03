@@ -6,6 +6,16 @@ test
 punchcard*
 .DS_Store
 err
+cat-vs-mouse
+hello-world
+to-upper-case
+multiply
+fibonacci
+cat-vs-mouse.cpp
+hello-world.cpp
+to-upper-case.cpp
+multiply.cpp
+fibonacci.cpp
 
 # Compiled Object files
 *.slo
