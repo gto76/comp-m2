@@ -51,6 +51,7 @@ class Util {
     static vector<string> getFilesInDirectory(const string &directory);
     static bool endsWith(string const &fullString, string const &ending);
     static bool isADir(string filename);
+    static bool contains(vector<string> options, const char* arg);
 };
 
 #endif

@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# Usage: parseEnvironment
+# Converts passed textfile into hpp header file containing const
+# string[] definition.
+
+# Stops execution if any command fails.
+set -eo pipefail
+
+main() {
+  textFile="src/environment.c"
+  headerFile="src/environment_const_string.hpp"
+  sed '/Do not edit/q' "$headerFile"
+  printf "\nconst vector<string> environmentConstString = {"
+
+  cat "$textFile" \
+    | perl -C7 -ne 'for(split(//)){print sprintf("%04X", ord)."\n"}' \
+    | sed 's/^/u8\"\\u/'  \
+    | sed 's/$/\"/' \
+    | tr '\n' ' ' \
+    | sed 's/ /, /g' \
+    | sed 's/, $/\n/' \
+    | fold -s
+  printf "};\n\n#endif"
+}
+
+main "$@"

@@ -39,6 +39,7 @@ const vector<bool> EMPTY_WORD = { false, false, false, false, false, false,
                                   false, false };
 const vector<bool> FIRST_ADDRESS = { false, false, false, false };
 const vector<bool> LAST_ADDRESS = { true, true, true, true };
+const vector<bool> ONE_BEFORE_LAST_ADDRESS = { true, true, true, false };
 const int MAX_VALUE = 255;
 
 const vector<bool> INIT_INSTRUCTION = { false, true, true, true, false, false,
@@ -88,14 +89,20 @@ const string NEW_LINE_SECOND = u8"\u000A";
 const string ESCAPE = u8"\u001B";
 const string LOWERCASE_M = u8"\u006D";
 
-const string SOURCE_HEADER = ""
+const string SOURCE_INCLUDES= ""
 "#include <stdio.h>\n"
 "#include <stdlib.h>\n"
+"#include <unistd.h>\n"
 "\n"
+"#include <bitset>\n"
 "#include <iostream>\n"
-"#include <string>\n"
-"\n"
+"#include <string>";
+
+
+const string SOURCE_HEADER = ""
 "using namespace std;\n"
+"\n"
+"bool outputNumbers = false;\n"
 "\n"
 "unsigned char sadd(unsigned char a, unsigned char b) {\n"
 "  return (a > 255 - b) ? 255 : a + b;\n"
@@ -138,25 +145,98 @@ const string SOURCE_HEADER = ""
 "  }\n"
 "}\n"
 "\n"
-"unsigned char readWordFromPipe() {\n"
+"string getString(unsigned char c) {\n"
+"  std::bitset<8> x(c);\n"
+"  string out;\n"
+"  for (size_t i = 0; i < 8; i++) {\n"
+"    if (x[i]) {\n"
+"      out += \"*\";\n"
+"    } else {\n"
+"      out += \"-\";\n"
+"    }\n"
+"  }\n"
+"  return out;\n"
+"}\n"
+"\n"
+"string getFormatedInt(unsigned char c) {\n"
+"  char formatedInt [4];\n"
+"  sprintf(formatedInt, \"%3d\", c);\n"
+"  return formatedInt;\n"
+"}\n"
+"\n"
+"string getStringWithFormatedInt(unsigned char c) {\n"
+"  return getString(c) + \" \" + getFormatedInt(c) + \"\\n\";\n"
+"}";
+
+const string PRINT_BASIC = ""
+"void print(unsigned char c) {\n"
+"  if (outputNumbers) {\n"
+"    cout << getStringWithFormatedInt(c);\n"
+"  } else {\n"
+"    cout << getString(c) + \"\\n\";\n"
+"  }\n"
+"}";
+
+const string PRINT_OUTPUT_CHARS = ""
+"void print(unsigned char c) {\n"
+"  cout << c;\n"
+"}";
+
+const string PRINT_RAW = ""
+"void print(unsigned char c) {\n"
+"  cout << c;\n"
+"  fflush(stdout);\n"
+"}";
+
+const string F0_BASIC = ""
+"unsigned char f0() {\n"
 "  string word;\n"
 "  cin >> word;\n"
 "  if (!cin) {\n"
 "    exit(0);\n"
 "  }\n"
 "  return parseWord(word);\n"
-"}\n"
-"\n"
+"}";
+
+const string F0_INPUT_CHARS = ""
 "unsigned char f0() {\n"
-"  return readWordFromPipe();\n"
+"  int c = getchar();\n"
+"  if (c == EOF) {\n"
+"    cout << endl;\n"
+"    exit(0);\n"
+"  }\n"
+"  return (unsigned char) c;\n"
+"}";
+
+const string F0_RAW = ""
+"unsigned char f0() {\n"
+"  unsigned char c = 0;\n"
+"  errno = 0;\n"
+"  ssize_t num = read(0, &c, 1);\n"
+"  if (num == -1 && errno == EINTR) {\n"
+"    // Exits if ctrl-c was pressed.\n"
+"    if (pleaseExit) {\n"
+"      exit(0);\n"
+"    }\n"
+"    return f0();\n"
+"  }\n"
+"  return c;\n"
 "}";
 
 const string SOURCE_FOOTER_1 = ""
 "int main() {\n"
+"  outputNumbers = isatty(fileno(stdout));\n"
 "  while(1) {\n"
-"    cout << f";
+"    print(f";
 
-const string SOURCE_FOOTER_2 = "();\n"
+const string SOURCE_FOOTER_1_RAW = ""
+"int main() {\n"
+"  setEnvironment();\n"
+"  outputNumbers = isatty(fileno(stdout));\n"
+"  while(1) {\n"
+"    print(f";
+
+const string SOURCE_FOOTER_2 = "());\n"
 "  }\n"
 "}";
 

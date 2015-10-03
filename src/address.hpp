@@ -1,3 +1,4 @@
+
 #ifndef ADDRESS_H
 #define ADDRESS_H
 
@@ -10,7 +11,7 @@ using namespace std;
 
 class Address {
   public:
-    Address(AddrSpace spaceIn, vector<bool> valIn)
+    Address(const AddrSpace spaceIn, vector<bool> valIn)
         : space(spaceIn), 
           val(valIn) { }
     bool operator == (const Address& other) const {
@@ -19,6 +20,7 @@ class Address {
     string getIntStr() const;
     AddrSpace const space;
     vector<bool> const val;
+    static string toString(AddrSpace space);
 };
 
 #endif

@@ -130,8 +130,8 @@ void prepareOutput() {
 
 void updateBuffer() {
   vector<vector<string>> tmp = Renderer::renderState(printer, computer.ram,
-                                                        computer.cpu, cursor, 
-                                                        *selectedView);
+                                                     computer.cpu, cursor,
+                                                     *selectedView);
   int i = 0;
   for (vector<string> line : tmp) {
     replaceBufferLine(line, i++);
@@ -237,39 +237,35 @@ void userInput() {
 bool switchKey(char c) {
   switch (c) {
     // BEGIN EXECUTION
-    case 10:   // enter
+    case 10:    // enter
       run();
       break;
-
     // MODES
-    case 50:   // 2
+    case 50:    // 2
       shiftPressed = 1;
       return true;
-    case 105:  // i
+    case 105:   // i
       engageInsertCharMode();
       break;
-    case 73:   // I
+    case 73:    // I
       engageInsertNumberMode();
       break;
-
     // VIEWS
-    case 44:   // ,
-      switchDrawing(false);
-      break;
-    case 46:   // .
+    case 44:    // ,
       switchDrawing(true);
       break;
-
+    case 46:    // .
+      switchDrawing(false);
+      break;
     // SAVE
-    case 115:  // s
+    case 115:   // s
       save();
       break;
-    case 83:   // S
+    case 83:    // S
       saveAs();
       break;
-
     // QUIT
-    case 81:   // Q
+    case 81:    // Q
       exit(0);
       break;
     case 113: { // q
@@ -279,106 +275,97 @@ bool switchKey(char c) {
       exit(0);
       break;
     }
-
     // BASIC MOVEMENT
-    case 107:  // k
-    case 65:   // A, part of escape seqence of up arrow
+    case 107:   // k
+    case 65:    // A, part of escape seqence of up arrow
       cursor.decreaseY();
       break;
-    case 106:  // j
-    case 66:   // B, part of escape seqence of down arrow
+    case 106:   // j
+    case 66:    // B, part of escape seqence of down arrow
       cursor.increaseY();
       break;
-    case 108:  // l
-    case 67:   // C, part of escape seqence of rigth arrow
+    case 108:   // l
+    case 67:    // C, part of escape seqence of rigth arrow
       cursor.increaseX();
       break;
-    case 104:  // h
-    case 68:   // D, part of escape seqence of left arrow
+    case 104:   // h
+    case 68:    // D, part of escape seqence of left arrow
       cursor.decreaseX();
       break;
-    case 116:  // t
-    case 9:    // tab
+    case 116:   // t
+    case 9:     // tab
       cursor.switchAddressSpace();
       break;
-    case 72:   // H (home)
-    case 94:   // ^
+    case 72:    // H (home)
+    case 94:    // ^
       cursor.setBitIndex(0);
       break;
-    case 70:   // F (end)
-    case 36:   // $
+    case 70:    // F (end)
+    case 36:    // $
       cursor.setBitIndex(WORD_SIZE-1);
       break;
-
     // VIM MOVEMENT
-    case 103:  // g
+    case 103:   // g
       cursor.setByteIndex(0);
       break;
-    case 71:   // G
+    case 71:    // G
       cursor.setByteIndex(RAM_SIZE-1);
       break;
-    case 101:  // e
+    case 101:   // e
       cursor.goToEndOfWord();
       break;
-    case 98:   // b
+    case 98:    // b
       cursor.goToBeginningOfWord();
       break;
-    case 119:  // w
+    case 119:   // w
       cursor.goToBeginningOfNextWord();
       break;
-    case 97:   // a
+    case 97:    // a
       cursor.setBitIndex(4);
       break;
-    case 122:  // z
-    case 90:   // shift + tab
-    case 84:   // T
+    case 122:   // z
+    case 90:    // shift + tab
+    case 84:    // T
       cursor.goToInstructionsAddress();
       break;
-
     // BASIC MANIPULATION
-    case 32:   // space
+    case 32:    // space
       cursor.switchBit();
       fileSaved = false;
       break;
-    case 51:   // 3, part of escape seqence of delete key
-    case 88: { // X
+    case 51:    // 3, part of escape seqence of delete key
+    case 127:   // backspace
+    case 120: { // x
       vector<bool> temp = cursor.getWord();
       bool success = cursor.deleteByteAndMoveRestUp();
       if (success) {
-        clipboard = temp;
         fileSaved = false;
+      } else {
+        clipboard = temp;
       }
       break;
     }
-    case 75:   // K
-    case 53:   // 5, part of escape seqence of page up
+    case 75:    // K
+    case 53:    // 5, part of escape seqence of page up
       cursor.moveByteUp();
       fileSaved = false;
       break;
-    case 74:   // J
-    case 54:   // 6, part of escape seqence of page down
+    case 74:    // J
+    case 54:    // 6, part of escape seqence of page down
       cursor.moveByteDown();
       fileSaved = false;
       break;
-
     // VIM MANIPULATION
-    case 102:  // f
+    case 102:   // f
       cursor.setBit(true);
       cursor.increaseX();
       fileSaved = false;
       break;
-    case 100:  // d
+    case 100:   // d
       cursor.setBit(false);
       cursor.increaseX();
       fileSaved = false;
       break;
-    case 120: { // x
-      clipboard = cursor.getWord();
-      cursor.eraseByte();
-      fileSaved = false;
-      // cursor.setBitIndex(0);
-      break;
-    } 
     case 111: { // o
       cursor.increaseY();
       bool success = cursor.insertByteAndMoveRestDown();
@@ -390,16 +377,21 @@ bool switchKey(char c) {
       }
       break;
     }
-    case 99:   // c
-    case 121:  // y
+    case 59: {  // ;
+      cursor.insertByteAndMoveRestDown();
+      fileSaved = false;
+      break;
+    }
+    case 99:    // c
+    case 121:   // y
       clipboard = cursor.getWord();
       break;
-    case 118:  // v
-    case 112:  // p
+    case 118:   // v
+    case 112:   // p
       cursor.setWord(clipboard);
       fileSaved = false;
       break;
-    case 80: { // P
+    case 80: {  // P
       bool success = cursor.insertByteAndMoveRestDown();
       if (success) {
         cursor.setWord(clipboard);
@@ -481,15 +473,15 @@ void switchDrawing(bool direction) {
     } else if (*selectedView == view3db) {
       selectedView = &view2d;
     } else {
-      selectedView = &view3d;
+      return;
     }
   } else {
-    if (*selectedView == view3d) {
-      selectedView = &view2d;
-    } else if (*selectedView == view3db) {
+    if (*selectedView == view3db) {
       selectedView = &view3d;
-    } else {
+    } else if (*selectedView == view2d) {
       selectedView = &view3db;
+    } else {
+      return;
     }
   }
   prepareOutput();
@@ -511,9 +503,9 @@ void save() {
     saveAs();
   } else {
     saveRamToFile(loadedFilename);
-    fileSaved = true; 
+    fileSaved = true;
     printer.printString("Saved "+loadedFilename);
-    redrawScreen();   
+    redrawScreen();
   }
 }
 
