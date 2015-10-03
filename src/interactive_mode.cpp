@@ -340,8 +340,8 @@ bool switchKey(char c) {
       cursor.switchBit();
       fileSaved = false;
       break;
-    case 51:   // 3, part of escape seqence of delete key
-    case 127:    // backspace
+    case 51:    // 3, part of escape seqence of delete key
+    case 127:   // backspace
     case 120: { // x
       vector<bool> temp = cursor.getWord();
       bool success = cursor.deleteByteAndMoveRestUp();
@@ -373,24 +373,18 @@ bool switchKey(char c) {
       cursor.increaseX();
       fileSaved = false;
       break;
-    // case 120: { // x
-      // clipboard = cursor.getWord();
-      // cursor.eraseByte();
-      // fileSaved = false;
-      // break;
-    // } 
-    case 111: { // o
-      // cursor.increaseY();
-      // bool success = cursor.insertByteAndMoveRestDown();
-      // if (success) {
-      //   cursor.setBitIndex(0);
-      //   fileSaved = false;
-      // } else {
-      //   cursor.decreaseY();
-      // }
-      // break;
-      // Temporary solution until I find a better key for keyboards without
-      // insert key:
+    case 111: {  // o
+      cursor.increaseY();
+      bool success = cursor.insertByteAndMoveRestDown();
+      if (success) {
+        cursor.setBitIndex(0);
+        fileSaved = false;
+      } else {
+        cursor.decreaseY();
+      }
+      break;
+    }
+    case 59: {   // ;
       cursor.insertByteAndMoveRestDown();
       fileSaved = false;
       break;
