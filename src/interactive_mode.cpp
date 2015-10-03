@@ -113,7 +113,7 @@ void InteractiveMode::startInteractiveMode(string filename) {
 void selectView() {
   const char* term = std::getenv("TERM");
   if (strcmp(term, "linux") == 0) {
-    selectedView = &view3db;
+    selectedView = &view2d;
   } else if (strcmp(term, "rxvt") == 0) {
     selectedView = &view2d;
   }
