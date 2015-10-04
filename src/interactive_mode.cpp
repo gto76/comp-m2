@@ -182,6 +182,18 @@ void sleepAndCheckForKey() {
       executionCanceled = true;
       return;
     }
+    // If s was pressed - save.
+    if (keyCode == 115) {
+      save();
+      executionCanceled = true;
+      return;
+    }
+    // If S was pressed - save as.
+    if (keyCode == 83) {
+      saveAs();
+      executionCanceled = true;
+      return;
+    }
     // "Press key to continue."
     keyCode = readStdin();
     // Quits if q or Q was pressed.
