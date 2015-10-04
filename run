@@ -2,7 +2,7 @@
 # Compiles and runs if no errors present.
 
 clear
-echo "Compiling..."
+echo "Compiling... (may take some time)"
 out=$(make 2>&1)
 rc=$?
 if [[ $rc -ne 0 ]]; then

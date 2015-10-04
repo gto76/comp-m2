@@ -37,6 +37,7 @@ void updateBuffer();
 void run();
 void exec();
 void sleepAndCheckForKey();
+void shouldQuit(int keyCode);
 // EDIT MODE
 void userInput();
 bool switchKey(char c);
@@ -174,6 +175,8 @@ void sleepAndCheckForKey() {
   }
   // Pauses execution if a key was hit, and waits for another key hit.
   if (int keyCode = Util::getKey()) {
+    // Quits if q or Q was pressed.
+    shouldQuit(keyCode);
     // Cancels execution if escape was pressed.
     if (keyCode == 27) {
       executionCanceled = true;
@@ -181,6 +184,8 @@ void sleepAndCheckForKey() {
     }
     // "Press key to continue."
     keyCode = readStdin();
+    // Quits if q or Q was pressed.
+    shouldQuit(keyCode);
     // Cancels execution if escape or tab was pressed.
     if (keyCode == 27 || keyCode == 9) {
       executionCanceled = true;
@@ -195,6 +200,20 @@ void sleepAndCheckForKey() {
       saveAs();
       executionCanceled = true;
     }
+  }
+}
+
+void shouldQuit(int keyCode) {
+  // Quits if Q was pressed.
+  if (keyCode == 81) {
+    exit(0);
+  }
+  // Saves and quits if q was pressed.
+  if (keyCode == 113) {
+    if (!fileSaved) {
+      saveAs();
+    }
+    exit(0);
   }
 }
 
@@ -261,15 +280,11 @@ bool switchKey(char c) {
       break;
     // QUIT
     case 81:    // Q
-      exit(0);
+      shouldQuit(81);
       break;
-    case 113: { // q
-      if (!fileSaved) {
-        saveAs();
-      }
-      exit(0);
+    case 113:   // q
+      shouldQuit(113);
       break;
-    }
     // BASIC MOVEMENT
     case 107:   // k
     case 65:    // A, part of escape seqence of up arrow
