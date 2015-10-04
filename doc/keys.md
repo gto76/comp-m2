@@ -39,12 +39,14 @@ a           | Go to fourth bit of a word (address part).
  _Key_          |  _Vim Key_  | _Description_
 :-------------- | ----------- | ----------------------------------
 Space           |             | Flip bit.
-Insert          | ;           | Insert blank word and move all following words one spot lower and update addresses.
+Insert          | ]           | Insert blank word and move all following words one spot lower and update addresses.
 Delete, Backspace | x           | Delete word and copy to clipboard if not empty, or move all following words one spot higher if empty. All addresses get updated.
 Page Up, Shift–Up Arrow | K           | Switch current and preceding word. All addresses get updated.
 Page Down, Shift–Down Arrow | J           | Switch current and following word. All addresses get updated.
 c               | y           | Copy word.
 v               | p           | Paste word.
+Shift–Right Arrow | +         | Increase value of the word.
+Shift–Left Arrow | -          | Decrease value of the word.
 
 #### Manipulation (Vim only)
  _Vim Key_ | _Description_

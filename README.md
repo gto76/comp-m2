@@ -32,7 +32,7 @@ instruction code - 4 bits
 
 Instruction set
 ---------------
-Most of the instructions, together with the highlighted word that they use/modify, are pretty self-explainatory. Exception are instructions, that start with `-***`, and are a part of `JRI~<>&VX` instruction cluster. They are:  
+Most of the instructions, together with the highlighted word that they use/modify, are pretty self-explainatory. Exception are instructions that start with `-***`, and are a part of `JRI~<>&VX` instruction cluster. They are:  
  * `J` – JUMP_REG,
  * `R` – READ_REG,
  * `I` – INIT,
@@ -43,6 +43,7 @@ Most of the instructions, together with the highlighted word that they use/modif
  * `V` – OR,
  * `X` – XOR.
 
+(Use Shift–Left/Right Arrow to easily shift between them.)  
 Detailed descriptions of all instructions can be found [**HERE**](doc/instruction-set.md).
 
 Keys
@@ -52,7 +53,7 @@ Keys
 * `Enter` – Start/pause execution,
 * `Esc` – Cancel execution,
 * `Delete`, `Backspace` – Delete word or move following words up if empty,
-* `Insert`, `;` – Insert empty word and move remaining words down,
+* `Insert`, `]` – Insert empty word and move remaining words down,
 * `s` – Save ram to textfile named `punchcard-<num>.cm2`. To load it, start program with `./comp <file>`,
 * `q` – Save and quit.
 
