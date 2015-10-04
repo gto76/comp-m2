@@ -10,7 +10,7 @@
      │   │g│aaaaaaaa│╲  ···· │ READ       │ │ ····  ╱│bbbbbbbb│v│                               │
      │   │g│aaaaaaaa│ | ···✷ │ WRITE      │ │ ···✷ | │bbbbbbbb│v│                               │
      │   │g│aaaaaaaa│ │ ··✷· │ ADD        │ │ ··✷· │ │bbbbbbbb│v│                               │
-     │   │g│aaaaaaaa│ │ ··✷✷ │ SUB        │ │ ··✷✷ │ │bbbbbbbb│v│            PRINTER            │
+     │   │g│aaaaaaaa│ │ ··✷✷ │ SUBTRACT   │ │ ··✷✷ │ │bbbbbbbb│v│            PRINTER            │
      │   │g│aaaaaaaa│ │ ·✷·· │ JUMP       │ │ ·✷·· │ │bbbbbbbb│v│  ╭─┬────────────────────────╮ │
      │   │g│aaaaaaaa│ │ ·✷·✷ │ IF MAX     │ │ ·✷·✷ │ │bbbbbbbb│v│  │ │   ╭────────────────╮   │ │
      │   │g│aaaaaaaa│ │ ·✷✷· │ IF MIN     │ │ ·✷✷· │ │bbbbbbbb│v│  │ │   │=============[]=│   │ │
