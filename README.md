@@ -24,7 +24,7 @@ instruction code - 4 bits
 * Some instructions (`JRI~<>&V`) do not specify address. They operate on register (`SHIFT L/R`, `NOT`, ...) or between register and predefined DATA address (`AND`, `OR`, ...).
 * Whatever gets written to the last address is sent to the printer, or to *stdout* if program is running in a non-interactive mode.
 * When reading from the last address (15), we get a random byte value, or a single word from *stdin*, if program is running in non-interactive mode.
-* In this word every `*` is interpreted as *true* and all other characters as *false*. If word starts with a digit, it is then red as a number and converted appropriately.
+* In this word every `*` is interpreted as *true* and all other characters as *false*. If word starts with a digit, it is then read as a number and converted appropriately.
 * Program will start in a non-interactive mode when any input is piped in, or any option is given. For instance `echo | ./comp <file>`
 * Programs can be saved with `s` key and loaded by passing their name as parameter.
 * If more than one filename is passed, the computers will be chained together (*stdint* > *comp-1* > *comp-2* > ... > *stdout*).
