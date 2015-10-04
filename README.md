@@ -85,6 +85,13 @@ $ cd comp-m2
 $ ./run
 ```
 
+### Docker
+Use the `mvitaly/comp-m2` docker hub image:  
+```docker run -it --rm mvitaly/comp-m2```
+
+You can also add parameters:  
+```docker run -it --rm mvitaly/comp-m2 -c examples/hello-world.cm2```
+
 Examples
 --------
 
