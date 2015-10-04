@@ -378,6 +378,14 @@ bool switchKey(char c) {
       fileSaved = false;
       break;
     // VIM MANIPULATION
+    case 43:    // +
+      cursor.increaseByteValue();
+      fileSaved = false;
+      break;
+    case 45:    // -
+      cursor.decreaseByteValue();
+      fileSaved = false;
+      break;
     case 102:   // f
       cursor.setBit(true);
       cursor.increaseX();
@@ -399,7 +407,7 @@ bool switchKey(char c) {
       }
       break;
     }
-    case 59: {  // ;
+    case 93: {  // ]
       cursor.insertByteAndMoveRestDown();
       fileSaved = false;
       break;
@@ -447,6 +455,14 @@ bool processInputWithShift(char c) {
     return true;
   } else if (c == 66) {    // B, part of down arrow
     cursor.moveByteDown();
+    fileSaved = false;
+    return true;
+  } else if (c == 67) {    // C, part of right arrow
+    cursor.increaseByteValue();
+    fileSaved = false;
+    return true;
+  } else if (c == 68) {    // D, part of left arrow
+    cursor.decreaseByteValue();
     fileSaved = false;
     return true;
   } else if (c == 126) {   // ~, part of insert key (also is 2)

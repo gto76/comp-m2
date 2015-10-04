@@ -56,6 +56,8 @@ class Cursor {
     void moveByteDown();
     bool insertByteAndMoveRestDown();
     bool deleteByteAndMoveRestUp();
+    void increaseByteValue();
+    void decreaseByteValue();
 
   private:
     Ram &ram;
@@ -96,6 +98,7 @@ class Cursor {
     int getBitIndex() const;
     int getAddr() const;
     void setAddr(int addr);
+    void changeBytesValue(int delta);
 };
 
 #endif

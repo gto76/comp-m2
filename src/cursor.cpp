@@ -211,6 +211,14 @@ bool Cursor::deleteByteAndMoveRestUp() {
   return deleteByteAndMoveRestUp(getAddress());
 }
 
+void Cursor::increaseByteValue() {
+  changeBytesValue(1);
+}
+
+void Cursor::decreaseByteValue() {
+  changeBytesValue(-1);
+}
+
 //////////////////////////////
 /////////// PRIVATE //////////
 //////////////////////////////
@@ -545,4 +553,9 @@ void Cursor::setAddr(int addr) {
   cursorPosition[addrSpace][Y] = addr;
 }
 
+void Cursor::changeBytesValue(int delta) {
+  vector<bool> val = getWord();
+  int intVal = Util::getInt(val) + delta;
+  setWord(Util::getBoolByte(intVal));
+}
 
