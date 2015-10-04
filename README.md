@@ -118,11 +118,11 @@ $ echo "Hello world" | ./comp -f examples/to-upper-case.cm2
 HELLO WORLD
 ```
 
-#### Cat vs Mouse
+#### Cat and Mouse
 ```
-$ ./comp compile -g examples/cat-vs-mouse/
-Compiled as cat-vs-mouse
-$ ./cat-vs-mouse
+$ ./comp compile -g examples/cat-and-mouse/
+Compiled as cat-and-mouse
+$ ./cat-and-mouse
 ```
 ```
 ##################
