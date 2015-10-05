@@ -18,7 +18,7 @@ Overview
 instruction code - 4 bits
   |  +-- address - 4 bits
   v  v
-----***-  ->  READ 14  ->  Copy value stored at address 14 of "DATA" ram to register.
+----***-  ->  READ 14  ->  Copy value stored at address 14 of DATA ram to register.
 ```
 * All addresses specified by instructions refer to DATA ram, except for addresses of *Execution Control* instructions (`JUMP`, `IF MAX`, `IF MIN`, ...). They refer to CODE part of ram.
 * Some instructions (`JRI~<>&V`) do not specify address. They operate on register (`SHIFT L/R`, `NOT`, ...) or between register and predefined DATA address (`AND`, `OR`, ...).
