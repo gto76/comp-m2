@@ -26,9 +26,9 @@ instruction code - 4 bits
 * When reading from the last address (15), we get a random byte value, or a single word from *stdin*, if program is running in non-interactive mode.
 * In this word every `*` is interpreted as *true* and all other characters as *false*. If word starts with a digit, it is then read as a number and converted appropriately.
 * Program will start in a non-interactive mode when any input is piped in, or any option is given. For instance `echo | ./comp <file>`
-* Programs can be saved with `s` key and loaded by passing their name as parameter.
-* If more than one filename is passed, the computers will be chained together (*stdint* > *comp-1* > *comp-2* > ... > *stdout*).
-* If folder is passed, all files that have suffix `.cm2` will be loaded in an alphabetical order.
+* Programs can be saved with `s` key and loaded by passing their name as a parameter.
+* If more than one filename is passed, the computers will be chained together (*stdin* > *comp-1* > *comp-2* > ... > *stdout*).
+* If folder is passed, all files in that folder that have suffix `.cm2` will be loaded in an alphabetical order.
 
 Instruction set
 ---------------
@@ -53,7 +53,7 @@ Keys
 * `Enter` – Start/pause execution,
 * `Esc` – Cancel execution,
 * `Delete`, `Backspace` – Delete word or move following words up if empty,
-* `Insert`, `]` – Insert empty word and move remaining words down,
+* `Insert`, `]` – Insert empty word and move following words down,
 * `s` – Save ram to textfile named `punchcard-<num>.cm2`. To load it, start program with `./comp <file>`,
 * `q` – Save and quit.
 
@@ -61,7 +61,7 @@ Detailed descriptions of all keys can be found [**HERE**](doc/keys.md).
 
 Options
 -------
-* `--non-interactive`, `-n` – Run program in non-interactive mode (not necessary if any other option is present, or if input is piped).
+* `--non-interactive`, `-n` – Run program in a non-interactive mode (not necessary if any other option is present, or if input is piped).
 * `--char-output`, `-c` – Convert words to characters when printing to *stdout*.
 * `--filter`, `-f` – Convert characters to words when reading from *stdin*, and words to characters when printing to *stdout*.
 * `--game`, `-g` – Same as *filter*, but read characters directly from keyboard.
@@ -78,7 +78,7 @@ How to run on…
 * Run the *UNIX* commands.
 
 ### UNIX
-*Make* and *g++* need to be installed first. On *Ubuntu* and *Debian* you can get them by running `sudo apt-get install build-essential`, on *OS X* they get installed automatically after running make.
+*Make* and *g++* need to be installed first. On *Ubuntu* and *Debian* you can get them by running `sudo apt-get install build-essential`, on *OS X* they get installed automatically after running *make*.
 ```bash
 $ git clone https://github.com/gto76/comp-m2.git
 $ cd comp-m2
