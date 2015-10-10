@@ -28,7 +28,7 @@ Instruction set
 **IF_MIN**     | `·✷✷·`   | Jumps to the specified address if register has value _0_ = '--------'.
 **IF_NOT_MAX** | `✷✷·✷`   | Jumps to the specified address if register does not have value _255_ = '********'.
 **IF_NOT_MIN** | `✷✷✷·`  | Jumps to the specified address if register does not have value _0_ = '--------'.
-**JUMP_REG**   | `·✷✷✷····` | Jumps to the address, specified by the last four bits of the register.
+**JUMP_REG**   | `·✷✷✷····` | Jumps to the address specified by the last four bits of the register.
 
 ### Bitwise Logic
  _Name_        |  _Code_     | _Description_
