@@ -6,12 +6,12 @@ test
 punchcard*
 .DS_Store
 err
-cat-vs-mouse
+cat-and-mouse
 hello-world
 to-upper-case
 multiply
 fibonacci
-cat-vs-mouse.cpp
+cat-and-mouse.cpp
 hello-world.cpp
 to-upper-case.cpp
 multiply.cpp
