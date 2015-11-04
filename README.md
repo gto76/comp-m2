@@ -5,7 +5,7 @@ Updated version of [**Comp**](https://github.com/gto76/comp-cpp) – Simple 4-bi
 
 ![screenshot](doc/screenshot.png)
 
-For quick start see [**HOW TO RUN**](README.md#how-to-run-on) section.
+For quick start see [**HOW TO RUN**](README.md#how-to-run-on).
 
 Overview
 --------
