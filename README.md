@@ -81,14 +81,14 @@ How to run on…
 
 ### UNIX
 *Make* and *g++* need to be installed first. On *Ubuntu* and *Debian* you can get them by running `sudo apt-get install build-essential`, on *OS X* they get installed automatically after running *make*.
-```bash
+```
 $ git clone https://github.com/gto76/comp-m2.git
 $ cd comp-m2
 $ ./run
 ```
 
 ### Docker
-```bash
+```
 $ docker run -it --rm mvitaly/comp-m2 <options>
 ```
 
