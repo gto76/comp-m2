@@ -154,4 +154,4 @@ $ ./cat-and-mouse
 
 Further Development
 -------------------
-Check out the blueprint for [**Mark III**](https://github.com/gto76/comp-m2/issues/4) model.
+Check out the blueprint of [**Mark III**](https://github.com/gto76/comp-m2/issues/4) model.
