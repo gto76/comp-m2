@@ -50,14 +50,14 @@ Detailed descriptions of all instructions can be found [**HERE**](doc/instructio
 
 Keys
 ----
-* `Space` – Flip bit,
-* `Tab` – Switch address space,
-* `Enter` – Start/pause execution,
-* `Esc` – Cancel execution,
-* `Delete`, `Backspace` – Delete word or move following words up if empty,
-* `Insert`, `]` – Insert empty word and move following words down,
-* `s` – Save ram to textfile named `punchcard-<num>.cm2`. To load it, start program with `./comp <file>`,
-* `q` – Save and quit.
+* `Space` – Flip bit
+* `Tab` – Switch address space
+* `Enter` – Start/pause execution
+* `Esc` – Cancel execution
+* `Delete`, `Backspace` – Delete word or move following words up if empty
+* `Insert`, `]` – Insert empty word and move following words down
+* `s` – Save ram to textfile named `punchcard-<num>.cm2`. To load it, start program with `./comp <file>`
+* `q` – Save and quit
 
 Detailed descriptions of all keys can be found [**HERE**](doc/keys.md).
 
