@@ -5,7 +5,7 @@ Comp Mark II
 
 ![screenshot](doc/screenshot.png)
 
-For quick start see [**HOW TO RUN**](README.md#how-to-run-on).
+**For quick start see [HOW TO RUN](README.md#how-to-run-on)**
 
 Overview
 --------
