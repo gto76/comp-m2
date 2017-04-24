@@ -126,6 +126,7 @@ HELLO WORLD
 ```
 
 #### Cat and Mouse
+Two player game
 ```
 $ ./comp compile -g examples/cat-and-mouse/
 Compiled as cat-and-mouse
