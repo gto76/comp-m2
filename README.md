@@ -63,7 +63,7 @@ Detailed descriptions of all keys can be found [**HERE**](doc/keys.md).
 
 Options
 -------
-* `--non-interactive`, `-n` – Runs program in a non-interactive mode (not necessary if any other option is present, or if input is piped).
+* `--non-interactive`, `-n` – Runs program in a non-interactive mode (withouth a gui). This option is not necessary if any other option is present, or if input is piped in.
 * `--char-output`, `-c` – Converts numbers to characters using ASCII standard when printing to *stdout*.
 * `--filter`, `-f` – Convert characters to numbers when reading from *stdin*, and numbers to characters when printing to *stdout*.
 * `--game`, `-g` – Same as *filter*, but reads characters directly from keyboard.
