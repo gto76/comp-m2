@@ -63,12 +63,12 @@ Detailed descriptions of all keys can be found [**HERE**](doc/keys.md).
 
 Options
 -------
-* `--non-interactive`, `-n` – Run program in a non-interactive mode (not necessary if any other option is present, or if input is piped).
-* `--char-output`, `-c` – Convert words to characters when printing to *stdout*.
-* `--filter`, `-f` – Convert characters to words when reading from *stdin*, and words to characters when printing to *stdout*.
-* `--game`, `-g` – Same as *filter*, but read characters directly from keyboard.
-* `parse` – Convert program to c++ code (other options may be specified).
-* `compile` – Compile program (other options may be specified).
+* `--non-interactive`, `-n` – Runs program in a non-interactive mode (not necessary if any other option is present, or if input is piped).
+* `--char-output`, `-c` – Converts numbers to characters using ASCII standard when printing to *stdout*.
+* `--filter`, `-f` – Convert characters to numbers when reading from *stdin*, and numbers to characters when printing to *stdout*.
+* `--game`, `-g` – Same as *filter*, but reads characters directly from keyboard.
+* `parse` – Converts program to c++ code (other options may be specified).
+* `compile` – Compiles program directly to executable file (other options may be specified).
 
 
 How to run on…
@@ -97,7 +97,7 @@ Examples
 
 #### Fibonacci Sequence
 ```
-$ ./comp -n examples/fibonacci.cm2
+$ ./comp --non-interactive examples/fibonacci.cm2
 -------*   1
 -------*   1
 ------*-   2
@@ -115,20 +115,20 @@ $ echo "3 4" | ./comp examples/multiply.cm2
 
 #### Hello World
 ```
-$ ./comp -c examples/hello-world.cm2
+$ ./comp --char-output examples/hello-world.cm2
 Hello world
 ```
 
 #### To Upper Case
 ```
-$ echo "Hello world" | ./comp -f examples/to-upper-case.cm2
+$ echo "Hello world" | ./comp --filter examples/to-upper-case.cm2
 HELLO WORLD
 ```
 
 #### Cat and Mouse
 Two player game
 ```
-$ ./comp compile -g examples/cat-and-mouse/
+$ ./comp compile --game examples/cat-and-mouse/
 Compiled as cat-and-mouse
 $ ./cat-and-mouse
 ```
