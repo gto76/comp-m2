@@ -68,7 +68,7 @@ Options
 * `--filter`, `-f` – Convert characters to numbers when reading from *stdin*, and numbers to characters when printing to *stdout*.
 * `--game`, `-g` – Same as *filter*, but reads characters directly from keyboard.
 * `parse` – Converts program to c++ code (other options may be specified).
-* `compile` – Compiles program directly to executable file (other options may be specified).
+* `compile` – Compiles program to executable file, by converting it to c++ code and running g++ compiler (other options from above may be specified). Only difference between compiled program and one run on the Comp Mark II is in execution speed.
 
 
 How to run on…
